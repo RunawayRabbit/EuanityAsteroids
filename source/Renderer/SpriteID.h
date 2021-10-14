@@ -1,0 +1,90 @@
+#pragma once
+
+enum class SpriteID
+{
+	NONE = 0,
+
+	// ANIMATED
+	SHIP_TRAIL,
+	SHIP_TRAIL_1,
+	SHIP_TRAIL_2,
+	SHIP_TRAIL_3,
+
+	SMALL_EXPLOSION,
+	SMALL_EXPLOSION_1,
+
+	EXPLOSION,
+	EXPLOSION_1,
+	EXPLOSION_2,
+	EXPLOSION_3,
+
+	MUZZLE_FLASH,
+	BULLET,
+	BULLET_1,
+
+	_END_ANIMATED,
+
+	// STATIC
+
+	SHIP,
+
+	LARGE_ASTEROID,
+	
+	MEDIUM_ASTEROID_1,
+	MEDIUM_ASTEROID_2,
+	MEDIUM_ASTEROID_3,
+	MEDIUM_ASTEROID_4,
+
+	SMOL_ASTEROID_1,
+	SMOL_ASTEROID_2,
+	SMOL_ASTEROID_3,
+	SMOL_ASTEROID_4,
+	SMOL_ASTEROID_5,
+	SMOL_ASTEROID_6,
+	SMOL_ASTEROID_7,
+	SMOL_ASTEROID_8,
+	SMOL_ASTEROID_9,
+	SMOL_ASTEROID_10,
+	SMOL_ASTEROID_11, // @NOTE: This one is basically invisible.
+	SMOL_ASTEROID_12,
+	SMOL_ASTEROID_13,
+	SMOL_ASTEROID_14,
+	SMOL_ASTEROID_15,
+	SMOL_ASTEROID_16,
+
+	// BACKGROUND BITS
+
+	STATIC_BACKGROUND,
+	PARALLAX_BACKGROUND_1,
+	PARALLAX_BACKGROUND_2,
+	PARALLAX_BACKGROUND_3,
+
+	// Menu and related stuff
+	MAIN_LOGO,
+	START_BUTTON,
+	QUIT_BUTTON,
+	SHITTY_LOGO,
+	GAME_OVER,
+
+
+	COUNT
+};
+
+namespace SpriteAnimationData
+{
+	constexpr SpriteID nextFrameIndex[] = {
+		SpriteID::NONE, // null animation
+		SpriteID::SHIP_TRAIL_1, SpriteID::SHIP_TRAIL_2, SpriteID::SHIP_TRAIL_3, SpriteID::SHIP_TRAIL, // ship trail
+		SpriteID::SMALL_EXPLOSION_1, SpriteID::SMALL_EXPLOSION,// small explosion
+		SpriteID::EXPLOSION_1, SpriteID::EXPLOSION_2, SpriteID::EXPLOSION_3, SpriteID::EXPLOSION, // explosion
+		SpriteID::BULLET, SpriteID::BULLET_1, SpriteID::BULLET, // bullet
+	};
+
+	constexpr float frameTime[] = {
+	0.0f, // zero animation
+	0.15f, 0.1f, 0.2f, 0.1f, // ship trail
+	0.2f, 0.15f, // small explosion
+	0.1f, 0.25f, 0.3f, 0.4f, // explosion
+	0.15f, 0.07f, 0.07f, // bullet
+	};
+}
