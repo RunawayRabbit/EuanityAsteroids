@@ -16,6 +16,42 @@
 
 #include "../Math/Math.h"
 
+float
+Create::GetCollisionRadiusFromColliderType(const AsteroidType& type)
+{
+	switch(type) {
+		case AsteroidType::LARGE:
+			return ColliderRadius::Large;
+
+		case AsteroidType::RANDOM_MEDIUM:
+		case AsteroidType::MEDIUM_1:
+		case AsteroidType::MEDIUM_2:
+		case AsteroidType::MEDIUM_3:
+		case AsteroidType::MEDIUM_4:
+			return ColliderRadius::Medium;
+
+		case AsteroidType::RANDOM_SMALL:
+		case AsteroidType::SMALL_1:
+		case AsteroidType::SMALL_2:
+		case AsteroidType::SMALL_3:
+		case AsteroidType::SMALL_4:
+		case AsteroidType::SMALL_5:
+		case AsteroidType::SMALL_6:
+		case AsteroidType::SMALL_7:
+		case AsteroidType::SMALL_8:
+		case AsteroidType::SMALL_9:
+		case AsteroidType::SMALL_10:
+		case AsteroidType::SMALL_11:
+		case AsteroidType::SMALL_12:
+		case AsteroidType::SMALL_13:
+		case AsteroidType::SMALL_14:
+		case AsteroidType::SMALL_15:
+		case AsteroidType::SMALL_16:
+			return ColliderRadius::Small;
+	}
+	return 0;
+}
+
 Create::Create(Game& game,
                EntityManager& entities,
                TransformManager& transforms,

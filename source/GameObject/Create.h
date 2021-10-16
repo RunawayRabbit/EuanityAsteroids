@@ -50,6 +50,8 @@ public:
 		SMALL_16,
 	};
 
+	static float GetCollisionRadiusFromColliderType(const AsteroidType& type);
+
 	Create(Game& game, EntityManager& entities, TransformManager& transforms, SpriteManager& sprites,
 		RigidbodyManager& rigidbodies, UIManager& uiManager, Timer& timer);
 

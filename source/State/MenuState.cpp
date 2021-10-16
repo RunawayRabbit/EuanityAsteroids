@@ -27,7 +27,7 @@ MenuState::OnEnter()
 void
 MenuState::OnExit()
 {
-	for(Entity asteroid : floatingAsteroids)
+	for(auto asteroid : floatingAsteroids)
 	{
 		game.Entities.Destroy(asteroid);
 	}
@@ -94,7 +94,7 @@ MenuState::SpawnRandomAsteroids()
 {
 	std::vector<Vector2> asteroidPositions;
 
-	const auto numAsteroids = 32;
+	const auto numAsteroids = 256;
 	floatingAsteroids.reserve(numAsteroids);
 
 
@@ -104,13 +104,16 @@ MenuState::SpawnRandomAsteroids()
 		auto attempts        = 0;
 		while(!isValidPosition)
 		{
-			if(attempts > 2048)
+			if(attempts > 8192)
 			{
 				// Yea I know.
 				return;
 			}
 
-			const auto asteroidRadius = ColliderRadius::Large;
+			auto asteroidSize = i < (numAsteroids/9) ? Create::AsteroidType::LARGE
+            : i < (3*numAsteroids/4) ? Create::AsteroidType::RANDOM_MEDIUM
+            : Create::AsteroidType::RANDOM_SMALL;
+			const auto asteroidRadius = Create::GetCollisionRadiusFromColliderType(asteroidSize);
 
 			auto startPos = Vector2 {
 				Math::RandomRange(asteroidRadius, game.GameField.max.x - asteroidRadius),
@@ -132,14 +135,14 @@ MenuState::SpawnRandomAsteroids()
 
 			if(isValidPosition)
 			{
-				const auto speed = 70.0f;
+				const auto speed = 90.0f;
 				auto startRot = static_cast<float>(rand() % 360);
 				auto startVel = Vector2 { Math::RandomRange(-speed, speed), Math::RandomRange(-speed, speed) };
 				auto rotVel   = Math::RandomRange(-45.0f, 45.0f);
 
 				asteroidPositions.push_back(startPos);
 
-				floatingAsteroids.push_back(game.Create.Asteroid(startPos, startRot, startVel, rotVel, Create::AsteroidType::LARGE));
+				floatingAsteroids.push_back(game.Create.Asteroid(startPos, startRot, startVel, rotVel, asteroidSize));
 			}
 			++attempts;
 		}

@@ -5,15 +5,15 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Some fixes to replaying, more structured game system resets">
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Physics/Physics.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.idb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/vc142.idb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/vc142.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/State/MenuState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.idb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.pdb" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +51,6 @@
       <option value="$PROJECT_DIR$/source/ECS/Entity.h" />
       <option value="$PROJECT_DIR$/EuanityAsteroids.vcxproj" />
       <option value="$PROJECT_DIR$/source/Platform/RingBuffer.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
       <option value="$PROJECT_DIR$/source/Platform/FrameTimer.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
@@ -66,7 +65,6 @@
       <option value="$PROJECT_DIR$/source/ECS/UIManager.h" />
       <option value="$PROJECT_DIR$/source/ECS/UIManager.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Game.h" />
-      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/MoveList.h" />
       <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/SpriteTransform.h" />
@@ -74,10 +72,13 @@
       <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
       <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
       <option value="$PROJECT_DIR$/source/BugList.txt" />
-      <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
+      <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
+      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
+      <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -162,7 +163,8 @@
       <workItem from="1634195543627" duration="279000" />
       <workItem from="1634196144877" duration="55000" />
       <workItem from="1634261055681" duration="13801000" />
-      <workItem from="1634357204179" duration="18230000" />
+      <workItem from="1634357204179" duration="18530000" />
+      <workItem from="1634380940031" duration="1357000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -192,7 +194,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634378343962</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed the duplicate collision handling bug">
+      <created>1634380763822</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1634380763822</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -215,7 +224,8 @@
     <MESSAGE value="Completed the new Range-based EntityID system." />
     <MESSAGE value="Added the to-be-implemented stuff to the buglist, evne if they aren't technically bugs." />
     <MESSAGE value="Some fixes to replaying, more structured game system resets" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some fixes to replaying, more structured game system resets" />
+    <MESSAGE value="Fixed the duplicate collision handling bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed the duplicate collision handling bug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

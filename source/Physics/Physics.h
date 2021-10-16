@@ -84,19 +84,19 @@ private:
 	// OBB Collisions
 
 	void ShipVsAsteroid(const MoveList::ColliderRanges& ranges, std::vector<CollisionListEntry>& collisions) const;
-	static void OBBVsSpecificAsteroid(const OBB& Ship,
-	                                  const Entity& ShipEntity,
-	                                  std::vector<MoveList::Entry>::iterator AsteroidBegin,
-	                                  std::vector<MoveList::Entry>::iterator AsteroidEnd,
-	                                  const float& AsteroidRadius,
+	static void OBBVsSpecificAsteroid(const OBB& ship,
+	                                  const Entity& shipEntity,
+	                                  std::vector<MoveList::Entry>::iterator asteroidBegin,
+	                                  std::vector<MoveList::Entry>::iterator asteroidEnd,
+	                                  const float& asteroidRadius,
 	                                  std::vector<CollisionListEntry>& Collisions);
 
 
 	// Circle Collisions
 
-	static void BulletVsAsteroid(const MoveList::ColliderRanges& Ranges,
-	                             std::vector<CollisionListEntry>& Collisions,
-	                             const float& DeltaTime);
+	static void BulletVsAsteroid(const MoveList::ColliderRanges& ranges,
+	                             std::vector<CollisionListEntry>& collisions,
+	                             const float& deltaTime);
 	static void AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
 	                               std::vector<CollisionListEntry>& Collisions,
 	                               const float& DeltaTime);
@@ -113,7 +113,7 @@ private:
 	                            const ColliderType& TypeB,
 	                            std::vector<CollisionListEntry>& Collisions);
 
-	static float GetMassFromColliderType(const ColliderType& Type);
+	static float GetMassFromColliderType(const ColliderType& type);
 
 	static const int MAX_SOLVER_ITERATIONS = 3;
 	inline static const float ASTEROID_MASSES[] { 16.0f, 4.0f, 1.0f };

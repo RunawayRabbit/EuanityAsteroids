@@ -215,6 +215,11 @@ Physics::RemoveDuplicateCollisions()
 		tempSet.insert(collisionEntry);
 
 	_CollisionList.assign(tempSet.begin(), tempSet.end());
+
+	//@NOTE: @BUGFIX: This sort is "necessary" to prevent render order issues in the case where asteroids overlap.
+	// in the case of "perfect" physics, we shouldn't ever have overlaps. But we decided to allow them and to be as
+	// graceful as we possibly can be when it *does* happen.
+	sort(_CollisionList.begin(), _CollisionList.end());
 }
 
 
@@ -237,37 +242,37 @@ Physics::ShipVsAsteroid(const MoveList::ColliderRanges& ranges, std::vector<Coll
 }
 
 void
-Physics::OBBVsSpecificAsteroid(const OBB& Ship,
-                               const Entity& ShipEntity,
-                               const std::vector<MoveList::Entry>::iterator AsteroidBegin,
-                               const std::vector<MoveList::Entry>::iterator AsteroidEnd,
-                               const float& AsteroidRadius,
+Physics::OBBVsSpecificAsteroid(const OBB& ship,
+                               const Entity& shipEntity,
+                               const std::vector<MoveList::Entry>::iterator asteroidBegin,
+                               const std::vector<MoveList::Entry>::iterator asteroidEnd,
+                               const float& asteroidRadius,
                                std::vector<CollisionListEntry>& Collisions)
 {
-	for(auto Asteroid = AsteroidBegin; Asteroid != AsteroidEnd; ++Asteroid)
+	for(auto Asteroid = asteroidBegin; Asteroid != asteroidEnd; ++Asteroid)
 	{
-		Circle Collider(Asteroid->Pos, AsteroidRadius);
-		if(CollisionTests::OBBToCircle(Ship, Collider))
+		Circle collider(Asteroid->Pos, asteroidRadius);
+		if(CollisionTests::OBBToCircle(ship, collider))
 		{
-			CollisionListEntry Entry;
-			Entry.A           = ShipEntity;
-			Entry.EntityAType = ColliderType::SHIP;
-			Entry.MassA       = GetMassFromColliderType(ColliderType::SHIP);
-			Entry.B           = Asteroid->Rb.entity;
-			Entry.EntityBType = Asteroid->Rb.colliderType;
-			Entry.MassB       = GetMassFromColliderType(Asteroid->Rb.colliderType);
+			CollisionListEntry entry;
+			entry.A           = shipEntity;
+			entry.EntityAType = ColliderType::SHIP;
+			entry.MassA       = GetMassFromColliderType(ColliderType::SHIP);
+			entry.B           = Asteroid->Rb.entity;
+			entry.EntityBType = Asteroid->Rb.colliderType;
+			entry.MassB       = GetMassFromColliderType(Asteroid->Rb.colliderType);
 
-			Entry.TimeOfCollision = 0.0f; // Made-up.
+			entry.TimeOfCollision = 0.0f; // Made-up.
 
-			Collisions.push_back(Entry);
+			Collisions.push_back(entry);
 		}
 	}
 }
 
 float
-Physics::GetMassFromColliderType(const ColliderType& Type)
+Physics::GetMassFromColliderType(const ColliderType& type)
 {
-	switch(Type)
+	switch(type)
 	{
 		case ColliderType::LARGE_ASTEROID: return ASTEROID_MASSES[0];
 		case ColliderType::MEDIUM_ASTEROID: return ASTEROID_MASSES[1];
@@ -279,41 +284,41 @@ Physics::GetMassFromColliderType(const ColliderType& Type)
 }
 
 void
-Physics::BulletVsAsteroid(const MoveList::ColliderRanges& Ranges,
-                          std::vector<CollisionListEntry>& Collisions,
-                          const float& DeltaTime)
+Physics::BulletVsAsteroid(const MoveList::ColliderRanges& ranges,
+                          std::vector<CollisionListEntry>& collisions,
+                          const float& deltaTime)
 {
-	constexpr float BulletMass = 0; // Fuck it, bullets don't have mass. I have decided this.
+	constexpr float bulletMass = 0; // Fuck it, bullets don't have mass. I have decided this.
 
-	for(auto Bullet = Ranges.BulletBegin; Bullet != Ranges.BulletEnd; ++Bullet)
+	for(auto bullet = ranges.BulletBegin; bullet != ranges.BulletEnd; ++bullet)
 	{
-		const auto BulletVsLargeRadius =
+		const auto bulletVsLargeRadius =
 			(ColliderRadius::Bullet + ColliderRadius::Large) *
 			(ColliderRadius::Bullet + ColliderRadius::Large);
-		CircleVsCircles(*Bullet, ColliderRadius::Bullet, BulletMass,
-		                Ranges.LargeBegin, Ranges.LargeEnd,
-		                ASTEROID_MASSES[0], BulletVsLargeRadius, DeltaTime,
+		CircleVsCircles(*bullet, ColliderRadius::Bullet, bulletMass,
+		                ranges.LargeBegin, ranges.LargeEnd,
+		                ASTEROID_MASSES[0], bulletVsLargeRadius, deltaTime,
 		                ColliderType::BULLET, ColliderType::LARGE_ASTEROID,
-		                Collisions);
+		                collisions);
 
 		const auto BulletVsMediumRadius =
 			(ColliderRadius::Bullet + ColliderRadius::Medium) *
 			(ColliderRadius::Bullet + ColliderRadius::Medium);
-		CircleVsCircles(*Bullet, ColliderRadius::Bullet, BulletMass,
-		                Ranges.MediumBegin, Ranges.MediumEnd,
-		                ASTEROID_MASSES[1], BulletVsMediumRadius, DeltaTime,
+		CircleVsCircles(*bullet, ColliderRadius::Bullet, bulletMass,
+		                ranges.MediumBegin, ranges.MediumEnd,
+		                ASTEROID_MASSES[1], BulletVsMediumRadius, deltaTime,
 		                ColliderType::BULLET, ColliderType::MEDIUM_ASTEROID,
-		                Collisions);
+		                collisions);
 
 		const auto BulletVsSmallRadius =
 			(ColliderRadius::Bullet + ColliderRadius::Small) *
 			(ColliderRadius::Bullet + ColliderRadius::Small);
 
-		CircleVsCircles(*Bullet, ColliderRadius::Bullet, BulletMass,
-		                Ranges.SmallBegin, Ranges.SmallEnd,
-		                ASTEROID_MASSES[2], BulletVsSmallRadius, DeltaTime,
+		CircleVsCircles(*bullet, ColliderRadius::Bullet, bulletMass,
+		                ranges.SmallBegin, ranges.SmallEnd,
+		                ASTEROID_MASSES[2], BulletVsSmallRadius, deltaTime,
 		                ColliderType::BULLET, ColliderType::SMOL_ASTEROID,
-		                Collisions);
+		                collisions);
 	}
 }
 
