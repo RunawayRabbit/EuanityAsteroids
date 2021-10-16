@@ -9,7 +9,7 @@
 
 EntityManager::EntityManager(const Timer& time)
 	//@NOTE @IMPORTANT: It is unlikely that we'll destroy more than 256 entities in two frames, but if we do, bump this number!
-	: ZombieList(256),
+	: ZombieList(2048),
 	  _Time(time)
 {
 	// @NOTE: Entity.id == 0 is considered to be the null entity and is never available.

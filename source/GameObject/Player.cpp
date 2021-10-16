@@ -50,6 +50,7 @@ Player::Kill(const Entity& playerEntity)
 	// Don't destroy if it isn't our entity being destroyed!
 	if(entity != playerEntity)
 		return;
+
 	auto ship = transformManager.Get(entity);
 
 	DestroyThruster(mainThruster);
@@ -59,6 +60,7 @@ Player::Kill(const Entity& playerEntity)
 	entityManager.Destroy(entity);
 
 	create.LargeExplosion(ship.value().pos);
+	entity = Entity::Null();
 }
 
 void
@@ -97,15 +99,15 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		const auto rotatingRight = inputBuffer.Contains(InputToggle::RotateRight);
 		if(!rotatingLeft && !rotatingRight)
 		{
-			newAngularVelocity = Math::MoveTowards(newAngularVelocity, 0, rotateDeceleration * deltaTime);
+			newAngularVelocity = Math::MoveTowards(newAngularVelocity, 0, ROTATE_DECELERATION * deltaTime);
 		}
 		else
 		{
 			// Apply torque
 			if(rotatingLeft)
-				trailRotation = -rotateAcceleration * deltaTime;
+				trailRotation = -ROTATE_ACCELERATION * deltaTime;
 			if(rotatingRight)
-				trailRotation = rotateAcceleration * deltaTime;
+				trailRotation = ROTATE_ACCELERATION * deltaTime;
 
 			newAngularVelocity += trailRotation;
 		}
@@ -116,8 +118,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	{
 		if(inputBuffer.Contains(InputToggle::StrafeLeft))
 		{
-			newVelocity += right * (-strafeAcceleration * deltaTime);
-			RenderThruster(strafeThrusterRight, Vector2(strafeThrusterX, strafeThrusterY), 90.0f, transform, SpriteID::MUZZLE_FLASH);
+			newVelocity += right * (-STRAFE_ACCELERATION * deltaTime);
+			RenderThruster(strafeThrusterRight, Vector2(STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), 90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -126,8 +128,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 
 		if(inputBuffer.Contains(InputToggle::StrafeRight))
 		{
-			newVelocity += right * (strafeAcceleration * deltaTime);
-			RenderThruster(strafeThrusterLeft, Vector2(-strafeThrusterX, strafeThrusterY), -90.0f, transform, SpriteID::MUZZLE_FLASH);
+			newVelocity += right * (STRAFE_ACCELERATION * deltaTime);
+			RenderThruster(strafeThrusterLeft, Vector2(-STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), -90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -140,8 +142,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	{
 		if(inputBuffer.Contains(InputToggle::MoveForward))
 		{
-			newVelocity += forward * (forwardAcceleration * deltaTime);
-			RenderThruster(mainThruster, Vector2(mainThrusterX, mainThrusterY), trailRotation, transform, SpriteID::SHIP_TRAIL);
+			newVelocity += forward * (FORWARD_ACCELERATION * deltaTime);
+			RenderThruster(mainThruster, Vector2(MAIN_THRUSTER_X, MAIN_THRUSTER_Y), trailRotation, transform, SpriteID::SHIP_TRAIL);
 		}
 		else
 		{
@@ -154,16 +156,16 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 #pragma region Shoot
 	if(shotTimer < 0.0f && inputBuffer.Contains(InputToggle::Shoot))
 	{
-		shotTimer = (shotTimer > -deltaTime) ? shotTimer + shotCooldown : shotCooldown;
+		shotTimer = (shotTimer > -deltaTime) ? shotTimer + SHOT_COOLDOWN : SHOT_COOLDOWN;
 		// ReSharper disable once CppExpressionWithoutSideEffects
-		create.Bullet(transform.pos + (forward * bulletSpawnOffsetY), transform.rot, bulletSpeed, bulletLifetime);
+		create.Bullet(transform.pos + (forward * BULLET_SPAWN_OFFSET_Y), transform.rot, BULLET_SPEED, BULLET_LIFETIME);
 	}
 #pragma endregion
 
 	// Write back our updated values.
 	const auto newSpeedSq  = newVelocity.LengthSq();
-	rigid->velocity        = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, maxSpeedSq));
-	rigid->angularVelocity = std::clamp(newAngularVelocity, -maxAngularVelocity, maxAngularVelocity);
+	rigid->velocity        = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, MAX_SPEED_SQ));
+	rigid->angularVelocity = std::clamp(newAngularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
 }
 
 void
@@ -183,7 +185,7 @@ Player::RenderThruster(Entity& thruster,
 	{
 		//@TODO: Log Error?
 	}
-	Transform* thrusterTrans = OptThrusterTrans.value();
+	auto thrusterTrans = OptThrusterTrans.value();
 
 	thrusterTrans->pos = parentTrans.pos + thrusterOffset.RotateDeg(parentTrans.rot);
 	thrusterTrans->rot = parentTrans.rot + thrusterRotation;

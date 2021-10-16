@@ -27,7 +27,7 @@ public:
 	RingBuffer<Entity> ZombieList;
 
 private:
-	void DestroyZombies(const Entity entity);
+	void DestroyZombies(Entity entity);
 
 	const Timer& _Time;
 

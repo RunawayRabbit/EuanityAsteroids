@@ -123,8 +123,8 @@ private:
 
 	const AABB _ScreenAABB;
 
-	static const int CHUNKS_X    = 8;
-	static const int CHUNKS_Y    = 6;
+	static const int CHUNKS_X    = 6;
+	static const int CHUNKS_Y    = 4;
 	static const int CHUNK_COUNT = CHUNKS_X * CHUNKS_Y;
 
 	const float _ChunkSizeX;

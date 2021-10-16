@@ -5,15 +5,17 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="">
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Sprite render order fixes, and jazzed up the menu a tiny bit.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/EntityManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/EntityManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/Player.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/Player.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Physics/Physics.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Platform/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/State/MenuState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.idb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/State/MenuState.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/State/PlayState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,13 +54,9 @@
       <option value="$PROJECT_DIR$/EuanityAsteroids.vcxproj" />
       <option value="$PROJECT_DIR$/source/Platform/RingBuffer.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/FrameTimer.cpp" />
-      <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/TransformManager.h" />
       <option value="$PROJECT_DIR$/source/ECS/TransformManager.cpp" />
-      <option value="$PROJECT_DIR$/source/ECS/EntityManager.h" />
-      <option value="$PROJECT_DIR$/source/ECS/EntityManager.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/RingBuffer.h" />
       <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.h" />
       <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp" />
@@ -71,14 +69,20 @@
       <option value="$PROJECT_DIR$/source/ECS/SpriteManager.h" />
       <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
       <option value="$PROJECT_DIR$/source/BugList.txt" />
-      <option value="$PROJECT_DIR$/source/Physics/Physics.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
       <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
-      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
+      <option value="$PROJECT_DIR$/source/Physics/Physics.h" />
+      <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
+      <option value="$PROJECT_DIR$/source/State/MenuState.h" />
+      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
+      <option value="$PROJECT_DIR$/source/ECS/EntityManager.h" />
+      <option value="$PROJECT_DIR$/source/ECS/EntityManager.cpp" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -164,7 +168,7 @@
       <workItem from="1634196144877" duration="55000" />
       <workItem from="1634261055681" duration="13801000" />
       <workItem from="1634357204179" duration="18530000" />
-      <workItem from="1634380940031" duration="1357000" />
+      <workItem from="1634380940031" duration="3538000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -201,7 +205,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634380763822</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Sprite render order fixes, and jazzed up the menu a tiny bit.">
+      <created>1634382491642</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1634382491642</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -225,7 +236,8 @@
     <MESSAGE value="Added the to-be-implemented stuff to the buglist, evne if they aren't technically bugs." />
     <MESSAGE value="Some fixes to replaying, more structured game system resets" />
     <MESSAGE value="Fixed the duplicate collision handling bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed the duplicate collision handling bug" />
+    <MESSAGE value="Sprite render order fixes, and jazzed up the menu a tiny bit." />
+    <option name="LAST_COMMIT_MESSAGE" value="Sprite render order fixes, and jazzed up the menu a tiny bit." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -9,10 +9,10 @@
 
 MenuState::MenuState(Game& game)
 	: game(game),
-	  title(Entity::Null()),
-	  startButton(Entity::Null()),
-	  quitButton(Entity::Null()),
-	  euanityMeme(Entity::Null())
+	  _Title(Entity::Null()),
+	  _StartButton(Entity::Null()),
+	  _QuitButton(Entity::Null()),
+	  _EuanityMeme(Entity::Null())
 {
 }
 
@@ -27,14 +27,14 @@ MenuState::OnEnter()
 void
 MenuState::OnExit()
 {
-	for(auto asteroid : floatingAsteroids)
+	for(auto asteroid : _FloatingAsteroids)
 	{
 		game.Entities.Destroy(asteroid);
 	}
-	game.Entities.Destroy(title);
-	game.Entities.Destroy(startButton);
-	game.Entities.Destroy(quitButton);
-	game.Entities.Destroy(euanityMeme);
+	game.Entities.Destroy(_Title);
+	game.Entities.Destroy(_StartButton);
+	game.Entities.Destroy(_QuitButton);
+	game.Entities.Destroy(_EuanityMeme);
 }
 
 void
@@ -58,7 +58,7 @@ MenuState::SpawnMenuButtons()
 	                     (screenCenter.y * 0.4f) + 168,
 	                     screenCenter.x - 311,
 	                     screenCenter.x + 311);
-	title = game.Create.UIButton(titleAABB, SpriteID::MAIN_LOGO, []()
+	_Title = game.Create.UIButton(titleAABB, SpriteID::MAIN_LOGO, []()
 	{
 	});
 
@@ -66,7 +66,7 @@ MenuState::SpawnMenuButtons()
 	                    (screenCenter.y * 1.1f) + buttonSize.y,
 	                    screenCenter.x - buttonSize.x * 0.5f,
 	                    screenCenter.x + buttonSize.x * 0.5f);
-	startButton = game.Create.UIButton(playAABB, SpriteID::START_BUTTON,
+	_StartButton = game.Create.UIButton(playAABB, SpriteID::START_BUTTON,
 	                                   [&]() -> void
 	                                   {
 		                                   game.ChangeState<PlayState>(false);
@@ -77,14 +77,14 @@ MenuState::SpawnMenuButtons()
 	                    (screenCenter.y * 1.1f) + buttonSize.y + 90,
 	                    screenCenter.x - buttonSize.x * 0.5f,
 	                    screenCenter.x + buttonSize.x * 0.5f);
-	quitButton = game.Create.UIButton(quitAABB, SpriteID::QUIT_BUTTON,
+	_QuitButton = game.Create.UIButton(quitAABB, SpriteID::QUIT_BUTTON,
 	                                  [&]() -> void
 	                                  {
 		                                  game.Quit();
 	                                  });
 
 	const AABB euanityAABB((screenCenter * 2) - Vector2(205.0f, 67.0f), (screenCenter * 2) - Vector2(5.0f, 5.0f));
-	euanityMeme = game.Create.UIButton(euanityAABB, SpriteID::SHITTY_LOGO, []()
+	_EuanityMeme = game.Create.UIButton(euanityAABB, SpriteID::SHITTY_LOGO, []()
 	{
 	});
 }
@@ -94,8 +94,8 @@ MenuState::SpawnRandomAsteroids()
 {
 	std::vector<Vector2> asteroidPositions;
 
-	const auto numAsteroids = 256;
-	floatingAsteroids.reserve(numAsteroids);
+	const auto numAsteroids = 1024;
+	_FloatingAsteroids.reserve(numAsteroids);
 
 
 	for(auto i = 0; i < numAsteroids; i++)
@@ -142,7 +142,7 @@ MenuState::SpawnRandomAsteroids()
 
 				asteroidPositions.push_back(startPos);
 
-				floatingAsteroids.push_back(game.Create.Asteroid(startPos, startRot, startVel, rotVel, asteroidSize));
+				_FloatingAsteroids.push_back(game.Create.Asteroid(startPos, startRot, startVel, rotVel, asteroidSize));
 			}
 			++attempts;
 		}

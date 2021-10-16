@@ -21,12 +21,10 @@ public:
 	void Kill(const Entity& playerEntity);
 
 	void Update(const InputBuffer& inputBuffer, const float& deltaTime);
-	inline bool IsAlive()
+	bool IsAlive() const
 	{
 		return entityManager.Exists(entity);
 	}
-
-	Entity entity;
 
 private:
 
@@ -40,6 +38,8 @@ private:
 	TransformManager& transformManager;
 	const Create& create;
 
+	Entity entity;
+
 	Entity mainThruster;
 	Entity strafeThrusterLeft;
 	Entity strafeThrusterRight;
@@ -50,24 +50,24 @@ private:
 
 	// @TODO: Pull all of these out into a struct that we can use, so that we
 	//  can implement multiple ship types!
-	static constexpr float mainThrusterX = 0.0f;
-	static constexpr float mainThrusterY = 18.0f;
+	static constexpr float MAIN_THRUSTER_X = 0.0f;
+	static constexpr float MAIN_THRUSTER_Y = 18.0f;
 
-	static constexpr float strafeThrusterX = 4.0f;
-	static constexpr float strafeThrusterY = 13.0f;
+	static constexpr float STRAFE_THRUSTER_X = 4.0f;
+	static constexpr float STRAFE_THRUSTER_Y = 13.0f;
 
-	static constexpr float maxSpeed = 170.0f;
-	static constexpr float forwardAcceleration = maxSpeed / 0.6f;
-	static constexpr float strafeAcceleration = maxSpeed / 1.5f;
+	static constexpr float MAX_SPEED = 210.0f;
+	static constexpr float FORWARD_ACCELERATION = MAX_SPEED / 0.6f;
+	static constexpr float STRAFE_ACCELERATION = MAX_SPEED / 1.5f;
 
-	static constexpr float bulletSpeed = 300.0f;
-	static constexpr float bulletLifetime = 2.5f;
-	static constexpr float shotCooldown = 0.3f;
-	static constexpr float bulletSpawnOffsetY = 11.0f;
+	static constexpr float BULLET_SPEED = 400.0f;
+	static constexpr float BULLET_LIFETIME = 2.8f;
+	static constexpr float SHOT_COOLDOWN = 0.3f;
+	static constexpr float BULLET_SPAWN_OFFSET_Y = 11.0f;
 
-	static constexpr float maxAngularVelocity = 320.0f;
-	static constexpr float rotateAcceleration = maxAngularVelocity / 0.4f;
-	static constexpr float rotateDeceleration = rotateAcceleration * 2.0f;
+	static constexpr float MAX_ANGULAR_VELOCITY = 320.0f;
+	static constexpr float ROTATE_ACCELERATION = MAX_ANGULAR_VELOCITY / 0.4f;
+	static constexpr float ROTATE_DECELERATION = ROTATE_ACCELERATION * 2.0f;
 
-	static constexpr float maxSpeedSq = maxSpeed * maxSpeed;
+	static constexpr float MAX_SPEED_SQ = MAX_SPEED * MAX_SPEED;
 };

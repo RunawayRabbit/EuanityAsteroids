@@ -4,34 +4,34 @@
 
 #include "IState.h"
 
-#include "..\GameObject\Create.h"
-#include "..\ECS\Entity.h"
+#include "../GameObject/Create.h"
+#include "../ECS/Entity.h"
 
 class Game;
 
-class MenuState : public IState
+class MenuState final : public IState
 {
 public:
-	MenuState(Game& game);
+	explicit MenuState(Game& game);
 	MenuState() = delete;
 
-	virtual void OnEnter() override;
-	virtual void OnExit() override;
-	
-	virtual void Update(const InputBuffer& inputBuffer, const float& deltaTime) override;
-	virtual void Render() override;
+	void OnEnter() override;
+	void OnExit() override;
+
+	void Update(const InputBuffer& inputBuffer, const float& deltaTime) override;
+	void Render() override;
 
 private:
 	void SpawnMenuButtons();
 	void SpawnRandomAsteroids();
 
 	Game& game;
-	
-	std::vector<Entity> floatingAsteroids;
 
-	Entity title;
+	std::vector<Entity> _FloatingAsteroids;
 
-	Entity startButton;
-	Entity quitButton;
-	Entity euanityMeme;
+	Entity _Title;
+
+	Entity _StartButton;
+	Entity _QuitButton;
+	Entity _EuanityMeme;
 };
