@@ -1,9 +1,9 @@
 #pragma once
 
-#include <unordered_set>
 #include <queue>
-#include <iostream>
+#include <iterator>
 
+#include "../Platform/RingBuffer.h"
 #include "Entity.h"
 
 class Timer;
@@ -11,20 +11,22 @@ class Timer;
 class EntityManager
 {
 public:
-	EntityManager(const Timer& Time);
+
+	explicit EntityManager(const Timer& time);
 
 	Entity Create();
-	bool Exists(Entity Entity) const;
-	void Destroy(Entity Entity);
-	void DestroyDelayed(Entity Entity, const float& Seconds);
+	bool Exists(Entity entity) const;
+	void Destroy(Entity entity);
+	void DestroyDelayed(Entity entity, const float& seconds);
 
 	void GarbageCollect();
 
 	uint32_t Count();
 
+	RingBuffer<Entity> ZombieList;
+
 private:
-	void Destroy(Entity::EID EntityEID);
-	void DestroyZombies(const Entity::EID Entity);
+	void DestroyZombies(const Entity entity);
 
 	const Timer& _Time;
 
@@ -34,24 +36,27 @@ private:
 		Entity::EID End;
 	};
 
-	std::unordered_set<Entity::EID> _ZombieList;
+	uint_fast16_t _PrevZombieCount = 0;
+	uint_fast16_t _ZombieCount     = 0;
 
 	std::vector<IDRange> _OpenRanges;
 
-	class death_row : public std::priority_queue<std::pair<float, Entity::EID>,
-		std::vector<std::pair<float, Entity::EID>>,
-		std::greater<std::pair<float, Entity::EID>>>
+	class DeathRow
+		: public std::priority_queue<std::pair<float, Entity>,
+		                             std::vector<std::pair<float, Entity>>,
+		                             std::greater<std::pair<float, Entity>>>
 	{
 	public:
-		bool remove(const Entity::EID EID)
+		// ReSharper disable once CppInconsistentNaming
+		bool remove(const Entity entity)
 		{
-			auto it = std::find_if(c.begin(), c.end(),
-				[=](std::pair<float, Entity::EID> pair)
-			{
-				return pair.second == EID;
-			});
+			const auto it = std::find_if(c.begin(), c.end(),
+			                             [=](std::pair<float, Entity> pair)
+			                             {
+				                             return pair.second == entity;
+			                             });
 
-			if (it != c.end())
+			if(it != c.end())
 			{
 				c.erase(it);
 				std::make_heap(c.begin(), c.end(), this->comp);
@@ -61,5 +66,5 @@ private:
 		}
 	};
 
-	death_row _DeathRow;
+	DeathRow _DeathRow;
 };

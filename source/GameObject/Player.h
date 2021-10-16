@@ -30,8 +30,8 @@ public:
 
 private:
 
-	void RenderThruster(Entity& thruster, const Vector2& thrusterOffset, const float& thrusterRotation, const Transform& parentTrans, const SpriteID spriteID);
-	void DestroyThruster(Entity& thruster);
+	void RenderThruster(Entity& thruster, const Vector2& thrusterOffset, const float& thrusterRotation, const Transform& parentTrans, const SpriteID spriteID) const;
+	void DestroyThruster(Entity& thruster) const;
 
 	RigidbodyManager& rigidbodyManager;
 	Physics& physics;
@@ -48,7 +48,7 @@ private:
 
 	// All of the tweakables live here!
 
-	// @TODO: Pull all of these out into a struct that we can use, so that we 
+	// @TODO: Pull all of these out into a struct that we can use, so that we
 	//  can implement multiple ship types!
 	static constexpr float mainThrusterX = 0.0f;
 	static constexpr float mainThrusterY = 18.0f;
@@ -68,6 +68,6 @@ private:
 	static constexpr float maxAngularVelocity = 320.0f;
 	static constexpr float rotateAcceleration = maxAngularVelocity / 0.4f;
 	static constexpr float rotateDeceleration = rotateAcceleration * 2.0f;
-	
+
 	static constexpr float maxSpeedSq = maxSpeed * maxSpeed;
 };

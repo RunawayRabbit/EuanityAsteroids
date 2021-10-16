@@ -42,22 +42,13 @@ void TransformManager::Add(const Entity entity, const Transform transform)
 
 void TransformManager::GarbageCollect(const EntityManager& entityManager)
 {
-	// @IMPORTANT
-	// @BUG
-	// @STUB
-
-	/*
-	// @TODO: Looping over every transform is inefficient. How do you do this better?
-	for (auto& transform : transforms) // It appears that auto& transform : transforms pulls a nullptr??!?!?!
+	for(const auto& entity : entityManager.ZombieList)
 	{
-		if (!entityManager.Exists(transform.first)) // This line causes a horrific crash.
-		{
-			transforms.erase(transform.first);
-		}
-	}*/
+		transforms.erase(entity);
+	}
 }
 
-size_t TransformManager::Count()
+size_t TransformManager::Count() const
 {
 	return transforms.size();
 }

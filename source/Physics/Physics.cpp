@@ -46,48 +46,48 @@ Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
 	RbAabb.max.x = std::max(RbAabb.max.x, RbAabb.max.x + DeltaPosition.x + Padding);
 	RbAabb.max.y = std::max(RbAabb.max.y, RbAabb.max.y + DeltaPosition.y + Padding);
 
-	auto Accumulator = Vector2::zero();
-	auto StartTileX  = -1;
-	auto StartTileY  = -1;
-	while(Accumulator.x < RbAabb.min.x)
+	auto accumulator = Vector2::zero();
+	auto startTileX  = -1;
+	auto startTileY  = -1;
+	while(accumulator.x < RbAabb.min.x)
 	{
-		Accumulator.x += _ChunkSizeX;
-		++StartTileX;
+		accumulator.x += _ChunkSizeX;
+		++startTileX;
 	}
-	while(Accumulator.y < RbAabb.min.y)
+	while(accumulator.y < RbAabb.min.y)
 	{
-		Accumulator.y += _ChunkSizeY;
-		++StartTileY;
+		accumulator.y += _ChunkSizeY;
+		++startTileY;
 	}
 	// @NOTE: Logic here is a bit tricky. At this point, startTile indicates the
 	//  "lowest" tile that the AABB overlaps, and accumulator is sitting in the
 	//  maximum corner of that tile.
 
 	// Using the same method, we advance the max accumulator to find the maximum.
-	auto EndTileX = StartTileX;
-	auto EndTileY = StartTileY;
-	while(Accumulator.x < RbAabb.max.x)
+	auto endTileX = startTileX;
+	auto endTileY = startTileY;
+	while(accumulator.x < RbAabb.max.x)
 	{
-		Accumulator.x += _ChunkSizeX;
-		++EndTileX;
+		accumulator.x += _ChunkSizeX;
+		++endTileX;
 	}
-	while(Accumulator.y < RbAabb.max.y)
+	while(accumulator.y < RbAabb.max.y)
 	{
-		Accumulator.y += _ChunkSizeY;
-		++EndTileY;
+		accumulator.y += _ChunkSizeY;
+		++endTileY;
 	}
 
 	// Enqueue the rigidbody into the appropriate moveLists by the chunk it's in.
-	for(auto Y = StartTileY; Y <= EndTileY; ++Y)
+	for(auto y = startTileY; y <= endTileY; ++y)
 	{
 		// Wrap our Y coordinate if we have to.
-		auto WrappedY = RbTrans.pos.y;
-		if(Y < 0)
-			WrappedY += _ScreenAABB.max.y;
-		else if(Y >= CHUNKS_Y)
-			WrappedY -= _ScreenAABB.max.y;
+		auto wrappedY = RbTrans.pos.y;
+		if(y < 0)
+			wrappedY += _ScreenAABB.max.y;
+		else if(y >= CHUNKS_Y)
+			wrappedY -= _ScreenAABB.max.y;
 
-		for(auto X = StartTileX; X <= EndTileX; ++X)
+		for(auto X = startTileX; X <= endTileX; ++X)
 		{
 			// Wrap the element in X if we have to.
 			auto WrappedX = RbTrans.pos.x;
@@ -98,8 +98,8 @@ Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
 
 			// Calculate the chunk index and enqueue
 			auto Mod              = [](const int A, const int B) { return (B + (A % B)) % B; };
-			const auto ChunkIndex = Mod(Y, CHUNKS_Y) * CHUNKS_X + Mod(X, CHUNKS_X);
-			_MoveLists[ChunkIndex].Enqueue({ Rb, Vector2(WrappedX, WrappedY) });
+			const auto ChunkIndex = Mod(y, CHUNKS_Y) * CHUNKS_X + Mod(X, CHUNKS_X);
+			_MoveLists[ChunkIndex].Enqueue({ Rb, Vector2(WrappedX, wrappedY) });
 		}
 	}
 }
@@ -170,32 +170,32 @@ Physics::End()
 }
 
 std::vector<Physics::CollisionListEntry>
-Physics::DetectInitialCollisions(MoveList& MoveList, const float& DeltaTime) const
+Physics::DetectInitialCollisions(MoveList& moveList, const float& deltaTime) const
 {
-	std::vector<CollisionListEntry> Collisions;
-	if(MoveList.Size() == 0)
-		return Collisions;
+	std::vector<CollisionListEntry> collisions;
+	if(moveList.Size() == 0)
+		return collisions;
 
 	// Sort to get our MoveList in order.
-	std::sort(MoveList.begin(), MoveList.end(), [](const MoveList::Entry& a, const MoveList::Entry& b) -> bool
+	std::sort(moveList.begin(), moveList.end(), [](const MoveList::Entry& a, const MoveList::Entry& b) -> bool
 	{
 		return a.Rb.colliderType < b.Rb.colliderType;
 	});
 
 	// The order of these has to match the order of enum ColliderType defined in ColliderType.h.
-	MoveList::ColliderRanges Ranges;
-	Ranges.ShipBegin = MoveList.begin();
-	Ranges.ShipEnd   = Ranges.BulletBegin = Ranges.ShipBegin + MoveList.GetColliderCount(ColliderType::SHIP);
-	Ranges.BulletEnd = Ranges.LargeBegin  = Ranges.BulletBegin + MoveList.GetColliderCount(ColliderType::BULLET);
-	Ranges.LargeEnd  = Ranges.MediumBegin = Ranges.LargeBegin + MoveList.GetColliderCount(ColliderType::LARGE_ASTEROID);
-	Ranges.MediumEnd = Ranges.SmallBegin  = Ranges.MediumBegin + MoveList.GetColliderCount(ColliderType::MEDIUM_ASTEROID);
-	Ranges.SmallEnd  = MoveList.end();
+	MoveList::ColliderRanges ranges;
+	ranges.ShipBegin = moveList.begin();
+	ranges.ShipEnd   = ranges.BulletBegin = ranges.ShipBegin + moveList.GetColliderCount(ColliderType::SHIP);
+	ranges.BulletEnd = ranges.LargeBegin  = ranges.BulletBegin + moveList.GetColliderCount(ColliderType::BULLET);
+	ranges.LargeEnd  = ranges.MediumBegin = ranges.LargeBegin + moveList.GetColliderCount(ColliderType::LARGE_ASTEROID);
+	ranges.MediumEnd = ranges.SmallBegin  = ranges.MediumBegin + moveList.GetColliderCount(ColliderType::MEDIUM_ASTEROID);
+	ranges.SmallEnd  = moveList.end();
 
-	ShipVsAsteroid(Ranges, Collisions);
-	BulletVsAsteroid(Ranges, Collisions, DeltaTime);
-	AsteroidVsAsteroid(Ranges, Collisions, DeltaTime);
+	ShipVsAsteroid(ranges, collisions);
+	BulletVsAsteroid(ranges, collisions, deltaTime);
+	AsteroidVsAsteroid(ranges, collisions, deltaTime);
 
-	return Collisions;
+	return collisions;
 }
 
 
@@ -458,7 +458,7 @@ Physics::ResolveUpdatedMovement(const float& DeltaTime)
 
 
 std::array<Physics::ResolvedListEntry, 2>
-Physics::ResolveMove(const float& deltaTime, CollisionListEntry collision) const
+Physics::ResolveMove(const float& deltaTime, const CollisionListEntry collision) const
 {
 	// This is probably all kinds of wrong, but I have never studied physics
 	// so I'm just sort of making this up as I go along, helped with some
@@ -466,122 +466,122 @@ Physics::ResolveMove(const float& deltaTime, CollisionListEntry collision) const
 
 	// https://www.youtube.com/watch?v=Dww4ArU5JF8
 
-	Transform* transA =_TransformManager.GetMutable(collision.A).value();
+	const auto transA = _TransformManager.GetMutable(collision.A).value();
 	Rigidbody* rigidA;
 	_RigidbodyManager.GetMutable(collision.A, rigidA);
 
-	Transform* transB = _TransformManager.GetMutable(collision.B).value();
+	const auto transB = _TransformManager.GetMutable(collision.B).value();
 	Rigidbody* rigidB;
 	_RigidbodyManager.GetMutable(collision.B, rigidB);
 
-	Vector2 startPosA = transA->pos + rigidA->velocity * (collision.TimeOfCollision * deltaTime);
-	Vector2 startPosB = transB->pos + rigidB->velocity * (collision.TimeOfCollision * deltaTime);
+	const auto startPosA = transA->pos + rigidA->velocity * (collision.TimeOfCollision * deltaTime);
+	const auto startPosB = transB->pos + rigidB->velocity * (collision.TimeOfCollision * deltaTime);
 
-	Vector2 relPos = startPosB - startPosA;
+	auto relPos = startPosB - startPosA;
 
 	// Split the problem into two parts: the component normal to the collision
 	// and the component tangential to the collision.
 
-	Vector2 impactNormal = relPos.normalized();
-	Vector2 impactTangent = impactNormal.Rot90CW();
+	const auto impactNormal  = relPos.normalized();
+	const auto impactTangent = impactNormal.Rot90CW();
 
 	// Conservation of Momentum (tangential)
 	// Dot(impactTangent, A.velocity) = Dot(impactTangent, endVelA);
 	// Dot(impactTangent, B.velocity) = Dot(impactTangent, endVelB);
-	float finalATangent = Dot(rigidA->velocity, impactTangent); // A.vel * cos(theta)
-	float finalBTangent = Dot(rigidB->velocity, impactTangent); // B.vel * cos(theta)
+	const auto finalATangent = Dot(rigidA->velocity, impactTangent); // A.vel * cos(theta)
+	const auto finalBTangent = Dot(rigidB->velocity, impactTangent); // B.vel * cos(theta)
 
 	// @NOTE: I am most likely mis-using this term here.
 	const float e = 0.95f; // Coefficient of restitution
 	// e = B.Velocity - A.Velocity / endVelB - endVelA
 
 	// Conservation of Momentum (normal)
-	float normalA = Dot(rigidA->velocity, impactNormal); // A.vel * sin(theta)
-	float normalB = Dot(rigidB->velocity, impactNormal); // B.vel * sin(theta)
+	const auto normalA = Dot(rigidA->velocity, impactNormal); // A.vel * sin(theta)
+	const auto normalB = Dot(rigidB->velocity, impactNormal); // B.vel * sin(theta)
 	// massA * normalA + massB * normalB = massA * finalANormal + massB * finalBNormal;
 
 	// Did the algebra and this is what fell out.
 
-	float finalBNormal =
+	auto finalBNormal =
 		normalA * collision.MassA * e -
 		normalB * collision.MassA * e +
 		normalA * collision.MassA + normalB * collision.MassB;
 
 	finalBNormal /= collision.MassA + collision.MassB;
 
-	float finalANormal = e * normalB - e * normalA + finalBNormal;
+	const auto finalANormal = e * normalB - e * normalA + finalBNormal;
 
 	// Enqueue the resolved entry.
 
 	ResolvedListEntry resolvedA;
 	resolvedA.AngularVelocity = rigidA->angularVelocity;
-	resolvedA.Entity = collision.A;
-	resolvedA.Position = transA->pos + (rigidA->velocity * collision.TimeOfCollision * deltaTime);
-	resolvedA.Velocity = (impactNormal * finalANormal) + (impactTangent * finalATangent);
-	resolvedA.Time = collision.TimeOfCollision;
+	resolvedA.Entity          = collision.A;
+	resolvedA.Position        = transA->pos + (rigidA->velocity * collision.TimeOfCollision * deltaTime);
+	resolvedA.Velocity        = (impactNormal * finalANormal) + (impactTangent * finalATangent);
+	resolvedA.Time            = collision.TimeOfCollision;
 
 	ResolvedListEntry resolvedB;
 	resolvedB.AngularVelocity = rigidB->angularVelocity;
-	resolvedB.Entity = collision.B;
-	resolvedB.Position = transB->pos + (rigidB->velocity * collision.TimeOfCollision * deltaTime);
-	resolvedB.Velocity = (impactNormal * finalBNormal) + (impactTangent * finalBTangent);
-	resolvedB.Time = collision.TimeOfCollision;
+	resolvedB.Entity          = collision.B;
+	resolvedB.Position        = transB->pos + (rigidB->velocity * collision.TimeOfCollision * deltaTime);
+	resolvedB.Velocity        = (impactNormal * finalBNormal) + (impactTangent * finalBTangent);
+	resolvedB.Time            = collision.TimeOfCollision;
 
 	return { resolvedA, resolvedB };
 }
 
 
 void
-Physics::FinalizeMoves(const float& DeltaTime)
+Physics::FinalizeMoves(const float& deltaTime)
 {
 	// Step 9, create a new MoveList set that contains no duplicates.
-	std::unordered_set<MoveList::Entry> UniqueMoves;
-	for(auto& MoveList : _MoveLists)
-		for(auto& Move : MoveList)
-			UniqueMoves.insert(Move);
+	std::unordered_set<MoveList::Entry> uniqueMoves;
+	for(auto& moveList : _MoveLists)
+		for(auto& move : moveList)
+			uniqueMoves.insert(move);
 
 
 	// Step 9.5.. Iterate MoveList and complete every move.
-	for(auto& entry : UniqueMoves)
+	for(const auto& [rigidbody, position] : uniqueMoves)
 	{
-		auto OptTrans = _TransformManager.GetMutable(entry.Rb.entity);
-		if(!OptTrans.has_value())
+		auto optTrans = _TransformManager.GetMutable(rigidbody.entity);
+		if(!optTrans.has_value())
 		{
 			// @TODO: Log Error?
 		}
 
-		Transform* Trans = OptTrans.value();
+		const auto trans = optTrans.value();
 
-		Trans->pos.x =
-			Math::Repeat(Trans->pos.x + (entry.Rb.velocity.x * DeltaTime), _ScreenAABB.right);
-		Trans->pos.y =
-			Math::Repeat(Trans->pos.y + (entry.Rb.velocity.y * DeltaTime), _ScreenAABB.bottom);
+		trans->pos.x =
+			Math::Repeat(trans->pos.x + (rigidbody.velocity.x * deltaTime), _ScreenAABB.right);
+		trans->pos.y =
+			Math::Repeat(trans->pos.y + (rigidbody.velocity.y * deltaTime), _ScreenAABB.bottom);
 
-		Trans->rot = Math::Repeat(Trans->rot + (entry.Rb.angularVelocity * DeltaTime), 360.0f);
+		trans->rot = Math::Repeat(trans->rot + (rigidbody.angularVelocity * deltaTime), 360.0f);
 	}
 
 	// Step 10 Iterate ResolvedList and stomp over with revised moves that are legal.
-	for(auto& Entry : _ResolvedList)
+	for(auto& entry : _ResolvedList)
 	{
-		auto [entity, position, velocity, angularVelocity, time] = Entry;
+		auto [entity, position, velocity, angularVelocity, time] = entry;
 
-		auto OptTrans = _TransformManager.GetMutable(entity);
-		if(!OptTrans.has_value())
+		auto optTrans = _TransformManager.GetMutable(entity);
+		if(!optTrans.has_value())
 		{
 			// @TODO: Log Error?
 		}
 
-		Transform* Trans = OptTrans.value();
+		const auto trans = optTrans.value();
 
-		const auto FinalPos = position + (velocity * ((1.0f - Entry.Time) * DeltaTime));
+		const auto finalPos = position + (velocity * ((1.0f - entry.Time) * deltaTime));
 
-		Trans->pos.x = Math::Repeat(FinalPos.x, _ScreenAABB.right);
-		Trans->pos.y = Math::Repeat(FinalPos.y, _ScreenAABB.bottom);
+		trans->pos.x = Math::Repeat(finalPos.x, _ScreenAABB.right);
+		trans->pos.y = Math::Repeat(finalPos.y, _ScreenAABB.bottom);
 
-		Rigidbody* Rigid;
-		_RigidbodyManager.GetMutable(Entry.Entity, Rigid);
-		Rigid->velocity        = velocity;
-		Rigid->angularVelocity = angularVelocity;
+		Rigidbody* rigid;
+		_RigidbodyManager.GetMutable(entry.Entity, rigid);
+		rigid->velocity        = velocity;
+		rigid->angularVelocity = angularVelocity;
 	}
 
 	// Sort the Report, ready for other game systems to query.

@@ -1,0 +1,3 @@
+Background Renderer has some draw order glitches
+Tiled physics sometimes misses interactions along the edges of the wrapped area
+There are no checks done when respawning the player and no immunity frames, you can spawn into instant death.

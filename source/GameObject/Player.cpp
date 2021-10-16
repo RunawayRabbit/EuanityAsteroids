@@ -1,6 +1,3 @@
-
-
-
 #include <algorithm> // min
 
 #include "../ECS/EntityManager.h"
@@ -18,35 +15,42 @@
 #include "Player.h"
 
 
-Player::Player(EntityManager& entityManager, RigidbodyManager& rigidbodyManager, TransformManager& transformManager, const Create& create,
-	Physics& physics) :
-	entityManager(entityManager),
-	rigidbodyManager(rigidbodyManager),
-	transformManager(transformManager),
-	create(create),
-	physics(physics),
-	entity(Entity::Null()),
-	mainThruster(Entity::Null()),
-	strafeThrusterLeft(Entity::Null()),
-	strafeThrusterRight(Entity::Null()),
-	shotTimer(0)
+Player::Player(EntityManager& entityManager,
+               RigidbodyManager& rigidbodyManager,
+               TransformManager& transformManager,
+               const Create& create,
+               Physics& physics)
+	: entity(Entity::Null()),
+	  rigidbodyManager(rigidbodyManager),
+	  physics(physics),
+	  entityManager(entityManager),
+	  transformManager(transformManager),
+	  create(create),
+	  mainThruster(Entity::Null()),
+	  strafeThrusterLeft(Entity::Null()),
+	  strafeThrusterRight(Entity::Null()),
+	  shotTimer(0)
 {
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,
 	// have all of our initialization done at startup time.
 }
 
-void Player::Spawn(const Vector2& startPos, const float& startRot)
+void
+Player::Spawn(const Vector2& startPos, const float& startRot)
 {
-	if (IsAlive()) return;
+	if(IsAlive())
+		return;
 
 	entity = create.Ship(startPos, startRot);
 }
 
-void Player::Kill(const Entity& playerEntity)
+void
+Player::Kill(const Entity& playerEntity)
 {
 	// Don't destroy if it isn't our entity being destroyed!
-	if (entity != playerEntity) return;
-	auto ship =transformManager.Get(entity);
+	if(entity != playerEntity)
+		return;
+	auto ship = transformManager.Get(entity);
 
 	DestroyThruster(mainThruster);
 	DestroyThruster(strafeThrusterLeft);
@@ -57,49 +61,50 @@ void Player::Kill(const Entity& playerEntity)
 	create.LargeExplosion(ship.value().pos);
 }
 
-void Player::Update(const InputBuffer& input, const float& deltaTime)
+void
+Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 {
 	// Early-out if the player's ship isn't currently spawned.
-	if (!IsAlive()) return;
+	if(!IsAlive())
+		return;
 
 	// Increment shot cooldown
 	shotTimer -= deltaTime;
 
 	// Get the rb and the transform from the respective managers
 	Rigidbody* rigid;
-	auto OptionalTransform = transformManager.Get(entity);
-	if (!rigidbodyManager.GetMutable(entity, rigid) || !OptionalTransform.has_value())
+	auto optionalTransform = transformManager.Get(entity);
+	if(!optionalTransform.has_value() || !rigidbodyManager.GetMutable(entity, rigid))
 	{
 		// If we end up here, a serious bug has occured.
 		__assume(false);
-		return;
 	}
 
-	auto transform = OptionalTransform.value();
+	const auto transform = optionalTransform.value();
 
-	Vector2 newVelocity = rigid->velocity;
-	float newAngularVelocity = rigid->angularVelocity;
+	auto newVelocity        = rigid->velocity;
+	auto newAngularVelocity = rigid->angularVelocity;
 
 	// Set up some helper vectors.
-	const Vector2 forward = -Vector2::Forward().RotateDeg(transform.rot); // SDL has is "negative Y is up". Which is dumb and I hate it.
-	const Vector2 right = Vector2::Right().RotateDeg(transform.rot);
+	const auto forward = -Vector2::Forward().RotateDeg(transform.rot); // SDL has is "negative Y is up". Which is dumb and I hate it.
+	const auto right   = Vector2::Right().RotateDeg(transform.rot);
 
-	float trailRotation = 0.0f;
+	auto trailRotation = 0.0f;
 
 #pragma region Rotate
 	{
-		bool rotatingLeft = input.Contains(InputToggle::RotateLeft);
-		bool rotatingRight = input.Contains(InputToggle::RotateRight);
-		if (!rotatingLeft && !rotatingRight)
+		const auto rotatingLeft  = inputBuffer.Contains(InputToggle::RotateLeft);
+		const auto rotatingRight = inputBuffer.Contains(InputToggle::RotateRight);
+		if(!rotatingLeft && !rotatingRight)
 		{
 			newAngularVelocity = Math::MoveTowards(newAngularVelocity, 0, rotateDeceleration * deltaTime);
 		}
 		else
 		{
 			// Apply torque
-			if (rotatingLeft)
+			if(rotatingLeft)
 				trailRotation = -rotateAcceleration * deltaTime;
-			if (rotatingRight)
+			if(rotatingRight)
 				trailRotation = rotateAcceleration * deltaTime;
 
 			newAngularVelocity += trailRotation;
@@ -109,7 +114,7 @@ void Player::Update(const InputBuffer& input, const float& deltaTime)
 
 #pragma region Strafe
 	{
-		if (input.Contains(InputToggle::StrafeLeft))
+		if(inputBuffer.Contains(InputToggle::StrafeLeft))
 		{
 			newVelocity += right * (-strafeAcceleration * deltaTime);
 			RenderThruster(strafeThrusterRight, Vector2(strafeThrusterX, strafeThrusterY), 90.0f, transform, SpriteID::MUZZLE_FLASH);
@@ -119,7 +124,7 @@ void Player::Update(const InputBuffer& input, const float& deltaTime)
 			DestroyThruster(strafeThrusterRight);
 		}
 
-		if (input.Contains(InputToggle::StrafeRight))
+		if(inputBuffer.Contains(InputToggle::StrafeRight))
 		{
 			newVelocity += right * (strafeAcceleration * deltaTime);
 			RenderThruster(strafeThrusterLeft, Vector2(-strafeThrusterX, strafeThrusterY), -90.0f, transform, SpriteID::MUZZLE_FLASH);
@@ -133,7 +138,7 @@ void Player::Update(const InputBuffer& input, const float& deltaTime)
 
 #pragma region Accelerate
 	{
-		if (input.Contains(InputToggle::MoveForward))
+		if(inputBuffer.Contains(InputToggle::MoveForward))
 		{
 			newVelocity += forward * (forwardAcceleration * deltaTime);
 			RenderThruster(mainThruster, Vector2(mainThrusterX, mainThrusterY), trailRotation, transform, SpriteID::SHIP_TRAIL);
@@ -146,24 +151,29 @@ void Player::Update(const InputBuffer& input, const float& deltaTime)
 #pragma endregion
 
 
-
 #pragma region Shoot
-	if (shotTimer < 0.0f && input.Contains(InputToggle::Shoot))
+	if(shotTimer < 0.0f && inputBuffer.Contains(InputToggle::Shoot))
 	{
 		shotTimer = (shotTimer > -deltaTime) ? shotTimer + shotCooldown : shotCooldown;
+		// ReSharper disable once CppExpressionWithoutSideEffects
 		create.Bullet(transform.pos + (forward * bulletSpawnOffsetY), transform.rot, bulletSpeed, bulletLifetime);
 	}
 #pragma endregion
 
 	// Write back our updated values.
-	float newSpeedSq = newVelocity.LengthSq();
-	rigid->velocity = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, maxSpeedSq));
+	const auto newSpeedSq  = newVelocity.LengthSq();
+	rigid->velocity        = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, maxSpeedSq));
 	rigid->angularVelocity = std::clamp(newAngularVelocity, -maxAngularVelocity, maxAngularVelocity);
 }
 
-void Player::RenderThruster(Entity& thruster, const Vector2& thrusterOffset, const float& thrusterRotation, const Transform& parentTrans, const SpriteID spriteID)
+void
+Player::RenderThruster(Entity& thruster,
+                       const Vector2& thrusterOffset,
+                       const float& thrusterRotation,
+                       const Transform& parentTrans,
+                       const SpriteID spriteID) const
 {
-	if (!entityManager.Exists(thruster))
+	if(!entityManager.Exists(thruster))
 	{
 		thruster = create.ShipThruster(entity, thrusterOffset, thrusterRotation, spriteID);
 	}
@@ -179,7 +189,8 @@ void Player::RenderThruster(Entity& thruster, const Vector2& thrusterOffset, con
 	thrusterTrans->rot = parentTrans.rot + thrusterRotation;
 }
 
-void Player::DestroyThruster(Entity& thruster)
+void
+Player::DestroyThruster(Entity& thruster) const
 {
 	entityManager.Destroy(thruster);
 	thruster = Entity::Null();

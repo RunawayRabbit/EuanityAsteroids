@@ -1,17 +1,20 @@
 #include "Create.h"
 
-#include "..\Platform\Game.h"
+#include <iostream>
 
-#include "..\ECS\RigidbodyManager.h"
-#include "..\ECS\TransformManager.h"
-#include "..\ECS\SpriteManager.h"
-#include "..\ECS\EntityManager.h"
-#include "..\ECS\UIManager.h"
 
-#include "..\State\Timer.h"
-#include "..\State\MenuState.h"
+#include "../Platform/Game.h"
 
-#include "..\Math\Math.h"
+#include "../ECS/RigidbodyManager.h"
+#include "../ECS/TransformManager.h"
+#include "../ECS/SpriteManager.h"
+#include "../ECS/EntityManager.h"
+#include "../ECS/UIManager.h"
+
+#include "../State/Timer.h"
+#include "../State/MenuState.h"
+
+#include "../Math/Math.h"
 
 Create::Create(Game& game,
                EntityManager& entities,
@@ -23,8 +26,8 @@ Create::Create(Game& game,
 	: game(game),
 	  entityManager(entities),
 	  transManager(transforms),
-	  spriteManager(sprites),
 	  rigidbodyManager(rigidbodies),
+	  spriteManager(sprites),
 	  uiManager(uiManager),
 	  timer(timer)
 {
@@ -37,7 +40,7 @@ Create::Asteroid(const Vector2& position,
                  const float& rotVelocity,
                  const AsteroidType& asteroidType) const
 {
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
@@ -88,16 +91,16 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 			return retVal;
 	}
 
-	auto OptionalParentTrans = transManager.GetMutable(asteroid);
-	if(!OptionalParentTrans.has_value())
+	auto optionalParentTrans = transManager.GetMutable(asteroid);
+	if(!optionalParentTrans.has_value())
 	{
 		return retVal;
 	}
 
-	auto ParentTransform = OptionalParentTrans.value();
+	const auto parentTransform = optionalParentTrans.value();
 
-	Vector2 halfParentForward = Vector2::Forward().RotateDeg(ParentTransform->rot) * 0.5f;
-	Vector2 halfParentRight   = halfParentForward.Rot90CW();
+	const auto halfParentForward = Vector2::Forward().RotateDeg(parentTransform->rot) * 0.5f;
+	const auto halfParentRight   = halfParentForward.Rot90CW();
 
 	std::array<Vector2, 4> directions;
 
@@ -109,11 +112,11 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 
 	for(auto i = 0; i < 4; i++)
 	{
-		Entity entity = entityManager.Create();
+		auto entity = entityManager.Create();
 
 		Transform trans;
-		trans.pos = ParentTransform->pos + (directions.at(i) * (parentRadius + 0.0001f));
-		trans.rot = ParentTransform->rot;
+		trans.pos = parentTransform->pos + (directions.at(i) * (parentRadius + 0.0001f));
+		trans.rot = parentTransform->rot;
 		transManager.Add(entity, trans);
 		rigidbodyManager.Add(entity, colliderType, parentRigid->velocity + (directions.at(i) * splitImpulse), parentRigid->angularVelocity);
 		spriteManager.Create(entity, sprites.at(i), RenderQueue::Layer::DEFAULT);
@@ -126,10 +129,10 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 	return retVal;
 }
 
-[[maybe_unused]] Entity
+Entity
 Create::SmallExplosion(const Vector2& position) const
 {
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
@@ -144,7 +147,7 @@ Create::SmallExplosion(const Vector2& position) const
 Entity
 Create::LargeExplosion(const Vector2& position) const
 {
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
@@ -157,7 +160,7 @@ Create::LargeExplosion(const Vector2& position) const
 }
 
 ColliderType
-Create::GetColliderFor(const AsteroidType& asteroidType) const
+Create::GetColliderFor(const AsteroidType& asteroidType)
 {
 	if(asteroidType == AsteroidType::LARGE)
 		return ColliderType::LARGE_ASTEROID;
@@ -198,13 +201,14 @@ Create::GetSpriteFor(const AsteroidType& asteroidType) const
 		case AsteroidType::SMALL_15: return SpriteID::SMOL_ASTEROID_15;
 		case AsteroidType::SMALL_16: return SpriteID::SMOL_ASTEROID_16;
 
-		case AsteroidType::RANDOM_MEDIUM: return (SpriteID) ((int) SpriteID::MEDIUM_ASTEROID_1 + Math::RandomRange(0, 3));
+		case AsteroidType::RANDOM_MEDIUM: return static_cast<SpriteID>(static_cast<int>(SpriteID::MEDIUM_ASTEROID_1) +
+				Math::RandomRange(0, 3));
 		case AsteroidType::RANDOM_SMALL:
 		{
 			//@NOTE: Janky hack to deal with SMOL_ASTEROID_11 being basically invisible.
-			auto Candidate = (SpriteID) ((int) SpriteID::SMOL_ASTEROID_1 + Math::RandomRange(0, 15));
+			const auto candidate = static_cast<SpriteID>(static_cast<int>(SpriteID::SMOL_ASTEROID_1) + Math::RandomRange(0, 15));
 			//if (Candidate == SpriteID::SMOL_ASTEROID_11) Candidate = SpriteID::SMOL_ASTEROID_12;
-			return Candidate;
+			return candidate;
 		}
 
 		default: return SpriteID::NONE;
@@ -215,7 +219,9 @@ Create::GetSpriteFor(const AsteroidType& asteroidType) const
 Entity
 Create::Bullet(const Vector2& position, const float& rotation, const float& speed, const float& secondsToLive) const
 {
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
+
+	// std::cout << "Created bullet with EID " << entity.ToString() << ".\n";
 
 	Transform trans;
 	trans.pos = position;
@@ -232,7 +238,7 @@ Create::Bullet(const Vector2& position, const float& rotation, const float& spee
 Entity
 Create::Ship(const Vector2& position, const float& rotation, const Vector2& initialVelocity, const float& initialAngularVelocity) const
 {
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
@@ -254,7 +260,7 @@ Create::ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const fl
 		return Entity::Null();
 	}
 
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
 
 	Transform trans;
 	trans.pos = parentTrans.value().pos + thrusterOffset.RotateDeg(parentTrans.value().rot);
@@ -266,9 +272,9 @@ Create::ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const fl
 }
 
 Entity
-Create::UIButton(const AABB& position, SpriteID spriteID, std::function<void()> callback) const
+Create::UIButton(const AABB& position, const SpriteID spriteID, const std::function<void()> callback) const
 {
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
 	uiManager.MakeButton(entity, position, spriteID, callback);
 
 	return entity;
@@ -277,9 +283,9 @@ Create::UIButton(const AABB& position, SpriteID spriteID, std::function<void()> 
 Entity
 Create::GameOver(int score, const Vector2& gameOverPos)
 {
-	Entity entity = entityManager.Create();
+	const auto entity = entityManager.Create();
 
-	Transform trans {};
+	Transform trans;
 	trans.pos = gameOverPos;
 	trans.rot = 0;
 	transManager.Add(entity, trans);

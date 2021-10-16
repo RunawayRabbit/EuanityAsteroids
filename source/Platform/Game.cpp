@@ -85,7 +85,7 @@ void Game::GarbageCollection()
 {
 	// @TODO: This can be better.
 
-	entities.GarbageCollect();
 	xforms.GarbageCollect(entities);
 	UI.GarbageCollect();
+	entities.GarbageCollect();
 }

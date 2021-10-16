@@ -47,6 +47,7 @@
     <ClInclude Include="source\Physics\Physics.h" />
     <ClInclude Include="source\Platform\FrameTimer.h" />
     <ClInclude Include="source\Platform\Game.h" />
+    <ClInclude Include="source\Platform\RingBuffer.h" />
     <ClInclude Include="source\Renderer\BackgroundRenderer.h" />
     <ClInclude Include="source\Renderer\Color.h" />
     <ClInclude Include="source\Renderer\Renderer.h" />
@@ -82,6 +83,9 @@
     <ClCompile Include="source\State\MenuState.cpp" />
     <ClCompile Include="source\State\PlayState.cpp" />
     <ClCompile Include="source\State\Timer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="source\BugList.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

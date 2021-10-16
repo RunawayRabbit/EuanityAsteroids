@@ -62,8 +62,8 @@ public:
 	Entity Ship(const Vector2& position, const float& rotation, const Vector2& initialVelocity = Vector2::zero(), const float& initialAngularVelocity = 0) const;
 	Entity ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const float& thrusterRotation, SpriteID spriteID) const;
 
-	Entity SmallExplosion(const Vector2& position) const;
-	Entity LargeExplosion(const Vector2& position) const;
+	[[maybe_unused]] Entity SmallExplosion(const Vector2& position) const;
+	[[maybe_unused]] Entity LargeExplosion(const Vector2& position) const;
 
 	Entity UIButton(const AABB& position, SpriteID spriteID, std::function<void()> callback) const;
 
@@ -71,7 +71,7 @@ public:
 
 private:
 
-	ColliderType GetColliderFor(const AsteroidType& asteroidType) const;
+	static ColliderType GetColliderFor(const AsteroidType& asteroidType);
 	SpriteID GetSpriteFor(const AsteroidType& asteroidType) const;
 
 	Game& game;

@@ -33,7 +33,7 @@ int main(int argc, char* args[])
 		game.Render();
 		timer.UpdateEstimatedRenderTime(renderBegin);
 
-		timer.PrintDebugStats(); // Frame timing
+		//timer.PrintDebugStats(); // Frame timing
 	}
 
 	return EXIT_SUCCESS;

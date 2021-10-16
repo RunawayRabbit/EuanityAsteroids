@@ -1,10 +1,16 @@
 #include "EntityManager.h"
+
+#include <assert.h>
+
 #include "../State/Timer.h"
+
 
 //@TODO: Does this class GUARANTEE that it will never return or create a null entity implicitly?
 
-EntityManager::EntityManager(const Timer& Time)
-	: _Time(Time)
+EntityManager::EntityManager(const Timer& time)
+	//@NOTE @IMPORTANT: It is unlikely that we'll destroy more than 256 entities in two frames, but if we do, bump this number!
+	: ZombieList(256),
+	  _Time(time)
 {
 	// @NOTE: Entity.id == 0 is considered to be the null entity and is never available.
 
@@ -32,9 +38,9 @@ EntityManager::Create()
 }
 
 bool
-EntityManager::Exists(const Entity Entity) const
+EntityManager::Exists(const Entity entity) const
 {
-	if(Entity._ID == 0)
+	if(entity._ID == 0)
 		return false; // Hard-coded zero entity
 
 	// Binary search ranges
@@ -45,16 +51,16 @@ EntityManager::Exists(const Entity Entity) const
 	{
 		const auto i = (Min + Max) / 2;
 
-		if(Entity._ID < _OpenRanges[i].Begin)
+		if(entity._ID < _OpenRanges[i].Begin)
 		{
 			if(i == Min)
-				return !_ZombieList.count(Entity._ID);
+				return !ZombieList.Contains(entity);
 			Max = i - 1;
 		}
-		else if(Entity._ID > _OpenRanges[i].End)
+		else if(entity._ID > _OpenRanges[i].End)
 		{
 			if(i == Max)
-				return !_ZombieList.count(Entity._ID);
+				return !ZombieList.Contains(entity);
 			Min = i + 1;
 		}
 		else
@@ -62,39 +68,42 @@ EntityManager::Exists(const Entity Entity) const
 			return false;
 		}
 	}
-
-	static_assert("Unreachable Code");
 }
 
 void
-EntityManager::Destroy(const Entity Entity)
+EntityManager::Destroy(const Entity entity)
 {
-	Destroy(Entity._ID);
+	if(entity == Entity::Null())
+		return; // The null entity cannot be destroyed! It is too POWERFULLLL!!!
+
+	if(!ZombieList.Contains(entity))
+	{
+		++_ZombieCount;
+		ZombieList.Enqueue(entity);
+		assert(!ZombieList.IsFull());
+	}
+	else
+	{
+		//std::cout << "Attempting to destroy zombie entity " << entity.ToString() << "!\n";
+	}
 }
 
-void
-EntityManager::Destroy(const Entity::EID EntityEID)
-{
-	if(EntityEID == 0)
-		return; // The nullentity cannot be destroyed! It is too POWERFULLLL!!!
-
-	_ZombieList.insert(EntityEID);
-}
 
 void
-EntityManager::DestroyZombies(const Entity::EID EntityEID)
+EntityManager::DestroyZombies(const Entity entity)
 {
-	_DeathRow.remove(EntityEID);
+	_DeathRow.remove(entity);
 
-	const Entity::EID EntityPlusOne  = EntityEID + 1;
-	const Entity::EID EntityMinusOne = EntityEID - 1;
+	const Entity::EID entityEID      = entity._ID;
+	const Entity::EID entityPlusOne  = entityEID + 1;
+	const Entity::EID entityMinusOne = entityEID - 1;
 
 	for(auto Range = _OpenRanges.begin();
 	    Range != _OpenRanges.end(); ++Range)
 	{
-		if(EntityEID < Range->Begin)
+		if(entityEID < Range->Begin)
 		{
-			if(EntityPlusOne == Range->Begin)
+			if(entityPlusOne == Range->Begin)
 			{
 				--Range->Begin;
 				return;
@@ -102,26 +111,26 @@ EntityManager::DestroyZombies(const Entity::EID EntityEID)
 			else
 			{
 				// We need to add a new range.
-				_OpenRanges.insert(Range, { EntityEID, EntityEID });
+				_OpenRanges.insert(Range, { entityEID, entityEID });
 				return;
 			}
 		}
 
-		if(EntityMinusOne == Range->End)
+		if(entityMinusOne == Range->End)
 		{
 			// Extend the open range to include the destroyed entity
 			++Range->End;
-			const auto NextRange = Range + 1;
-			if(Range->End + 1 == NextRange->Begin)
+			const auto nextRange = Range + 1;
+			if(Range->End + 1 == nextRange->Begin)
 			{
 				// Combine this range with the one above it
-				Range->End = NextRange->End;
-				_OpenRanges.erase(NextRange);
+				Range->End = nextRange->End;
+				_OpenRanges.erase(nextRange);
 			}
 			return;
 		}
 
-		if(EntityPlusOne == Range->Begin)
+		if(entityPlusOne == Range->Begin)
 		{
 			// Extend the open range to include the destroyed entity
 			--Range->Begin;
@@ -131,20 +140,25 @@ EntityManager::DestroyZombies(const Entity::EID EntityEID)
 }
 
 void
-EntityManager::DestroyDelayed(Entity Entity, const float& Seconds)
+EntityManager::DestroyDelayed(Entity entity, const float& seconds)
 {
-	_DeathRow.push({ _Time.Now() + Seconds, Entity._ID });
+	_DeathRow.push({ _Time.Now() + seconds, entity });
 }
 
 void
 EntityManager::GarbageCollect()
 {
+	// There are two concepts at play for entity deletion.
+	// DeathRow is a list of entities and timers. When the timers expire, the entities will be Destroy()ed.
+
 	while(_DeathRow.size() > 0)
 	{
-		auto& element = _DeathRow.top();
-		if(element.first < _Time.Now())
+		const auto& [deathTime, entity] = _DeathRow.top();
+		if(deathTime < _Time.Now())
 		{
-			Destroy(element.second);
+			// std::cout << "Killing Entity " << entity.ToString() << " on Death Row.\n";
+
+			Destroy(entity);
 			_DeathRow.pop();
 		}
 		else
@@ -153,26 +167,30 @@ EntityManager::GarbageCollect()
 		}
 	}
 
-	for(auto Zombie : _ZombieList)
-	{
-		DestroyZombies(Zombie);
-	}
+	// Destroy() adds those entities to the ZombieList, where they will be stored for one frame. Entities on the
+	// ZombieList return false if queried via EntityManager::Exists() which gives the ECS managers one frame to evict
+	// the data related to that entity before the entityID is returned to the pool, ready to be reused.
 
-	_ZombieList.clear();
+	for(uint16_t i = 0; i < _PrevZombieCount; ++i)
+	{
+		DestroyZombies(ZombieList.Dequeue().value());
+	}
+	_PrevZombieCount = _ZombieCount;
+	_ZombieCount     = 0;
 }
 
 uint32_t
 EntityManager::Count()
 {
-	uint32_t Count = _OpenRanges[0].Begin - 1;
+	uint32_t count = _OpenRanges[0].Begin - 1;
 
 	for(auto i = 1; i < _OpenRanges.size(); ++i)
 	{
-		auto Previous = _OpenRanges[i - 1];
-		auto Current  = _OpenRanges[i];
+		const auto previous = _OpenRanges[i - 1];
+		const auto current  = _OpenRanges[i];
 
-		Count += Current.Begin - Previous.End - 1;
+		count += current.Begin - previous.End - 1;
 	}
 
-	return Count;
+	return count;
 }

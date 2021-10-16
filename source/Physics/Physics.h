@@ -58,11 +58,11 @@ private:
 
 	// Physics Pipeline
 
-	std::vector<Physics::CollisionListEntry> DetectInitialCollisions(MoveList& MoveList, const float& DeltaTime) const;
+	std::vector<Physics::CollisionListEntry> DetectInitialCollisions(MoveList& moveList, const float& deltaTime) const;
 	void DetectSecondaryCollisions(const std::vector<Physics::ResolvedListEntry> resolvedThisIteration);
 	std::vector<Physics::ResolvedListEntry> ResolveUpdatedMovement(const float& DeltaTime);
-	std::array<Physics::ResolvedListEntry, 2> ResolveMove(const float& DeltaTime, CollisionListEntry Collision) const;
-	void FinalizeMoves(const float& DeltaTime);
+	std::array<Physics::ResolvedListEntry, 2> ResolveMove(const float& deltaTime, CollisionListEntry collision) const;
+	void FinalizeMoves(const float& deltaTime);
 	void End();
 
 

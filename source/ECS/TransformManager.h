@@ -17,7 +17,7 @@ public:
 	void Add(Entity entity, Transform transform);
 	void GarbageCollect(const EntityManager& entityManager);
 
-	size_t Count();
+	size_t Count() const;
 
 private:
 	std::unordered_map<Entity, Transform> transforms;
