@@ -12,32 +12,32 @@
 #include "../Math/OBB.h"
 #include "../Math/Vector2.h"
 
-Physics::Physics(TransformManager& TransformManager, RigidbodyManager& RigidbodyManager, const AABB& ScreenAabb)
-	: _TransformManager(TransformManager),
-	  _RigidbodyManager(RigidbodyManager),
-	  _ScreenAABB(ScreenAabb),
-	  _ChunkSizeX(ScreenAabb.max.x / CHUNKS_X),
-	  _ChunkSizeY(ScreenAabb.max.y / CHUNKS_Y),
+Physics::Physics(TransformManager& transformManager, RigidbodyManager& rigidbodyManager, const AABB& screenAABB)
+	: _TransformManager(transformManager),
+	  _RigidbodyManager(rigidbodyManager),
+	  _ScreenAABB(screenAABB),
+	  _ChunkSizeX(screenAABB.max.x / CHUNKS_X),
+	  _ChunkSizeY(screenAABB.max.y / CHUNKS_Y),
 	  _MoveLists()
 {
 }
 
 void
-Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
+Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 {
 	// Get an AABB for the rigidbody using it's transform
 
-	auto optionalRbTrans = _TransformManager.Get(Rb.entity);
+	auto optionalRbTrans = _TransformManager.Get(rb.entity);
 	if(!optionalRbTrans.has_value())
 	{
 		//@TODO: Error check in case of RB with no Transform?
 	}
 
 	const auto rbTrans = optionalRbTrans.value();
-	auto rbAABB        = ColliderRadius::GetAABB(Rb.colliderType, rbTrans.pos);
+	auto rbAABB        = ColliderRadius::GetAABB(rb.colliderType, rbTrans.pos);
 
 	// Pad the AABB by the velocity, and a small safety margin.
-	const auto deltaPosition = Rb.velocity * DeltaTime;
+	const auto deltaPosition = rb.velocity * deltaTime;
 
 	const auto padding = 15.0f;
 
@@ -90,45 +90,49 @@ Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
 		for(auto X = startTileX; X <= endTileX; ++X)
 		{
 			// Wrap the element in X if we have to.
-			auto WrappedX = rbTrans.pos.x;
+			auto wrappedX = rbTrans.pos.x;
 			if(X < 0)
-				WrappedX += _ScreenAABB.max.x;
+				wrappedX += _ScreenAABB.max.x;
 			else if(X >= CHUNKS_X)
-				WrappedX -= _ScreenAABB.max.x;
+				wrappedX -= _ScreenAABB.max.x;
 
 			// Calculate the chunk index and enqueue
 			auto Mod              = [](const int A, const int B) { return (B + (A % B)) % B; };
-			const auto ChunkIndex = Mod(y, CHUNKS_Y) * CHUNKS_X + Mod(X, CHUNKS_X);
-			_MoveLists[ChunkIndex].Enqueue({ Rb, Vector2(WrappedX, wrappedY) });
+			const auto chunkIndex = Mod(y, CHUNKS_Y) * CHUNKS_X + Mod(X, CHUNKS_X);
+			_MoveLists[chunkIndex].Enqueue({ rb, Vector2(wrappedX, wrappedY) });
 		}
 	}
 }
 
 void
-Physics::Simulate(const float& DeltaTime)
+Physics::Simulate(const float& deltaTime)
 {
 	_CollisionReport.clear(); // Clear last frame's report.
 
 	// Start our worker threads churning through the Initial collision tests.
-	for(auto i      = 0; i < CHUNK_COUNT; ++i)
-		_Workers[i] = std::async([this, i, DeltaTime]() -> std::vector<Physics::CollisionListEntry>
+	for(auto i = 0; i < CHUNK_COUNT; ++i)
+
+		_Workers[i] = std::async([this, i, deltaTime]() -> std::vector<CollisionListEntry>
 		{
-			return DetectInitialCollisions(_MoveLists[i], DeltaTime);
+			return DetectInitialCollisions(_MoveLists[i], deltaTime);
 		});
-	for(auto& Worker : _Workers)
+
+	for(auto& worker : _Workers)
 	{
-		auto Result = Worker.get();
-		_CollisionList.reserve(_CollisionList.size() + Result.size());
-		_CollisionList.insert(_CollisionList.end(), Result.begin(), Result.end());
+		auto result = worker.get();
+		_CollisionList.reserve(_CollisionList.size() + result.size());
+		_CollisionList.insert(_CollisionList.end(), result.begin(), result.end());
 	}
+
+	RemoveDuplicateCollisions();
 
 	if(_CollisionList.size() > 0) // Most frames feature zero collisions.
 	{
-		auto SolverIterations = 0;
+		auto solverIterations = 0;
 		do
 		{
 			// From each collision, generate new moves based on physical interactions
-			auto ResolvedThisIteration = ResolveUpdatedMovement(DeltaTime);
+			auto resolvedThisIteration = ResolveUpdatedMovement(deltaTime);
 
 			// Clear the collision list and the dirty set.
 			_CollisionReport.reserve(_CollisionReport.size() + _CollisionList.size());
@@ -137,15 +141,15 @@ Physics::Simulate(const float& DeltaTime)
 			_DirtyList.clear();
 
 			//  Check the NEW elements in resolved list against the full move list, looking for further collisions.
-			DetectSecondaryCollisions(ResolvedThisIteration);
+			DetectSecondaryCollisions(resolvedThisIteration);
 
 			// Step 7.5. Integrate the new resolved entries into the list.
-			_ResolvedList.reserve(_ResolvedList.size() + ResolvedThisIteration.size());
-			_ResolvedList.insert(_ResolvedList.end(), ResolvedThisIteration.begin(), ResolvedThisIteration.end());
+			_ResolvedList.reserve(_ResolvedList.size() + resolvedThisIteration.size());
+			_ResolvedList.insert(_ResolvedList.end(), resolvedThisIteration.begin(), resolvedThisIteration.end());
 
 			// Step 8. If the collision list is empty, continue. Otherwise, loop..
-			++SolverIterations;
-		} while(_CollisionList.size() > 0 && SolverIterations < MAX_SOLVER_ITERATIONS);
+			++solverIterations;
+		} while(_CollisionList.size() > 0 && solverIterations < MAX_SOLVER_ITERATIONS);
 
 		std::sort(_ResolvedList.begin(), _ResolvedList.end(),
 		          [](const ResolvedListEntry& a, ResolvedListEntry& b) -> bool
@@ -154,15 +158,15 @@ Physics::Simulate(const float& DeltaTime)
 		          });
 	}
 
-	FinalizeMoves(DeltaTime);
+	FinalizeMoves(deltaTime);
 	End();
 }
 
 void
 Physics::End()
 {
-	for(auto& MoveList : _MoveLists)
-		MoveList.Clear();
+	for(auto& moveList : _MoveLists)
+		moveList.Clear();
 
 	_CollisionList.clear();
 	_ResolvedList.clear();
@@ -196,6 +200,21 @@ Physics::DetectInitialCollisions(MoveList& moveList, const float& deltaTime) con
 	AsteroidVsAsteroid(ranges, collisions, deltaTime);
 
 	return collisions;
+}
+
+void
+Physics::RemoveDuplicateCollisions()
+{
+	//@TODO: Does this mean we should be storing the collisions as sets to begin with? How does that perform when we join the threads at the start?
+	//@NOTE: In testing this actually turned out to be the fastest method.
+	std::unordered_set<CollisionListEntry> tempSet;
+
+	tempSet.reserve(_CollisionList.size());
+
+	for(auto& collisionEntry : _CollisionList)
+		tempSet.insert(collisionEntry);
+
+	_CollisionList.assign(tempSet.begin(), tempSet.end());
 }
 
 
@@ -432,7 +451,7 @@ Physics::CircleVsCircles(const MoveList::Entry& Circle,
 
 
 std::vector<Physics::ResolvedListEntry>
-Physics::ResolveUpdatedMovement(const float& DeltaTime)
+Physics::ResolveUpdatedMovement(const float& deltaTime)
 {
 	std::vector<ResolvedListEntry> Resolved;
 
@@ -445,7 +464,7 @@ Physics::ResolveUpdatedMovement(const float& DeltaTime)
 			_DirtyList.find(Collision.B) == _DirtyList.end())
 		{
 			// Continue resolving collisions, but skip any that involve objects in the dirty set.
-			auto Moves = ResolveMove(DeltaTime, Collision);
+			auto Moves = ResolveMove(deltaTime, Collision);
 			Resolved.push_back(Moves[0]);
 			Resolved.push_back(Moves[1]);
 

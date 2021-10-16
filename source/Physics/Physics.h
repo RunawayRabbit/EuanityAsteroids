@@ -19,10 +19,11 @@ class RigidbodyManager;
 class Physics
 {
 public:
-	Physics(TransformManager& TransformManager, RigidbodyManager& RigidbodyManager, const AABB& ScreenAabb);
+	Physics(TransformManager& transformManager, RigidbodyManager& rigidbodyManager, const AABB& screenAABB);
 
-	void Enqueue(const Rigidbody& Rb, const float& DeltaTime);
-	void Simulate(const float& DeltaTime);
+	void Enqueue(const Rigidbody& rb, const float& deltaTime);
+
+	void Simulate(const float& deltaTime);
 
 	struct CollisionListEntry
 	{
@@ -37,6 +38,13 @@ public:
 		bool operator<(const CollisionListEntry& other) const
 		{
 			return (this->TimeOfCollision < other.TimeOfCollision);
+		}
+
+		bool operator==(const CollisionListEntry& other) const
+		{
+			return A == other.A &&
+				B == other.B &&
+				fabs(TimeOfCollision - other.TimeOfCollision) < FLT_EPSILON;
 		}
 	};
 
@@ -53,48 +61,70 @@ private:
 		Vector2 Position;
 		Vector2 Velocity;
 		float AngularVelocity = 0;
-		float Time = 0;
+		float Time            = 0;
 	};
 
 	// Physics Pipeline
 
-	std::vector<Physics::CollisionListEntry> DetectInitialCollisions(MoveList& moveList, const float& deltaTime) const;
-	void DetectSecondaryCollisions(const std::vector<Physics::ResolvedListEntry> resolvedThisIteration);
-	std::vector<Physics::ResolvedListEntry> ResolveUpdatedMovement(const float& DeltaTime);
-	std::array<Physics::ResolvedListEntry, 2> ResolveMove(const float& deltaTime, CollisionListEntry collision) const;
+	std::vector<CollisionListEntry> DetectInitialCollisions(MoveList& moveList, const float& deltaTime) const;
+
+	void RemoveDuplicateCollisions();
+
+	void DetectSecondaryCollisions(std::vector<ResolvedListEntry> resolvedThisIteration);
+
+	std::vector<ResolvedListEntry> ResolveUpdatedMovement(const float& deltaTime);
+
+	std::array<ResolvedListEntry, 2> ResolveMove(const float& deltaTime, CollisionListEntry collision) const;
+
 	void FinalizeMoves(const float& deltaTime);
+
 	void End();
 
 
 	// OBB Collisions
 
 	void ShipVsAsteroid(const MoveList::ColliderRanges& ranges, std::vector<CollisionListEntry>& collisions) const;
-	static void OBBVsSpecificAsteroid(const OBB& Ship, const Entity& ShipEntity, std::vector<MoveList::Entry>::iterator AsteroidBegin,
-	                                  std::vector<MoveList::Entry>::iterator AsteroidEnd, const float& AsteroidRadius, std::vector<CollisionListEntry>& Collisions);
+	static void OBBVsSpecificAsteroid(const OBB& Ship,
+	                                  const Entity& ShipEntity,
+	                                  std::vector<MoveList::Entry>::iterator AsteroidBegin,
+	                                  std::vector<MoveList::Entry>::iterator AsteroidEnd,
+	                                  const float& AsteroidRadius,
+	                                  std::vector<CollisionListEntry>& Collisions);
 
 
 	// Circle Collisions
 
-	static void BulletVsAsteroid(const MoveList::ColliderRanges& Ranges, std::vector<CollisionListEntry>& Collisions, const float& DeltaTime);
-	static void AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges, std::vector<CollisionListEntry>& Collisions, const float& DeltaTime);
+	static void BulletVsAsteroid(const MoveList::ColliderRanges& Ranges,
+	                             std::vector<CollisionListEntry>& Collisions,
+	                             const float& DeltaTime);
+	static void AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
+	                               std::vector<CollisionListEntry>& Collisions,
+	                               const float& DeltaTime);
 
-	static void CircleVsCircles(const MoveList::Entry& Circle, const float& CircleRadius, const float& CircleMass,
-	                            std::vector<MoveList::Entry>::iterator CirclesBegin, std::vector<MoveList::Entry>::iterator CirclesEnd,
-	                            const float& CirclesMass, const float& RadiusPlusRadiusSquared, const float& DeltaTime, const ColliderType& TypeA,
-	                            const ColliderType& TypeB, std::vector<CollisionListEntry>& Collisions);
+	static void CircleVsCircles(const MoveList::Entry& Circle,
+	                            const float& CircleRadius,
+	                            const float& CircleMass,
+	                            std::vector<MoveList::Entry>::iterator CirclesBegin,
+	                            std::vector<MoveList::Entry>::iterator CirclesEnd,
+	                            const float& CirclesMass,
+	                            const float& RadiusPlusRadiusSquared,
+	                            const float& DeltaTime,
+	                            const ColliderType& TypeA,
+	                            const ColliderType& TypeB,
+	                            std::vector<CollisionListEntry>& Collisions);
 
 	static float GetMassFromColliderType(const ColliderType& Type);
 
 	static const int MAX_SOLVER_ITERATIONS = 3;
-	inline static const float ASTEROID_MASSES[]{ 16.0f, 4.0f, 1.0f };
+	inline static const float ASTEROID_MASSES[] { 16.0f, 4.0f, 1.0f };
 
 	TransformManager& _TransformManager;
 	RigidbodyManager& _RigidbodyManager;
 
 	const AABB _ScreenAABB;
 
-	static const int CHUNKS_X = 8;
-	static const int CHUNKS_Y = 6;
+	static const int CHUNKS_X    = 8;
+	static const int CHUNKS_Y    = 6;
 	static const int CHUNK_COUNT = CHUNKS_X * CHUNKS_Y;
 
 	const float _ChunkSizeX;
@@ -117,3 +147,15 @@ private:
 
 	std::set<Entity> _DirtyList;
 };
+
+
+namespace std
+{
+template <> struct hash<Physics::CollisionListEntry>
+{
+	inline size_t operator()(const Physics::CollisionListEntry& entry) const noexcept
+	{
+		return entry.A.Hash() ^ entry.B.Hash();
+	}
+};
+}
