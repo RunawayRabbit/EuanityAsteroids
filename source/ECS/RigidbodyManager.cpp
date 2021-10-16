@@ -1,78 +1,78 @@
-
-
 #include "EntityManager.h"
 #include "RigidbodyManager.h"
-#include "TransformManager.h"
+#include "../Physics/Physics.h"
 
-#include "..\Physics\Physics.h"
-
-RigidbodyManager::RigidbodyManager(const EntityManager& entityManager, const int capacity) :
-	entityManager(entityManager)
+RigidbodyManager::RigidbodyManager(const EntityManager& entityManager, const int capacity)
+	: _EntityManager(entityManager)
 {
 	Allocate(capacity);
 }
 
-void RigidbodyManager::Add(const Entity& entity, const ColliderType colliderType, const Vector2 velocity, const float rotVelocity)
+void
+RigidbodyManager::Add(const Entity& entity, const ColliderType colliderType, const Vector2 velocity, const float rotVelocity)
 {
-	if (size == capacity)
+	if(_Size == _Capacity)
 	{
 		// We're about to overrun our buffer, we gotta scale.
-		Allocate((size * 2));
+		Allocate((_Size * 2));
 	}
 
 	// Insert our data at the back of the data store
 	Rigidbody rb;
-	rb.entity = entity; // @TODO: duplicate storage, clean up.
-	rb.velocity = velocity;
-	rb.colliderType = colliderType;
+	rb.entity          = entity; // @TODO: duplicate storage, clean up?
+	rb.velocity        = velocity;
+	rb.colliderType    = colliderType;
 	rb.angularVelocity = rotVelocity;
 
-	*(entities + size) = entity;
-	*(rigidbodies + size) = rb;
+	*(_Entities + _Size)    = entity;
+	*(_Rigidbodies + _Size) = rb;
 
-	++size;
+	++_Size;
 }
 
-void RigidbodyManager::Allocate(const int newCapacity)
+void
+RigidbodyManager::Allocate(const int capacity)
 {
-	capacity = newCapacity;
+	_Capacity = capacity;
 
 	// Allocate new memory
-	const size_t elementSizeInBytes = sizeof(Entity) + sizeof(Rigidbody);
-	void* newBuffer = new size_t[(elementSizeInBytes * newCapacity)];
+	const auto elementSizeInBytes = sizeof(Entity) + sizeof(Rigidbody);
+	void* newBuffer               = new size_t[(elementSizeInBytes * capacity)];
 
 	// Set up new pointers for where our data will go
-	Entity* newEntities = (Entity*)newBuffer;
-	Rigidbody* newRigidbodys = (Rigidbody*)(newEntities + newCapacity);
+	const auto newEntities    = static_cast<Entity*>(newBuffer);
+	const auto newRigidbodies = reinterpret_cast<Rigidbody*>(newEntities + capacity);
 
-	if (size > 0)
+	if(_Size > 0)
 	{
 		// Copy the data to the new buffer
-		memcpy(newEntities, entities, sizeof(Entity) * size);
-		memcpy(newRigidbodys, rigidbodies, sizeof(Rigidbody) * size);
+		memcpy(newEntities, _Entities, sizeof(Entity) * _Size);
+		memcpy(newRigidbodies, _Rigidbodies, sizeof(Rigidbody) * _Size);
 	}
 
 	// Switch the pointers around
-	entities = newEntities;
-	rigidbodies = newRigidbodys;
+	_Entities    = newEntities;
+	_Rigidbodies = newRigidbodies;
 
 	// Switch the buffers and free the old memory
-	delete buffer;
-	buffer = newBuffer;
+	// ReSharper disable once CppDeletingVoidPointer
+	delete _Buffer;
+	_Buffer = newBuffer;
 }
 
-bool RigidbodyManager::Lookup(const Entity entity, size_t* index) const
+bool
+RigidbodyManager::Lookup(const Entity entity, size_t* index) const
 {
-	Entity* entityIndex = entities;
-	size_t i = 0;
-	for (; i < capacity; ++i, ++entityIndex)
+	auto entityIndex = _Entities;
+	size_t i         = 0;
+	for(; i < _Size; ++i, ++entityIndex)
 	{
-		if (*entityIndex == Entity::Null())
+		if(*entityIndex == Entity::Null())
 		{
 			// We hit the end of the index! This entity wasn't in the store!
 			return false;
 		}
-		if (*entityIndex == entity)
+		if(*entityIndex == entity)
 		{
 			*index = i;
 			return true;
@@ -81,44 +81,53 @@ bool RigidbodyManager::Lookup(const Entity entity, size_t* index) const
 	return false;
 }
 
-bool RigidbodyManager::GetMutable(const Entity entity, Rigidbody*& rb)
+bool
+RigidbodyManager::GetMutable(const Entity entity, Rigidbody*& rb)
 {
 	size_t index;
-	if (Lookup(entity, &index))
+	if(Lookup(entity, &index))
 	{
-		rb = (rigidbodies + index);
+		rb = (_Rigidbodies + index);
 		return true;
 	}
 	return false;
 }
 
 std::optional<Rigidbody>
-RigidbodyManager::Get(const Entity entity)
+RigidbodyManager::Get(const Entity entity) const
 {
 	std::optional<Rigidbody> result;
 	size_t index;
-	if (Lookup(entity, &index))
+	if(Lookup(entity, &index))
 	{
-		result = *(rigidbodies + index);
+		result = *(_Rigidbodies + index);
 	}
 	return result;
 }
 
-uint32_t RigidbodyManager::Count()
+uint32_t
+RigidbodyManager::Count() const
 {
-	return size;
+	return _Size;
+}
+
+void
+RigidbodyManager::Clear()
+{
+	_Size = 0;
 }
 
 
-void RigidbodyManager::EnqueueAll(Physics& physics, const float& deltaTime)
+void
+RigidbodyManager::EnqueueAll(Physics& physics, const float& deltaTime)
 {
-	int i = 0;
-	while (i < size)
+	auto i = 0;
+	while(i < _Size)
 	{
-		Entity* entity = (entities + i);
-		Rigidbody* rb = (rigidbodies + i);
+		const auto entity = (_Entities + i);
+		const auto rb     = (_Rigidbodies + i);
 
-		if (entityManager.Exists(*entity))
+		if(_EntityManager.Exists(*entity))
 		{
 			physics.Enqueue(*rb, deltaTime);
 			++i;
@@ -127,13 +136,13 @@ void RigidbodyManager::EnqueueAll(Physics& physics, const float& deltaTime)
 		{
 			// Transform appears to have been deleted.
 			// Do the swap to remove it from the list.
-			Entity* lastActiveEntity = entities + size - 1;
-			Rigidbody* lastActiveRigidbody = rigidbodies + size - 1;
+			const auto lastActiveEntity    = _Entities + _Size - 1;
+			const auto lastActiveRigidbody = _Rigidbodies + _Size - 1;
 
-			*(entities + i) = *(lastActiveEntity);
-			*(rigidbodies + i) = *(lastActiveRigidbody);
+			*(_Entities + i)    = *(lastActiveEntity);
+			*(_Rigidbodies + i) = *(lastActiveRigidbody);
 
-			--size;
+			--_Size;
 		}
 	}
 }

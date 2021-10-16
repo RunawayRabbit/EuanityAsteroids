@@ -9,22 +9,22 @@
 #include "Game.h"
 
 Game::Game(std::string windowName, int width, int height) :
-	entities(time),
-	renderer(windowName, width, height),
-	renderQueue(renderer, width, height),
-	input(InputHandler(isRunning)),
-	UI(entities, input.GetBuffer()),
-	gameField(0.0f, (float)height, 0.0f, (float)width),
-	xforms(2), //intial capacity. Can resize dynamically.
-	backgroundRenderer(xforms, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
-	rigidbodies(entities, 2),
-	sprites(xforms, entities, renderQueue.GetSpriteAtlas(), 128),
-	create(*this, entities, xforms, sprites, rigidbodies, UI, time),
-	physics(xforms, rigidbodies, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
-	isRunning(true)
+	Entities(Time),
+	Renderer(windowName, width, height),
+	RenderQueue(Renderer, width, height),
+	Input(InputHandler(_IsRunning)),
+	UI(Entities, Input.GetBuffer()),
+	GameField(0.0f, (float)height, 0.0f, (float)width),
+	Xforms(2), //intial capacity. Can resize dynamically.
+	BackgroundRenderer(Xforms, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
+	Rigidbodies(Entities, 2),
+	Sprites(Xforms, Entities, RenderQueue.GetSpriteAtlas(), 128),
+	Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
+	Physics(Xforms, Rigidbodies, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
+	_IsRunning(true)
 {
-	currentState = std::make_unique<MenuState>(*this);
-	currentState->OnEnter();
+	CurrentState = std::make_unique<MenuState>(*this);
+	CurrentState->OnEnter();
 }
 
 Game::~Game()
@@ -34,26 +34,26 @@ Game::~Game()
 
 bool Game::IsRunning() const
 {
-	return isRunning;
+	return _IsRunning;
 }
 
 void Game::ProcessInput()
 {
-	input.Clear();
-	input.ProcessInput();
+	Input.Clear();
+	Input.ProcessInput();
 }
 
 void Game::Update(float deltaTime)
 {
-	time.Update(deltaTime);
+	Time.Update(deltaTime);
 
-	const InputBuffer& inputBuffer = input.GetBuffer();
+	const InputBuffer& inputBuffer = Input.GetBuffer();
 
-	currentState->Update(inputBuffer, deltaTime);
+	CurrentState->Update(inputBuffer, deltaTime);
 
-	rigidbodies.EnqueueAll(physics, deltaTime);
-	physics.Simulate(deltaTime);
-	sprites.Update(deltaTime);
+	Rigidbodies.EnqueueAll(Physics, deltaTime);
+	Physics.Simulate(deltaTime);
+	Sprites.Update(deltaTime);
 
 	GarbageCollection();
 
@@ -65,27 +65,37 @@ void Game::Update(float deltaTime)
 
 void Game::Render()
 {
-	renderQueue.Clear();
+	RenderQueue.Clear();
 
-	UI.Render(renderQueue);
+	UI.Render(RenderQueue);
 
-	backgroundRenderer.Render(renderQueue, time.DeltaTime());
+	BackgroundRenderer.Render(RenderQueue, Time.DeltaTime());
 
-	sprites.Render(renderQueue);
+	Sprites.Render(RenderQueue);
 
-	renderer.Render(renderQueue.GetRenderQueue());
+	Renderer.Render(RenderQueue.GetRenderQueue());
 }
 
 void Game::Quit()
 {
-	isRunning = false;
+	_IsRunning = false;
 }
 
 void Game::GarbageCollection()
 {
 	// @TODO: This can be better.
 
-	xforms.GarbageCollect(entities);
+	Xforms.GarbageCollect(Entities);
 	UI.GarbageCollect();
-	entities.GarbageCollect();
+	Entities.GarbageCollect();
+}
+
+void
+Game::ResetAllSystems()
+{
+	Entities.Clear();
+	Xforms.Clear();
+	Rigidbodies.Clear();
+	UI.Clear();
+	Sprites.Clear();
 }

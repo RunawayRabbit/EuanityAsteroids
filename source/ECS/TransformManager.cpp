@@ -3,52 +3,58 @@
 #include "EntityManager.h"
 
 
-TransformManager::TransformManager(int capacity)
+TransformManager::TransformManager(const int capacity)
 {
-	transforms.reserve(capacity);
+	_Transforms.reserve(capacity);
 }
 
 
 std::optional<Transform>
-TransformManager::Get(const Entity Entity) const
+TransformManager::Get(const Entity entity) const
 {
-	std::optional<Transform> Result;
+	std::optional<Transform> result;
 
-	const auto Search = transforms.find(Entity);
+	const auto Search = _Transforms.find(entity);
 
-	if (Search != transforms.end()) {
-		Result = Search->second;
+	if (Search != _Transforms.end()) {
+		result = Search->second;
 	}
-	return Result;
+	return result;
 }
 
 std::optional<Transform*>
 TransformManager::GetMutable(const Entity entity)
 {
-	std::optional<Transform*> Result;
-	auto Search = transforms.find(entity);
+	std::optional<Transform*> result;
+	auto Search = _Transforms.find(entity);
 
-	if (Search != transforms.end()) {
-		Result = &Search->second;
+	if (Search != _Transforms.end()) {
+		result = &Search->second;
 	}
-	return Result;
+	return result;
 }
 
 
 void TransformManager::Add(const Entity entity, const Transform transform)
 {
-	transforms.insert_or_assign(entity, transform);
+	_Transforms.insert_or_assign(entity, transform);
 }
 
 void TransformManager::GarbageCollect(const EntityManager& entityManager)
 {
 	for(const auto& entity : entityManager.ZombieList)
 	{
-		transforms.erase(entity);
+		_Transforms.erase(entity);
 	}
 }
 
 size_t TransformManager::Count() const
 {
-	return transforms.size();
+	return _Transforms.size();
+}
+
+void
+TransformManager::Clear()
+{
+	_Transforms.clear();
 }

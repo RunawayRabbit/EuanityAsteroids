@@ -6,8 +6,8 @@
 
 struct SpriteTransform
 {
-	SpriteID id;
-	SDL_Rect position;
-	float rotation;
-	RenderQueue::Layer layer;
+	SpriteID ID;
+	SDL_Rect Position;
+	float Rotation;
+	RenderQueue::Layer Layer;
 };

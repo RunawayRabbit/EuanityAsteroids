@@ -44,24 +44,24 @@ EntityManager::Exists(const Entity entity) const
 		return false; // Hard-coded zero entity
 
 	// Binary search ranges
-	size_t Min = 0;
-	auto Max   = _OpenRanges.size() - 1;
+	size_t min = 0;
+	auto max   = _OpenRanges.size() - 1;
 
 	while(true)
 	{
-		const auto i = (Min + Max) / 2;
+		const auto i = (min + max) / 2;
 
 		if(entity._ID < _OpenRanges[i].Begin)
 		{
-			if(i == Min)
+			if(i == min)
 				return !ZombieList.Contains(entity);
-			Max = i - 1;
+			max = i - 1;
 		}
 		else if(entity._ID > _OpenRanges[i].End)
 		{
-			if(i == Max)
+			if(i == max)
 				return !ZombieList.Contains(entity);
-			Min = i + 1;
+			min = i + 1;
 		}
 		else
 		{
@@ -193,4 +193,16 @@ EntityManager::Count()
 	}
 
 	return count;
+}
+
+void
+EntityManager::Clear()
+{
+	ZombieList.Clear();
+
+	//@TODO: Pretty clear that this range-based storage system needs to be it's own class.
+	_OpenRanges.clear();
+	_OpenRanges.push_back({ 1, Entity::ENTITYID_MAX });
+
+	_DeathRow = DeathRow();
 }

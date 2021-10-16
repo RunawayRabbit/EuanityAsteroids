@@ -1,68 +1,65 @@
-
 #include "UIManager.h"
 
-#include "..\ECS\EntityManager.h"
+#include "../ECS/EntityManager.h"
 
-#include "..\Input\InputBuffer.h"
+#include "../Input/InputBuffer.h"
 
-#include "..\Renderer\RenderQueue.h"
-#include "..\ECS\EntityManager.h"
+#include "../Renderer/RenderQueue.h"
 
-#include <iostream>
-
-UIManager::UIManager(EntityManager& entityManager, const InputBuffer& inputBuffer) :
-	entityManager(entityManager),
-	inputBuffer(inputBuffer),
-	active(Entity::Null()),
-	hot(Entity::Null())
+UIManager::UIManager(EntityManager& entityManager, const InputBuffer& inputBuffer)
+	: _EntityManager(entityManager),
+	  _InputBuffer(inputBuffer),
+	  _Active(Entity::Null()),
+	  _Hot(Entity::Null())
 {
 }
 
-void UIManager::Render(RenderQueue& renderQueue)
+void
+UIManager::Render(RenderQueue& renderQueue)
 {
-	for (auto& button : UIButtons)
+	for(auto& button : _UIButtons)
 	{
-		if (DoButton(renderQueue, button))
+		if(DoButton(renderQueue, button))
 		{
-			button.callback();
+			button.Callback();
 			return;
 		}
-
 	}
 }
 
-bool UIManager::DoButton(RenderQueue& renderQueue, const UIButton& element)
+bool
+UIManager::DoButton(RenderQueue& renderQueue, const UIButton& element)
 {
-	bool wasClicked = false;
-	bool isActive = element.entity == active;
-	bool weAreHot = false;
+	const auto isActive = element.Entity == _Active;
+	auto wasClicked     = false;
+	auto weAreHot       = false;
 
-	if (element.box.Contains(inputBuffer.mousePos))
+	if(element.Box.Contains(_InputBuffer.mousePos))
 	{
 		// Mouse is over us, so we mark ourselves as the hot entity.
-		hot = element.entity;
+		_Hot     = element.Entity;
 		weAreHot = true;
 	}
 
-	if (isActive)
+	if(isActive)
 	{
 		// We are the active UI element, meaning that we are holding ownership
 		// over the context right now. We are responsible for freeing that
 		// ownership should we need to.
-		if (inputBuffer.Contains(InputOneShot::MouseUp))
+		if(_InputBuffer.Contains(InputOneShot::MouseUp))
 		{
 			// We had ownership and the mouse was lifted. Is it still on top of us?
-			if (weAreHot)
+			if(weAreHot)
 				wasClicked = true;
-			
+
 			// Either way, we have to release the context now.
-			active = Entity::Null();
+			_Active = Entity::Null();
 		}
 	}
-	else if (active == Entity::Null() && weAreHot && inputBuffer.Contains(InputOneShot::MouseDown))
+	else if(_Active == Entity::Null() && weAreHot && _InputBuffer.Contains(InputOneShot::MouseDown))
 	{
 		// Mouse is over us, it went down, and there is no active context. We can take ownership.
-		active = element.entity;
+		_Active = element.Entity;
 	}
 
 
@@ -70,27 +67,38 @@ bool UIManager::DoButton(RenderQueue& renderQueue, const UIButton& element)
 	return wasClicked;
 }
 
-void UIManager::DrawButton(RenderQueue& renderQueue, const UIButton& element, bool isHot, bool isActive)
+void
+UIManager::DrawButton(RenderQueue& renderQueue, const UIButton& element, bool isHot, bool isActive)
 {
-	SDL_Rect targetRect{};
-	targetRect.x = (int)(element.box.min.x);
-	targetRect.y = (int)(element.box.min.y);
-	targetRect.w = (int)(element.box.max.x - element.box.min.x);
-	targetRect.h = (int)(element.box.max.y - element.box.min.y);
-	renderQueue.Enqueue(element.spriteID, targetRect, 0, RenderQueue::Layer::UI);
+	SDL_Rect targetRect;
+	targetRect.x = static_cast<int>(element.Box.min.x);
+	targetRect.y = static_cast<int>(element.Box.min.y);
+	targetRect.w = static_cast<int>(element.Box.max.x - element.Box.min.x);
+	targetRect.h = static_cast<int>(element.Box.max.y - element.Box.min.y);
+	renderQueue.Enqueue(element.SpriteID, targetRect, 0, RenderQueue::Layer::UI);
 }
 
 
-void UIManager::MakeButton(const Entity& entity, const AABB& box, SpriteID spriteID, std::function<void()> callback)
+void
+UIManager::MakeButton(const Entity& entity, const AABB& box, const SpriteID spriteID, const std::function<void()> callback)
 {
-	UIButtons.push_back(UIButton(entity, box, spriteID, callback));
+	_UIButtons.push_back(UIButton(entity, box, spriteID, callback));
 }
 
-void UIManager::GarbageCollect()
+void
+UIManager::GarbageCollect()
 {
-	UIButtons.erase(std::remove_if(UIButtons.begin(), UIButtons.end(),
-		[&](UIButton& button) -> bool
-		{
-			return (!entityManager.Exists(button.entity));
-		}), UIButtons.end()); // <-- Don't forget this bad boy here. C++ isn't user-friendly.
+	_UIButtons.erase(std::remove_if(_UIButtons.begin(), _UIButtons.end(),
+	                                [&](UIButton& button) -> bool
+	                                {
+		                                return (!_EntityManager.Exists(button.Entity));
+	                                }), _UIButtons.end()); // <-- Don't forget this bad boy here. C++ isn't user-friendly.
+}
+
+void
+UIManager::Clear()
+{
+	_UIButtons.clear();
+	_Active = Entity::Null();
+	_Hot    = Entity::Null();
 }

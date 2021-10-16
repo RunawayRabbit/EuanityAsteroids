@@ -5,24 +5,28 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Completed the new Range-based EntityID system.">
-      <change afterPath="$PROJECT_DIR$/source/Platform/RingBuffer.h" afterDir="false" />
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Added the to-be-implemented stuff to the buglist, evne if they aren't technically bugs.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/BugList.txt" beforeDir="false" afterPath="$PROJECT_DIR$/source/BugList.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/ECS/EntityManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/EntityManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/RigidbodyManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/RigidbodyManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/SpriteManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/SpriteManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/ECS/TransformManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/TransformManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/ECS/TransformManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/TransformManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/UIManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/UIManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/UIManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/UIManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Create.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Player.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Player.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Physics/MoveList.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/MoveList.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Platform/FrameTimer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/FrameTimer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Platform/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Platform/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Platform/Game.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Platform/RingBuffer.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/RingBuffer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Renderer/SpriteTransform.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/SpriteTransform.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/State/MenuState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/State/PlayState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" afterDir="false" />
@@ -31,7 +35,6 @@
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.write.1.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.idb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/vc142.idb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/vc142.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/vc142.pdb" afterDir="false" />
     </list>
@@ -66,27 +69,35 @@
       <option value="$PROJECT_DIR$/source/Platform/FrameTimer.h" />
       <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/Entity.h" />
-      <option value="$PROJECT_DIR$/source/Physics/MoveList.h" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.h" />
-      <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp" />
-      <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.h" />
-      <option value="$PROJECT_DIR$/source/ECS/TransformManager.h" />
       <option value="$PROJECT_DIR$/EuanityAsteroids.vcxproj" />
       <option value="$PROJECT_DIR$/source/Platform/RingBuffer.cpp" />
-      <option value="$PROJECT_DIR$/source/ECS/TransformManager.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
-      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
-      <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/FrameTimer.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
+      <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" />
+      <option value="$PROJECT_DIR$/source/ECS/TransformManager.h" />
+      <option value="$PROJECT_DIR$/source/ECS/TransformManager.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/EntityManager.h" />
       <option value="$PROJECT_DIR$/source/ECS/EntityManager.cpp" />
+      <option value="$PROJECT_DIR$/source/Platform/RingBuffer.h" />
+      <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.h" />
+      <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp" />
+      <option value="$PROJECT_DIR$/source/ECS/UIManager.h" />
+      <option value="$PROJECT_DIR$/source/ECS/UIManager.cpp" />
+      <option value="$PROJECT_DIR$/source/Platform/Game.h" />
+      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
+      <option value="$PROJECT_DIR$/source/Physics/MoveList.h" />
+      <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" />
+      <option value="$PROJECT_DIR$/source/Renderer/SpriteTransform.h" />
+      <option value="$PROJECT_DIR$/source/ECS/SpriteManager.h" />
+      <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
+      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
       <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
-      <option value="$PROJECT_DIR$/source/Platform/RingBuffer.h" />
-      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
+      <option value="$PROJECT_DIR$/source/BugList.txt" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -96,8 +107,8 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.34983897" />
-    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.431562" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.16908212" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.17069243" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="C++" />
@@ -171,7 +182,7 @@
       <workItem from="1634195543627" duration="279000" />
       <workItem from="1634196144877" duration="55000" />
       <workItem from="1634261055681" duration="13801000" />
-      <workItem from="1634357204179" duration="9442000" />
+      <workItem from="1634357204179" duration="15997000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -180,7 +191,21 @@
       <option name="project" value="LOCAL" />
       <updated>1634190612649</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Completed the new Range-based EntityID system.">
+      <created>1634367066878</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1634367066878</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added the to-be-implemented stuff to the buglist, evne if they aren't technically bugs.">
+      <created>1634367180174</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1634367180174</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -201,18 +226,18 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Picking the project back up!" />
     <MESSAGE value="Completed the new Range-based EntityID system." />
-    <option name="LAST_COMMIT_MESSAGE" value="Completed the new Range-based EntityID system." />
+    <MESSAGE value="Added the to-be-implemented stuff to the buglist, evne if they aren't technically bugs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added the to-be-implemented stuff to the buglist, evne if they aren't technically bugs." />
   </component>
   <component name="XDebuggerManager">
-    <watches-manager>
-      <configuration name="CppProject">
-        <watch expression="_ZombieCount" language="C++" />
-        <watch expression="_PrevZombieCount" language="C++" />
-        <watch expression="_DeathRow" language="C++" />
-        <watch expression="ZombieList" language="C++" />
-        <watch expression="(Entity*)rigidbodies.entities+17" language="C++" />
-        <watch expression="rigidbodies.size" language="C++" />
-      </configuration>
-    </watches-manager>
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/source/Platform/Game.h</url>
+          <line>51</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

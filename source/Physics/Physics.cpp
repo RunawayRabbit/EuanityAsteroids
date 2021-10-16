@@ -27,34 +27,34 @@ Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
 {
 	// Get an AABB for the rigidbody using it's transform
 
-	auto OptionalRBTrans = _TransformManager.Get(Rb.entity);
-	if(!OptionalRBTrans.has_value())
+	auto optionalRbTrans = _TransformManager.Get(Rb.entity);
+	if(!optionalRbTrans.has_value())
 	{
 		//@TODO: Error check in case of RB with no Transform?
 	}
 
-	Transform RbTrans = OptionalRBTrans.value();
-	auto RbAabb       = ColliderRadius::GetAABB(Rb.colliderType, RbTrans.pos);
+	const auto rbTrans = optionalRbTrans.value();
+	auto rbAABB        = ColliderRadius::GetAABB(Rb.colliderType, rbTrans.pos);
 
 	// Pad the AABB by the velocity, and a small safety margin.
-	const auto DeltaPosition = Rb.velocity * DeltaTime;
+	const auto deltaPosition = Rb.velocity * DeltaTime;
 
-	const auto Padding = 15.0f;
+	const auto padding = 15.0f;
 
-	RbAabb.min.x = std::min(RbAabb.min.x, RbAabb.min.x + DeltaPosition.x - Padding);
-	RbAabb.min.y = std::min(RbAabb.min.y, RbAabb.min.y + DeltaPosition.y - Padding);
-	RbAabb.max.x = std::max(RbAabb.max.x, RbAabb.max.x + DeltaPosition.x + Padding);
-	RbAabb.max.y = std::max(RbAabb.max.y, RbAabb.max.y + DeltaPosition.y + Padding);
+	rbAABB.min.x = std::min(rbAABB.min.x, rbAABB.min.x + deltaPosition.x - padding);
+	rbAABB.min.y = std::min(rbAABB.min.y, rbAABB.min.y + deltaPosition.y - padding);
+	rbAABB.max.x = std::max(rbAABB.max.x, rbAABB.max.x + deltaPosition.x + padding);
+	rbAABB.max.y = std::max(rbAABB.max.y, rbAABB.max.y + deltaPosition.y + padding);
 
 	auto accumulator = Vector2::zero();
 	auto startTileX  = -1;
 	auto startTileY  = -1;
-	while(accumulator.x < RbAabb.min.x)
+	while(accumulator.x < rbAABB.min.x)
 	{
 		accumulator.x += _ChunkSizeX;
 		++startTileX;
 	}
-	while(accumulator.y < RbAabb.min.y)
+	while(accumulator.y < rbAABB.min.y)
 	{
 		accumulator.y += _ChunkSizeY;
 		++startTileY;
@@ -66,12 +66,12 @@ Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
 	// Using the same method, we advance the max accumulator to find the maximum.
 	auto endTileX = startTileX;
 	auto endTileY = startTileY;
-	while(accumulator.x < RbAabb.max.x)
+	while(accumulator.x < rbAABB.max.x)
 	{
 		accumulator.x += _ChunkSizeX;
 		++endTileX;
 	}
-	while(accumulator.y < RbAabb.max.y)
+	while(accumulator.y < rbAABB.max.y)
 	{
 		accumulator.y += _ChunkSizeY;
 		++endTileY;
@@ -81,7 +81,7 @@ Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
 	for(auto y = startTileY; y <= endTileY; ++y)
 	{
 		// Wrap our Y coordinate if we have to.
-		auto wrappedY = RbTrans.pos.y;
+		auto wrappedY = rbTrans.pos.y;
 		if(y < 0)
 			wrappedY += _ScreenAABB.max.y;
 		else if(y >= CHUNKS_Y)
@@ -90,7 +90,7 @@ Physics::Enqueue(const Rigidbody& Rb, const float& DeltaTime)
 		for(auto X = startTileX; X <= endTileX; ++X)
 		{
 			// Wrap the element in X if we have to.
-			auto WrappedX = RbTrans.pos.x;
+			auto WrappedX = rbTrans.pos.x;
 			if(X < 0)
 				WrappedX += _ScreenAABB.max.x;
 			else if(X >= CHUNKS_X)
@@ -202,18 +202,18 @@ Physics::DetectInitialCollisions(MoveList& moveList, const float& deltaTime) con
 void
 Physics::ShipVsAsteroid(const MoveList::ColliderRanges& ranges, std::vector<CollisionListEntry>& collisions) const
 {
-	for(auto Ship = ranges.ShipBegin; Ship != ranges.ShipEnd; ++Ship)
+	for(auto ship = ranges.ShipBegin; ship != ranges.ShipEnd; ++ship)
 	{
-		auto OptionalShipTrans = _TransformManager.Get(Ship->Rb.entity);
-		if(!OptionalShipTrans.has_value())
+		auto optionalShipTrans = _TransformManager.Get(ship->Rb.entity);
+		if(!optionalShipTrans.has_value())
 			// @TODO: Are you ever going to write that logging module? Because this should be logged.
 			continue;
-		Transform ShipTrans = OptionalShipTrans.value();
-		OBB PlayerObb(ShipTrans.pos, ColliderRadius::Ship, ShipTrans.rot);
+		auto [shipPos, shipRot] = optionalShipTrans.value();
+		OBB playerOBB(shipPos, ColliderRadius::Ship, shipRot);
 
-		OBBVsSpecificAsteroid(PlayerObb, Ship->Rb.entity, ranges.LargeBegin, ranges.LargeEnd, ColliderRadius::Large, collisions);
-		OBBVsSpecificAsteroid(PlayerObb, Ship->Rb.entity, ranges.MediumBegin, ranges.MediumEnd, ColliderRadius::Medium, collisions);
-		OBBVsSpecificAsteroid(PlayerObb, Ship->Rb.entity, ranges.SmallBegin, ranges.SmallEnd, ColliderRadius::Small, collisions);
+		OBBVsSpecificAsteroid(playerOBB, ship->Rb.entity, ranges.LargeBegin, ranges.LargeEnd, ColliderRadius::Large, collisions);
+		OBBVsSpecificAsteroid(playerOBB, ship->Rb.entity, ranges.MediumBegin, ranges.MediumEnd, ColliderRadius::Medium, collisions);
+		OBBVsSpecificAsteroid(playerOBB, ship->Rb.entity, ranges.SmallBegin, ranges.SmallEnd, ColliderRadius::Small, collisions);
 	}
 }
 

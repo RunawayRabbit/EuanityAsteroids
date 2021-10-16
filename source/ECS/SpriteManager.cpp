@@ -2,30 +2,31 @@
 
 #include "SpriteManager.h"
 
+
+#include "EntityManager.h"
 #include "../Renderer/Sprite.h"
 #include "../Renderer/RenderQueue.h"
 #include "../Renderer/SpriteTransform.h"
 
 #include "../Math/OBB.h"
-#include "../Math/AABB.h"
 
 
 SpriteManager::SpriteManager(const TransformManager& transManager,
                              const EntityManager& entityManager,
                              const SpriteAtlas& spriteAtlas,
                              const int capacity)
-	: spriteAtlas(spriteAtlas),
-	  repeating(transManager, entityManager, capacity),
-	  nonRepeating(transManager, entityManager, capacity),
-	  transManager(transManager)
+	: _TransManager(transManager),
+	  _SpriteAtlas(spriteAtlas),
+	  _Repeating(transManager, entityManager, capacity),
+	  _NonRepeating(transManager, entityManager, capacity)
 {
 }
 
 void
 SpriteManager::Render(RenderQueue& renderQueue) const
 {
-	repeating.RenderLooped(renderQueue, renderQueue.screenWidth, renderQueue.screenHeight);
-	nonRepeating.Render(renderQueue);
+	_Repeating.RenderLooped(renderQueue);
+	_NonRepeating.Render(renderQueue);
 }
 
 void
@@ -34,58 +35,62 @@ SpriteManager::Create(const Entity entity, const SpriteID spriteID, const Render
 	//@TODO: These APIs aren't following the same conventions...
 
 	// Get the date we need to work with.
-	const auto [TransPos, TransRot] = transManager.Get(entity).value();
+	const auto [TransPos, TransRot] = _TransManager.Get(entity).value();
 
-	const Sprite sprite = spriteAtlas.Get(spriteID);
+	const auto [id, tex, rect] = _SpriteAtlas.Get(spriteID);
 
 	SpriteTransform spriteTransform;
 
-	spriteTransform.id = spriteID;
+	spriteTransform.ID = spriteID;
 
 	SDL_Rect transPosition;
-	transPosition.x          = ((int) TransPos.x - sprite.source.w / 2);
-	transPosition.y          = ((int) TransPos.y - sprite.source.h / 2);
-	transPosition.w          = sprite.source.w;
-	transPosition.h          = sprite.source.h;
-	spriteTransform.position = transPosition;
-	spriteTransform.rotation = TransRot;
-	spriteTransform.layer    = layer;
+	transPosition.x          = (static_cast<int>(TransPos.x) - rect.w / 2);
+	transPosition.y          = (static_cast<int>(TransPos.y) - rect.h / 2);
+	transPosition.w          = rect.w;
+	transPosition.h          = rect.h;
+	spriteTransform.Position = transPosition;
+	spriteTransform.Rotation = TransRot;
+	spriteTransform.Layer    = layer;
 
 	// Pipe the call to the correct function.
 	if(shouldRepeatAtEdges)
 	{
-		repeating.Create(entity, spriteID, spriteTransform);
+		_Repeating.Create(entity, spriteID, spriteTransform);
 	}
 	else
 	{
-		nonRepeating.Create(entity, spriteID, spriteTransform);
+		_NonRepeating.Create(entity, spriteID, spriteTransform);
 	}
 }
 
 void
 SpriteManager::Update(const float deltaTime)
 {
-	repeating.Update(spriteAtlas, deltaTime);
-	nonRepeating.Update(spriteAtlas, deltaTime);
+	_Repeating.Update(_SpriteAtlas, deltaTime);
+	_NonRepeating.Update(_SpriteAtlas, deltaTime);
+}
+
+void
+SpriteManager::Clear()
+{
+	_Repeating.Clear();
+	_NonRepeating.Clear();
 }
 
 
 // SPRITE CATEGORY
 
-#pragma warning(push)
 SpriteManager::SpriteCategory::SpriteCategory(const TransformManager& transManager, const EntityManager& entityManager, const int capacity)
-	: transManager(transManager),
-	  entityManager(entityManager)
+	: _TransManager(transManager),
+	  _EntityManager(entityManager)
 {
 	Allocate(capacity);
 }
-#pragma warning(pop)
-
 
 void
 SpriteManager::SpriteCategory::Allocate(const int newCapacity)
 {
-	capacity = newCapacity;
+	_Capacity = newCapacity;
 
 	// Allocate new memory
 	const auto elementSizeInBytes = sizeof(Entity) + sizeof(SpriteTransform);
@@ -95,99 +100,104 @@ SpriteManager::SpriteCategory::Allocate(const int newCapacity)
 	Entity* newEntities            = static_cast<Entity*>(newBuffer);
 	SpriteTransform* newTransforms = reinterpret_cast<SpriteTransform*>(newEntities + newCapacity);
 
-	if(size > 0)
+	if(_Size > 0)
 	{
 		// Copy the data to the new buffer
-		memcpy(newEntities, entities, sizeof(Entity) * size);
-		memcpy(newTransforms, transforms, sizeof(SpriteTransform) * size);
+		memcpy(newEntities, _Entities, sizeof(Entity) * _Size);
+		memcpy(newTransforms, _Transforms, sizeof(SpriteTransform) * _Size);
 	}
 
 	// Switch the pointers around
-	entities   = newEntities;
-	transforms = newTransforms;
+	_Entities   = newEntities;
+	_Transforms = newTransforms;
 
 	// Switch the buffers and free the old memory
-	delete buffer;
-	buffer = newBuffer;
+	// ReSharper disable once CppDeletingVoidPointer
+	delete _Buffer;
+	_Buffer = newBuffer;
 }
 
 void
 SpriteManager::SpriteCategory::Render(RenderQueue& renderQueue) const
 {
-	for(auto i = 0; i < size; i++)
+	for(auto i = 0; i < _Size; i++)
 	{
-		const SpriteTransform* transform = transforms + i;
-		renderQueue.Enqueue(transform->id, transform->position, transform->rotation, transform->layer);
+		const SpriteTransform* transform = _Transforms + i;
+		renderQueue.Enqueue(transform->ID, transform->Position, transform->Rotation, transform->Layer);
 	}
 }
 
 void
-SpriteManager::SpriteCategory::RenderLooped(RenderQueue& renderQueue, const int screenWidth, const int screenHeight) const
+SpriteManager::SpriteCategory::RenderLooped(RenderQueue& renderQueue) const
 {
-	AABB screenAABB(Vector2::zero(), Vector2((float) screenWidth, (float) screenHeight));
-
-	for(auto i = 0; i < size; i++)
+	for(auto i = 0; i < _Size; i++)
 	{
-		const SpriteTransform* transform = transforms + i;
+		const SpriteTransform* transform = _Transforms + i;
 		renderQueue.EnqueueLooped(*transform);
 	}
 }
 
+void
+SpriteManager::SpriteCategory::Clear()
+{
+	_Size         = 0;
+	_AnimatedSize = 0;
+}
 
 void
 SpriteManager::SpriteCategory::Create(const Entity entity, const SpriteID spriteID, const SpriteTransform trans)
 {
-	if(size == capacity)
+	if(_Size == _Capacity)
 	{
 		// We're about to overrun our buffer, we gotta scale.
-		Allocate(static_cast<size_t>(size * 2));
+		Allocate(static_cast<size_t>(_Size * 2));
 	}
 
 	// Insert our data at the back of the data store
-	*(entities + size)   = entity;
-	*(transforms + size) = trans;
+	*(_Entities + _Size)   = entity;
+	*(_Transforms + _Size) = trans;
 
 	if(SpriteAtlas::isAnimated(spriteID))
 	{
 		// @TODO: This isn't the most efficient algorithm but I'm assuming the compiler will fix it..?
-		std::swap(*(entities + size), *(entities + currentFrameTimes.size()));
-		std::swap(*(transforms + size), *(transforms + currentFrameTimes.size()));
+		std::swap(*(_Entities + _Size), *(_Entities + _CurrentFrameTimes.size()));
+		std::swap(*(_Transforms + _Size), *(_Transforms + _CurrentFrameTimes.size()));
 
-		currentFrameTimes.push_back(SpriteAnimationData::frameTime[static_cast<int>(spriteID)]);
+		_CurrentFrameTimes.push_back(SpriteAnimationData::frameTime[static_cast<int>(spriteID)]);
 	}
 
-	++size;
+	++_Size;
 }
 
 void
 SpriteManager::SpriteCategory::Update(const SpriteAtlas& spriteAtlas, const float deltaTime)
 {
-	int i = 0;
-	while(i < size)
+	auto i = 0;
+	while(i < _Size)
 	{
-		const auto entity            = (entities + i);
-		SpriteTransform* spriteTrans = (transforms + i);
+		const auto entity = (_Entities + i);
+		auto spriteTrans  = (_Transforms + i);
 
-		auto transform = transManager.Get(*entity);
-		if(entityManager.Exists(*entity) && transform.has_value())
+		auto transform = _TransManager.Get(*entity);
+		if(_EntityManager.Exists(*entity) && transform.has_value())
 		{
-			if(SpriteAtlas::isAnimated(spriteTrans->id))
+			if(SpriteAtlas::isAnimated(spriteTrans->ID))
 			{
-				currentFrameTimes[i] -= deltaTime;
-				if(currentFrameTimes[i] < 0.0f)
+				_CurrentFrameTimes[i] -= deltaTime;
+				if(_CurrentFrameTimes[i] < 0.0f)
 				{
-					spriteTrans->id = SpriteAnimationData::nextFrameIndex[static_cast<int>(spriteTrans->id)];
-					currentFrameTimes[i] += SpriteAnimationData::frameTime[static_cast<int>(spriteTrans->id)];
+					spriteTrans->ID = SpriteAnimationData::nextFrameIndex[static_cast<int>(spriteTrans->ID)];
+					_CurrentFrameTimes[i] += SpriteAnimationData::frameTime[static_cast<int>(spriteTrans->ID)];
 
-					const Sprite newSprite  = spriteAtlas.Get(spriteTrans->id);
-					spriteTrans->position.w = newSprite.source.w;
-					spriteTrans->position.h = newSprite.source.h;
+					const Sprite newSprite  = spriteAtlas.Get(spriteTrans->ID);
+					spriteTrans->Position.w = newSprite.source.w;
+					spriteTrans->Position.h = newSprite.source.h;
 				}
 			}
 
-			spriteTrans->rotation   = transform.value().rot;
-			spriteTrans->position.x = static_cast<int>(floor(transform.value().pos.x - static_cast<float>(spriteTrans->position.w) / 2.0f));
-			spriteTrans->position.y = static_cast<int>(floor(transform.value().pos.y - static_cast<float>(spriteTrans->position.h) / 2.0f));
+			spriteTrans->Rotation   = transform.value().rot;
+			spriteTrans->Position.x = static_cast<int>(floor(transform.value().pos.x - static_cast<float>(spriteTrans->Position.w) / 2.0f));
+			spriteTrans->Position.y = static_cast<int>(floor(transform.value().pos.y - static_cast<float>(spriteTrans->Position.h) / 2.0f));
 
 			++i;
 		}
@@ -196,30 +206,30 @@ SpriteManager::SpriteCategory::Update(const SpriteAtlas& spriteAtlas, const floa
 			// Entity or Transform appears to have been deleted.
 			// Do the swap to remove it from the list.
 
-			Entity* lastEntity             = entities + size - 1;
-			SpriteTransform* lastTransform = transforms + size - 1;
+			Entity* lastEntity             = _Entities + _Size - 1;
+			SpriteTransform* lastTransform = _Transforms + _Size - 1;
 
 			size_t swapTarget = i;
 
-			if(SpriteAtlas::isAnimated(spriteTrans->id))
+			if(SpriteAtlas::isAnimated(spriteTrans->ID))
 			{
 				// Maintain sorted order for animated sprites
-				swapTarget = currentFrameTimes.size() - 1;
+				swapTarget = _CurrentFrameTimes.size() - 1;
 
-				Entity* lastAnimatedEntity             = entities + swapTarget;
-				SpriteTransform* lastAnimatedTransform = transforms + swapTarget;
+				Entity* lastAnimatedEntity             = _Entities + swapTarget;
+				SpriteTransform* lastAnimatedTransform = _Transforms + swapTarget;
 
-				*(entities + i)   = *(lastAnimatedEntity);
-				*(transforms + i) = *(lastAnimatedTransform);
+				*(_Entities + i)   = *(lastAnimatedEntity);
+				*(_Transforms + i) = *(lastAnimatedTransform);
 
-				currentFrameTimes[i] = currentFrameTimes.back();
-				currentFrameTimes.pop_back();
+				_CurrentFrameTimes[i] = _CurrentFrameTimes.back();
+				_CurrentFrameTimes.pop_back();
 			}
 
-			*(entities + swapTarget)   = *(lastEntity);
-			*(transforms + swapTarget) = *(lastTransform);
+			*(_Entities + swapTarget)   = *(lastEntity);
+			*(_Transforms + swapTarget) = *(lastTransform);
 
-			--size;
+			--_Size;
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #include <mutex>
 #include <optional>
 #include <algorithm>
+#include <cassert>
 
 template <typename T> class RingBuffer
 {
@@ -22,6 +23,7 @@ public:
 	void Enqueue(T element);
 	std::optional<T> Dequeue();
 	bool Contains(const T& element) const;
+	void Clear();
 
 	struct Iterator
 	{
@@ -138,7 +140,7 @@ RingBuffer<T>::Enqueue(T element)
 
 	if(_IsFull)
 	{
-		// We're stomping data, advance the tail!
+		assert(!"We're stomping data!!");
 		_Tail = (_Tail + 1) % _Capacity;
 	}
 
@@ -182,4 +184,13 @@ RingBuffer<T>::Contains(const T& element) const
 		return (std::find(tail, end, element) != end) ||
 			(std::find(start, head, element) != head);
 	}
+}
+
+template <typename T> void
+RingBuffer<T>::Clear()
+{
+	_Head = 0;
+	_Tail = 0;
+	_IsFull = false;
+
 }

@@ -1,5 +1,7 @@
-Background Renderer has some draw order glitches
+Background Renderer has some draw order glitches on the menu screen
 Tiled physics sometimes misses interactions along the edges of the wrapped area
+Tiled physics duplicates some collisions in certain circumstances?
+
 There are no checks done when respawning the player and no immunity frames, you can spawn into instant death.
 No sound because I didn't implement sound =D
 Not yet using the WIP DX12 rendering backend.

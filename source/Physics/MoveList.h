@@ -8,9 +8,9 @@ public:
 		Rigidbody Rb;
 		Vector2 Pos;
 
-		bool operator==(const MoveList::Entry& Other) const
+		bool operator==(const MoveList::Entry& other) const
 		{
-			return (Rb.entity == Other.Rb.entity);
+			return (Rb.entity == other.Rb.entity);
 		}
 	};
 
@@ -56,9 +56,9 @@ public:
 	{
 		return _Data.end();
 	}
-	int GetColliderCount(const ColliderType& ColliderType)
+	int GetColliderCount(const ColliderType& colliderType)
 	{
-		return _ColliderCounts[static_cast<int>(ColliderType)];
+		return _ColliderCounts[static_cast<int>(colliderType)];
 	}
 
 private:

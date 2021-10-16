@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include "../Renderer/Renderer.h"
 #include "../Renderer/RenderQueue.h"
@@ -14,7 +13,6 @@
 #include "../ECS/UIManager.h"
 
 #include "../GameObject/Create.h"
-#include "../GameObject/Player.h"
 
 #include "../Physics/Physics.h"
 
@@ -22,9 +20,8 @@
 
 #include "../Math/AABB.h"
 
-#include "..\State\GameMode.h"
-#include "..\State\Timer.h"
-#include "..\State\MenuState.h"
+#include "../State/Timer.h"
+#include "../State/MenuState.h"
 
 
 class Game
@@ -46,42 +43,50 @@ public:
 	//@NOTE: This has to be declared out here so that the state machine compilation units
 	// can see the code and generate their templated versions. I don't like this one bit.
 	template<typename T>
-	void ChangeState()
+	void ChangeState(bool shouldResetSystems)
 	{
-		currentState->OnExit();
-		currentState = std::make_unique<T>(*this);
-		currentState->OnEnter();
+		CurrentState->OnExit();
+
+		if(shouldResetSystems)
+		{
+			ResetAllSystems();
+		}
+
+		CurrentState = std::make_unique<T>(*this);
+		CurrentState->OnEnter();
 	}
 
 	void GarbageCollection();
+	void ResetAllSystems();
 
 	// Renderer Stuff
-	Renderer renderer;
-	RenderQueue renderQueue;
-	BackgroundRenderer backgroundRenderer;
+	Renderer Renderer;
+	RenderQueue RenderQueue;
+	BackgroundRenderer BackgroundRenderer;
 
 	//Input
-	InputHandler input;
+	InputHandler Input;
 
 	// GameObject Creator
-	Create create;
+	Create Create;
 
 	// IDK what this is honestly
-	Timer time;
+	Timer Time;
 
 	// ECS Systems
-	EntityManager entities;
-	TransformManager xforms;
-	SpriteManager sprites;
+	EntityManager Entities;
+	TransformManager Xforms;
+	SpriteManager Sprites;
 	UIManager UI;
 
 	// Physics
-	Physics physics;
-	RigidbodyManager rigidbodies;
-	const AABB gameField;
+	Physics Physics;
+	RigidbodyManager Rigidbodies;
+	const AABB GameField;
 
 	// Gameplay
-	std::unique_ptr<IState> currentState;
+	std::unique_ptr<IState> CurrentState;
 
-	bool isRunning;
+private:
+	bool _IsRunning;
 };

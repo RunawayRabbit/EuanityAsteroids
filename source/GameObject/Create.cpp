@@ -289,9 +289,9 @@ Create::GameOver(int score, const Vector2& gameOverPos)
 	trans.pos = gameOverPos;
 	trans.rot = 0;
 	transManager.Add(entity, trans);
-	spriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE);
+	spriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, false);
 
-	timer.ExecuteDelayed(5.0f, [&]() { game.ChangeState<MenuState>(); });
+	timer.ExecuteDelayed(5.0f, [&]() { game.ChangeState<MenuState>(true); });
 
 	return entity;
 }

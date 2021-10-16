@@ -1,13 +1,10 @@
 #pragma once
 
 #include "Entity.h"
-#include "EntityManager.h"
 
-#include "..\Math\Vector2.h"
+#include "../Renderer/RenderQueue.h"
+#include "../Renderer/SpriteAtlas.h"
 
-#include "..\Renderer\RenderQueue.h"
-#include "..\Renderer\SpriteAtlas.h"
-#include "..\Renderer\SpriteTransform.h"
 
 #include "TransformManager.h"
 
@@ -19,47 +16,51 @@ public:
 	SpriteManager(const TransformManager& transManager, const EntityManager& entityManager, const SpriteAtlas& spriteAtlas, const int capacity);
 	SpriteManager() = delete;
 
-	void Create(const Entity entity, const SpriteID spriteID, const RenderQueue::Layer layer, const bool shouldRepeatAtEdges = true);
+	void Create(Entity entity, SpriteID spriteID, RenderQueue::Layer layer, bool shouldRepeatAtEdges = true);
 
 	void Render(RenderQueue& renderQueue) const;
 
-	void Update(const float deltaTime);
+	void Update(float deltaTime);
+
+	void Clear();
 
 private:
-	const TransformManager& transManager;
+	const TransformManager& _TransManager;
 
 	class SpriteCategory
 	{
 	public:
-		SpriteCategory(const TransformManager& transManager, const EntityManager& entityManager, const int capacity);
+		SpriteCategory(const TransformManager& transManager, const EntityManager& entityManager, int capacity);
 		SpriteCategory() = delete;
 
-		void Allocate(const int newCapacity);
-		
-		void Create(const Entity entity, const SpriteID spriteID, const SpriteTransform trans);
+		void Allocate(int newCapacity);
 
-		void Update(const SpriteAtlas& spriteAtlas, const float deltaTime);
+		void Create(Entity entity, SpriteID spriteID, SpriteTransform trans);
+
+		void Update(const SpriteAtlas& spriteAtlas, float deltaTime);
 
 		void Render(RenderQueue& renderQueue) const;
-		void RenderLooped(RenderQueue& renderQueue, const int screenWidth, const int screenHeight) const;
+		void RenderLooped(RenderQueue& renderQueue) const;
+
+		void Clear();
 
 	private:
-		const TransformManager& transManager;
-		const EntityManager& entityManager;
+		const TransformManager& _TransManager;
+		const EntityManager& _EntityManager;
 
-		int size = 0;
-		int animatedSize = 0;
-		int capacity;
+		int _Size = 0;
+		int _AnimatedSize = 0;
+		int _Capacity;
 
-		void* buffer;
-		Entity* entities;
-		SpriteTransform* transforms;
+		void* _Buffer;
+		Entity* _Entities;
+		SpriteTransform* _Transforms;
 
-		std::vector<float> currentFrameTimes;
+		std::vector<float> _CurrentFrameTimes;
 	};
 
-	const SpriteAtlas& spriteAtlas;
+	const SpriteAtlas& _SpriteAtlas;
 
-	SpriteCategory repeating;
-	SpriteCategory nonRepeating;
+	SpriteCategory _Repeating;
+	SpriteCategory _NonRepeating;
 };

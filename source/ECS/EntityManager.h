@@ -22,6 +22,7 @@ public:
 	void GarbageCollect();
 
 	uint32_t Count();
+	void Clear();
 
 	RingBuffer<Entity> ZombieList;
 
