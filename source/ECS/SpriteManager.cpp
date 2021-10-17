@@ -18,7 +18,8 @@ SpriteManager::SpriteManager(const TransformManager& transManager,
 	: _TransManager(transManager),
 	  _SpriteAtlas(spriteAtlas),
 	  _Repeating(transManager, entityManager, capacity),
-	  _NonRepeating(transManager, entityManager, capacity)
+	  _NonRepeating(transManager, entityManager, capacity),
+	  _ScreenSpace(transManager, entityManager, capacity)
 {
 }
 
@@ -27,11 +28,11 @@ SpriteManager::Render(RenderQueue& renderQueue) const
 {
 	_Repeating.RenderLooped(renderQueue);
 	_NonRepeating.Render(renderQueue);
+	_ScreenSpace.RenderScreenSpace(renderQueue);
 }
 
 void
-SpriteManager::Create(const Entity entity, const SpriteID spriteID, const RenderQueue::Layer layer, const bool shouldRepeatAtEdges,
-	 const bool isScreenspace)
+SpriteManager::Create(const Entity entity, const SpriteID spriteID, const RenderQueue::Layer layer, const RenderFlags renderFlags)
 {
 	//@TODO: These APIs aren't following the same conventions...
 
@@ -53,14 +54,24 @@ SpriteManager::Create(const Entity entity, const SpriteID spriteID, const Render
 	spriteTransform.Rotation = TransRot;
 	spriteTransform.Layer    = layer;
 
-	// Pipe the call to the correct function.
-	if(shouldRepeatAtEdges)
+	switch(renderFlags)
 	{
-		_Repeating.Create(entity, spriteID, spriteTransform);
-	}
-	else
-	{
-		_NonRepeating.Create(entity, spriteID, spriteTransform);
+		case RenderFlags::FIXED:
+		{
+			_NonRepeating.Create(entity, spriteID, spriteTransform);
+			break;
+		}
+
+		case RenderFlags::REPEATING:
+		{
+			_Repeating.Create(entity, spriteID, spriteTransform);
+			break;
+		}
+		case RenderFlags::SCREEN_SPACE:
+		{
+			_ScreenSpace.Create(entity, spriteID, spriteTransform);
+			break;
+		}
 	}
 }
 
@@ -69,6 +80,7 @@ SpriteManager::Update(const float deltaTime)
 {
 	_Repeating.Update(_SpriteAtlas, deltaTime);
 	_NonRepeating.Update(_SpriteAtlas, deltaTime);
+	_ScreenSpace.Update(_SpriteAtlas, deltaTime);
 }
 
 void
@@ -76,6 +88,7 @@ SpriteManager::Clear()
 {
 	_Repeating.Clear();
 	_NonRepeating.Clear();
+	_ScreenSpace.Clear();
 }
 
 
@@ -125,6 +138,16 @@ SpriteManager::SpriteCategory::Render(RenderQueue& renderQueue) const
 	{
 		const SpriteTransform* transform = _Transforms + i;
 		renderQueue.Enqueue(transform->ID, transform->Position, transform->Rotation, transform->Layer);
+	}
+}
+
+void
+SpriteManager::SpriteCategory::RenderScreenSpace(RenderQueue& renderQueue) const
+{
+	for(auto i = 0; i < _Size; i++)
+	{
+		const SpriteTransform* transform = _Transforms + i;
+		renderQueue.EnqueueScreenSpace(transform->ID, transform->Position, transform->Rotation, transform->Layer);
 	}
 }
 
@@ -190,9 +213,9 @@ SpriteManager::SpriteCategory::Update(const SpriteAtlas& spriteAtlas, const floa
 					spriteTrans->ID = SpriteAnimationData::nextFrameIndex[static_cast<int>(spriteTrans->ID)];
 					_CurrentFrameTimes[i] += SpriteAnimationData::frameTime[static_cast<int>(spriteTrans->ID)];
 
-					const Sprite newSprite  = spriteAtlas.Get(spriteTrans->ID);
-					spriteTrans->Position.w = newSprite.source.w;
-					spriteTrans->Position.h = newSprite.source.h;
+					const auto [spriteID, tex, src] = spriteAtlas.Get(spriteTrans->ID);
+					spriteTrans->Position.w         = src.w;
+					spriteTrans->Position.h         = src.h;
 				}
 			}
 
@@ -207,8 +230,8 @@ SpriteManager::SpriteCategory::Update(const SpriteAtlas& spriteAtlas, const floa
 			// Entity or Transform appears to have been deleted.
 			// Do the swap to remove it from the list.
 
-			Entity* lastEntity             = _Entities + _Size - 1;
-			SpriteTransform* lastTransform = _Transforms + _Size - 1;
+			const auto lastEntity    = _Entities + _Size - 1;
+			const auto lastTransform = _Transforms + _Size - 1;
 
 			size_t swapTarget = i;
 

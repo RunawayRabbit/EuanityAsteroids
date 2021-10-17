@@ -13,10 +13,17 @@ class AABB;
 class SpriteManager
 {
 public:
+	enum class RenderFlags : uint8_t
+	{
+        REPEATING,
+		FIXED,
+        SCREEN_SPACE,
+    };
+
 	SpriteManager(const TransformManager& transManager, const EntityManager& entityManager, const SpriteAtlas& spriteAtlas, int capacity);
 	SpriteManager() = delete;
 
-	void Create(Entity entity, SpriteID spriteID, RenderQueue::Layer layer, bool shouldRepeatAtEdges = true, bool isScreenspace = false);
+	void Create(Entity entity, SpriteID spriteID, RenderQueue::Layer layer, RenderFlags renderFlags = RenderFlags::REPEATING);
 
 	void Render(RenderQueue& renderQueue) const;
 
@@ -30,6 +37,9 @@ private:
 	class SpriteCategory
 	{
 	public:
+
+
+
 		SpriteCategory(const TransformManager& transManager, const EntityManager& entityManager, int capacity);
 		SpriteCategory() = delete;
 
@@ -40,6 +50,7 @@ private:
 		void Update(const SpriteAtlas& spriteAtlas, float deltaTime);
 
 		void Render(RenderQueue& renderQueue) const;
+		void RenderScreenSpace(RenderQueue& renderQueue) const;
 		void RenderLooped(RenderQueue& renderQueue) const;
 
 		void Clear();
@@ -48,7 +59,7 @@ private:
 		const TransformManager& _TransManager;
 		const EntityManager& _EntityManager;
 
-		int _Size = 0;
+		int _Size         = 0;
 		int _AnimatedSize = 0;
 		int _Capacity;
 
@@ -63,4 +74,5 @@ private:
 
 	SpriteCategory _Repeating;
 	SpriteCategory _NonRepeating;
+	SpriteCategory _ScreenSpace;
 };

@@ -69,7 +69,7 @@ public:
 
 	Entity UIButton(const AABB& position, SpriteID spriteID, std::function<void()> callback) const;
 
-	Entity GameOver(int score, const Vector2& gameOverPos = Vector2::zero());
+	Entity GameOver(int score);
 
 private:
 

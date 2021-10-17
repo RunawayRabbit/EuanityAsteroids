@@ -322,17 +322,19 @@ Create::UIButton(const AABB& position, const SpriteID spriteID, const std::funct
 }
 
 Entity
-Create::GameOver(int score, const Vector2& gameOverPos)
+Create::GameOver(int score)
 {
 	const auto entity = _EntityManager.Create();
 
 	Transform trans;
-	trans.pos = gameOverPos;
+	trans.pos = {_Game.GameField.max * 0.5f};
 	trans.rot = 0;
 	_TransManager.Add(entity, trans);
-	_SpriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, true);
+	_SpriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, SpriteManager::RenderFlags::SCREEN_SPACE);
 
-	_Timer.ExecuteDelayed(5.0f, [&]() { _Game.ChangeState<MenuState>(true); });
+	const auto gameOverDuration = 5.0f;
+	_Timer.ExecuteDelayed(gameOverDuration, [&]() { _Game.ChangeState<MenuState>(true); });
+	_EntityManager.DestroyDelayed(entity, gameOverDuration);
 
 	return entity;
 }
