@@ -30,7 +30,8 @@ SpriteManager::Render(RenderQueue& renderQueue) const
 }
 
 void
-SpriteManager::Create(const Entity entity, const SpriteID spriteID, const RenderQueue::Layer layer, const bool shouldRepeatAtEdges)
+SpriteManager::Create(const Entity entity, const SpriteID spriteID, const RenderQueue::Layer layer, const bool shouldRepeatAtEdges,
+	 const bool isScreenspace)
 {
 	//@TODO: These APIs aren't following the same conventions...
 

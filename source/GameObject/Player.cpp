@@ -14,22 +14,24 @@
 
 #include "Player.h"
 
+#include "../Math/Vector2Int.h"
+
 
 Player::Player(EntityManager& entityManager,
                RigidbodyManager& rigidbodyManager,
                TransformManager& transformManager,
                const Create& create,
                Physics& physics)
-	: entity(Entity::Null()),
-	  rigidbodyManager(rigidbodyManager),
-	  physics(physics),
-	  entityManager(entityManager),
-	  transformManager(transformManager),
-	  create(create),
-	  mainThruster(Entity::Null()),
-	  strafeThrusterLeft(Entity::Null()),
-	  strafeThrusterRight(Entity::Null()),
-	  shotTimer(0)
+	: _Entity(Entity::Null()),
+	  _RigidbodyManager(rigidbodyManager),
+	  _Physics(physics),
+	  _EntityManager(entityManager),
+	  _TransformManager(transformManager),
+	  _Create(create),
+	  _MainThruster(Entity::Null()),
+	  _StrafeThrusterLeft(Entity::Null()),
+	  _StrafeThrusterRight(Entity::Null()),
+	  _ShotTimer(0)
 {
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,
 	// have all of our initialization done at startup time.
@@ -41,26 +43,26 @@ Player::Spawn(const Vector2& startPos, const float& startRot)
 	if(IsAlive())
 		return;
 
-	entity = create.Ship(startPos, startRot);
+	_Entity = _Create.Ship(startPos, startRot);
 }
 
 void
 Player::Kill(const Entity& playerEntity)
 {
 	// Don't destroy if it isn't our entity being destroyed!
-	if(entity != playerEntity)
+	if(_Entity != playerEntity)
 		return;
 
-	auto ship = transformManager.Get(entity);
+	auto ship = _TransformManager.Get(_Entity);
 
-	DestroyThruster(mainThruster);
-	DestroyThruster(strafeThrusterLeft);
-	DestroyThruster(strafeThrusterRight);
+	DestroyThruster(_MainThruster);
+	DestroyThruster(_StrafeThrusterLeft);
+	DestroyThruster(_StrafeThrusterRight);
 
-	entityManager.Destroy(entity);
+	_EntityManager.Destroy(_Entity);
 
-	create.LargeExplosion(ship.value().pos);
-	entity = Entity::Null();
+	_Create.LargeExplosion(ship.value().pos, GetPlayerVelocity() * -0.4f);
+	_Entity = Entity::Null();
 }
 
 void
@@ -71,12 +73,12 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		return;
 
 	// Increment shot cooldown
-	shotTimer -= deltaTime;
+	_ShotTimer -= deltaTime;
 
 	// Get the rb and the transform from the respective managers
 	Rigidbody* rigid;
-	auto optionalTransform = transformManager.Get(entity);
-	if(!optionalTransform.has_value() || !rigidbodyManager.GetMutable(entity, rigid))
+	auto optionalTransform = _TransformManager.Get(_Entity);
+	if(!optionalTransform.has_value() || !_RigidbodyManager.GetMutable(_Entity, rigid))
 	{
 		// If we end up here, a serious bug has occured.
 		__assume(false);
@@ -119,21 +121,21 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		if(inputBuffer.Contains(InputToggle::StrafeLeft))
 		{
 			newVelocity += right * (-STRAFE_ACCELERATION * deltaTime);
-			RenderThruster(strafeThrusterRight, Vector2(STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), 90.0f, transform, SpriteID::MUZZLE_FLASH);
+			RenderThruster(_StrafeThrusterRight, Vector2(STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), 90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
-			DestroyThruster(strafeThrusterRight);
+			DestroyThruster(_StrafeThrusterRight);
 		}
 
 		if(inputBuffer.Contains(InputToggle::StrafeRight))
 		{
 			newVelocity += right * (STRAFE_ACCELERATION * deltaTime);
-			RenderThruster(strafeThrusterLeft, Vector2(-STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), -90.0f, transform, SpriteID::MUZZLE_FLASH);
+			RenderThruster(_StrafeThrusterLeft, Vector2(-STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), -90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
-			DestroyThruster(strafeThrusterLeft);
+			DestroyThruster(_StrafeThrusterLeft);
 		}
 	}
 #pragma endregion
@@ -143,22 +145,22 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		if(inputBuffer.Contains(InputToggle::MoveForward))
 		{
 			newVelocity += forward * (FORWARD_ACCELERATION * deltaTime);
-			RenderThruster(mainThruster, Vector2(MAIN_THRUSTER_X, MAIN_THRUSTER_Y), trailRotation, transform, SpriteID::SHIP_TRAIL);
+			RenderThruster(_MainThruster, Vector2(MAIN_THRUSTER_X, MAIN_THRUSTER_Y), trailRotation, transform, SpriteID::SHIP_TRAIL);
 		}
 		else
 		{
-			DestroyThruster(mainThruster);
+			DestroyThruster(_MainThruster);
 		}
 	}
 #pragma endregion
 
 
 #pragma region Shoot
-	if(shotTimer < 0.0f && inputBuffer.Contains(InputToggle::Shoot))
+	if(_ShotTimer < 0.0f && inputBuffer.Contains(InputToggle::Shoot))
 	{
-		shotTimer = (shotTimer > -deltaTime) ? shotTimer + SHOT_COOLDOWN : SHOT_COOLDOWN;
+		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + SHOT_COOLDOWN : SHOT_COOLDOWN;
 		// ReSharper disable once CppExpressionWithoutSideEffects
-		create.Bullet(transform.pos + (forward * BULLET_SPAWN_OFFSET_Y), transform.rot, BULLET_SPEED, BULLET_LIFETIME);
+		_Create.Bullet(transform.pos + (forward * BULLET_SPAWN_OFFSET_Y), transform.rot, BULLET_SPEED, BULLET_LIFETIME);
 	}
 #pragma endregion
 
@@ -168,6 +170,39 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	rigid->angularVelocity = std::clamp(newAngularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
 }
 
+Vector2Int
+Player::GetPlayerPositionInt() const
+{
+	const auto floatPos     = GetPlayerPosition();
+	const Vector2Int retVal = {static_cast<int>(floatPos.x), static_cast<int>(floatPos.y)};
+	return retVal;
+}
+
+Vector2
+Player::GetPlayerPosition() const
+{
+	auto trans = _TransformManager.Get(_Entity);
+	Vector2 retVal = {0.0f,0.0f};
+	if(trans.has_value())
+	{
+		retVal = trans.value().pos;
+
+	}
+	return retVal;
+}
+
+Vector2
+Player::GetPlayerVelocity() const
+{
+	auto rigid = _RigidbodyManager.Get(_Entity);
+	auto retVal = Vector2::zero();
+	if(rigid.has_value())
+	{
+		retVal = rigid.value().velocity;
+	}
+	return retVal;
+}
+
 void
 Player::RenderThruster(Entity& thruster,
                        const Vector2& thrusterOffset,
@@ -175,12 +210,12 @@ Player::RenderThruster(Entity& thruster,
                        const Transform& parentTrans,
                        const SpriteID spriteID) const
 {
-	if(!entityManager.Exists(thruster))
+	if(!_EntityManager.Exists(thruster))
 	{
-		thruster = create.ShipThruster(entity, thrusterOffset, thrusterRotation, spriteID);
+		thruster = _Create.ShipThruster(_Entity, thrusterOffset, thrusterRotation, spriteID);
 	}
 
-	auto OptThrusterTrans = transformManager.GetMutable(thruster);
+	auto OptThrusterTrans = _TransformManager.GetMutable(thruster);
 	if(!OptThrusterTrans.has_value())
 	{
 		//@TODO: Log Error?
@@ -194,6 +229,6 @@ Player::RenderThruster(Entity& thruster,
 void
 Player::DestroyThruster(Entity& thruster) const
 {
-	entityManager.Destroy(thruster);
+	_EntityManager.Destroy(thruster);
 	thruster = Entity::Null();
 }

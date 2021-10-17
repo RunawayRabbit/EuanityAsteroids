@@ -29,22 +29,25 @@ public:
 
 	struct Element
 	{
-		SDL_Texture* tex;
-		SDL_Rect srcRect;
-		SDL_Rect dstRect;
-		float angle;
-		RenderQueue::Layer layer;
+		SDL_Texture* Tex;
+		SDL_Rect SrcRect;
+		SDL_Rect DstRect;
+		float Angle;
+		Layer Layer;
 	};
 
-	const int screenWidth;
-	const int screenHeight;
+	const int ScreenWidth;
+	const int ScreenHeight;
 
-	void Enqueue(SpriteID spriteID, const SDL_Rect& targetRect, const float rotation, const RenderQueue::Layer layer);
-	void Enqueue(SpriteID spriteID, const float rotation, const RenderQueue::Layer layer);
+	void Enqueue(SpriteID spriteID, const SDL_Rect& targetRect, float rotation, Layer layer);
+	void Enqueue(SpriteID spriteID, float rotation, Layer layer);
+	void EnqueueScreenSpace(SpriteID spriteID, const SDL_Rect& targetRect, float rotation, Layer layer);
 	void EnqueueLooped(const SpriteTransform& transform);
 
-	const SpriteAtlas& GetSpriteAtlas() { return spriteAtlas; }
-	const std::vector<RenderQueue::Element>& GetRenderQueue();
+	void SetCameraLocation(const int& x, const int& y);
+
+	const SpriteAtlas& GetSpriteAtlas() const { return _SpriteAtlas; }
+	const std::vector<Element>& GetRenderQueue();
 	void Clear();
 
 private:
@@ -54,6 +57,10 @@ private:
 	void DrawAtLeft(const SpriteTransform& transform, const AABB& screenAABB);
 	void DrawAtRight(const SpriteTransform& transform, const AABB& screenAABB);
 
-	SpriteAtlas spriteAtlas;
-	std::vector<RenderQueue::Element> renderQueue;
+
+	int _FocalPointX;
+	int _FocalPointY;
+
+	SpriteAtlas _SpriteAtlas;
+	std::vector<Element> _RenderQueue;
 };

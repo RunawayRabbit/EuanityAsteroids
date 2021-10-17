@@ -65,22 +65,22 @@ public:
 	Entity ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const float& thrusterRotation, SpriteID spriteID) const;
 
 	[[maybe_unused]] Entity SmallExplosion(const Vector2& position) const;
-	[[maybe_unused]] Entity LargeExplosion(const Vector2& position) const;
+	[[maybe_unused]] Entity LargeExplosion(const Vector2& position, const Vector2& velocity = Vector2::zero(), const float& rotVelocity = 0) const;
 
 	Entity UIButton(const AABB& position, SpriteID spriteID, std::function<void()> callback) const;
 
-	Entity GameOver(int score, const Vector2& gameOverPos);
+	Entity GameOver(int score, const Vector2& gameOverPos = Vector2::zero());
 
 private:
 
 	static ColliderType GetColliderFor(const AsteroidType& asteroidType);
 	SpriteID GetSpriteFor(const AsteroidType& asteroidType) const;
 
-	Game& game;
-	EntityManager& entityManager;
-	TransformManager& transManager;
-	RigidbodyManager& rigidbodyManager;
-	SpriteManager& spriteManager;
-	UIManager& uiManager;
-	Timer& timer;
+	Game& _Game;
+	EntityManager& _EntityManager;
+	TransformManager& _TransManager;
+	RigidbodyManager& _RigidbodyManager;
+	SpriteManager& _SpriteManager;
+	UIManager& _UIManager;
+	Timer& _Timer;
 };

@@ -13,10 +13,10 @@ class AABB;
 class SpriteManager
 {
 public:
-	SpriteManager(const TransformManager& transManager, const EntityManager& entityManager, const SpriteAtlas& spriteAtlas, const int capacity);
+	SpriteManager(const TransformManager& transManager, const EntityManager& entityManager, const SpriteAtlas& spriteAtlas, int capacity);
 	SpriteManager() = delete;
 
-	void Create(Entity entity, SpriteID spriteID, RenderQueue::Layer layer, bool shouldRepeatAtEdges = true);
+	void Create(Entity entity, SpriteID spriteID, RenderQueue::Layer layer, bool shouldRepeatAtEdges = true, bool isScreenspace = false);
 
 	void Render(RenderQueue& renderQueue) const;
 

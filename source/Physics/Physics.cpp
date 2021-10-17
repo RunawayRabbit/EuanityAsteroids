@@ -87,18 +87,18 @@ Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 		else if(y >= CHUNKS_Y)
 			wrappedY -= _ScreenAABB.max.y;
 
-		for(auto X = startTileX; X <= endTileX; ++X)
+		for(auto x = startTileX; x <= endTileX; ++x)
 		{
 			// Wrap the element in X if we have to.
 			auto wrappedX = rbTrans.pos.x;
-			if(X < 0)
+			if(x < 0)
 				wrappedX += _ScreenAABB.max.x;
-			else if(X >= CHUNKS_X)
+			else if(x >= CHUNKS_X)
 				wrappedX -= _ScreenAABB.max.x;
 
 			// Calculate the chunk index and enqueue
-			auto Mod              = [](const int A, const int B) { return (B + (A % B)) % B; };
-			const auto chunkIndex = Mod(y, CHUNKS_Y) * CHUNKS_X + Mod(X, CHUNKS_X);
+			auto mod              = [](const int A, const int B) { return (B + (A % B)) % B; };
+			const auto chunkIndex = mod(y, CHUNKS_Y) * CHUNKS_X + mod(x, CHUNKS_X);
 			_MoveLists[chunkIndex].Enqueue({ rb, Vector2(wrappedX, wrappedY) });
 		}
 	}
@@ -188,7 +188,7 @@ Physics::DetectInitialCollisions(MoveList& moveList, const float& deltaTime) con
 
 	// The order of these has to match the order of enum ColliderType defined in ColliderType.h.
 	MoveList::ColliderRanges ranges;
-	ranges.ShipBegin = moveList.begin();
+	ranges.ShipBegin = moveList.begin() + moveList.GetColliderCount(ColliderType::NONE);
 	ranges.ShipEnd   = ranges.BulletBegin = ranges.ShipBegin + moveList.GetColliderCount(ColliderType::SHIP);
 	ranges.BulletEnd = ranges.LargeBegin  = ranges.BulletBegin + moveList.GetColliderCount(ColliderType::BULLET);
 	ranges.LargeEnd  = ranges.MediumBegin = ranges.LargeBegin + moveList.GetColliderCount(ColliderType::LARGE_ASTEROID);

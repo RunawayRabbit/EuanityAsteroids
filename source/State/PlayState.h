@@ -2,38 +2,39 @@
 
 #include <vector>
 
-#include "..\GameObject\Player.h"
+#include "../GameObject/Player.h"
 
 #include "IState.h"
 
 class Game;
 
-class PlayState : public IState
+class PlayState final : public IState
 {
 public:
-	PlayState(Game& game);
+	explicit PlayState(Game& game);
 	PlayState() = delete;
 
-	virtual void OnEnter() override;
-	virtual void OnExit() override;
+	void OnEnter() override;
+	void OnExit() override;
 
-	virtual void Update(const InputBuffer& inputBuffer, const float& deltaTime) override;
-	virtual void Render() override;
+	void Update(const InputBuffer& inputBuffer, const float& deltaTime) override;
+	void Render() override;
 
 private:
-	Game& game;
+	Game& _Game;
 
-	Player player;
-	Entity gameOver;
+	Player _Player;
+	Entity _GameOver;
 
-	std::vector<Entity> currentAsteroids;
+	std::vector<Entity> _CurrentAsteroids;
 
-	int level;
-	int lives;
-	int score;
+	int _Level;
+	int _Lives;
+	int _Score;
 
-	bool waitingForNextLevel;
-	bool waitingToSpawn;
+	bool _WaitingForNextLevel;
+	bool _WaitingToSpawn;
+	inline static const float CAMERA_VELOCITY_FACTOR = 0.3f;;
 
 	void SpawnFreshAsteroids(const int& count, const float& minVelocity, const float& maxVelocity);
 	void SpawnPlayer();

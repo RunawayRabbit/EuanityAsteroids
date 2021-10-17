@@ -1,8 +1,10 @@
 #pragma once
 
-#include "..\ECS\Entity.h"
-#include "..\ECS\EntityManager.h"
-#include "..\Physics\Physics.h"
+#include "../ECS/Entity.h"
+#include "../ECS/EntityManager.h"
+#include "../Physics/Physics.h"
+
+#include "../Math/Vector2Int.h"
 
 class RigidbodyManager;
 class EntityManager;
@@ -23,28 +25,33 @@ public:
 	void Update(const InputBuffer& inputBuffer, const float& deltaTime);
 	bool IsAlive() const
 	{
-		return entityManager.Exists(entity);
+		return _EntityManager.Exists(_Entity);
 	}
+
+	Vector2 GetPlayerPosition() const;
+	Vector2Int GetPlayerPositionInt() const;
+
+	Vector2 GetPlayerVelocity() const;
 
 private:
 
 	void RenderThruster(Entity& thruster, const Vector2& thrusterOffset, const float& thrusterRotation, const Transform& parentTrans, const SpriteID spriteID) const;
 	void DestroyThruster(Entity& thruster) const;
 
-	RigidbodyManager& rigidbodyManager;
-	Physics& physics;
+	RigidbodyManager& _RigidbodyManager;
+	Physics& _Physics;
 
-	EntityManager& entityManager;
-	TransformManager& transformManager;
-	const Create& create;
+	EntityManager& _EntityManager;
+	TransformManager& _TransformManager;
+	const Create& _Create;
 
-	Entity entity;
+	Entity _Entity;
 
-	Entity mainThruster;
-	Entity strafeThrusterLeft;
-	Entity strafeThrusterRight;
+	Entity _MainThruster;
+	Entity _StrafeThrusterLeft;
+	Entity _StrafeThrusterRight;
 
-	float shotTimer;
+	float _ShotTimer;
 
 	// All of the tweakables live here!
 

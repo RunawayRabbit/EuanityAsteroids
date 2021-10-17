@@ -75,7 +75,7 @@ UIManager::DrawButton(RenderQueue& renderQueue, const UIButton& element, bool is
 	targetRect.y = static_cast<int>(element.Box.min.y);
 	targetRect.w = static_cast<int>(element.Box.max.x - element.Box.min.x);
 	targetRect.h = static_cast<int>(element.Box.max.y - element.Box.min.y);
-	renderQueue.Enqueue(element.SpriteID, targetRect, 0, RenderQueue::Layer::UI);
+	renderQueue.EnqueueScreenSpace(element.SpriteID, targetRect, 0, RenderQueue::Layer::UI);
 }
 
 

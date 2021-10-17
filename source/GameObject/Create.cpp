@@ -59,13 +59,13 @@ Create::Create(Game& game,
                RigidbodyManager& rigidbodies,
                UIManager& uiManager,
                Timer& timer)
-	: game(game),
-	  entityManager(entities),
-	  transManager(transforms),
-	  rigidbodyManager(rigidbodies),
-	  spriteManager(sprites),
-	  uiManager(uiManager),
-	  timer(timer)
+	: _Game(game),
+	  _EntityManager(entities),
+	  _TransManager(transforms),
+	  _RigidbodyManager(rigidbodies),
+	  _SpriteManager(sprites),
+	  _UIManager(uiManager),
+	  _Timer(timer)
 {
 }
 
@@ -76,14 +76,14 @@ Create::Asteroid(const Vector2& position,
                  const float& rotVelocity,
                  const AsteroidType& asteroidType) const
 {
-	const auto entity = entityManager.Create();
+	const auto entity = _EntityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
 	trans.rot = rotation;
-	transManager.Add(entity, trans);
-	rigidbodyManager.Add(entity, GetColliderFor(asteroidType), velocity, rotVelocity);
-	spriteManager.Create(entity, GetSpriteFor(asteroidType), RenderQueue::Layer::DEFAULT);
+	_TransManager.Add(entity, trans);
+	_RigidbodyManager.Add(entity, GetColliderFor(asteroidType), velocity, rotVelocity);
+	_SpriteManager.Create(entity, GetSpriteFor(asteroidType), RenderQueue::Layer::DEFAULT);
 
 	return entity;
 }
@@ -94,7 +94,7 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 	std::array<Entity, 4> retVal = { Entity::Null(), Entity::Null(), Entity::Null(), Entity::Null() };
 
 	Rigidbody* parentRigid {};
-	if(!rigidbodyManager.GetMutable(asteroid, parentRigid))
+	if(!_RigidbodyManager.GetMutable(asteroid, parentRigid))
 	{
 		return retVal;
 	}
@@ -123,11 +123,11 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 
 		default:
 			// Only LARGE_ASTEROID and MEDIUM_ASTEROID are splittable. Destroy smalls.
-			entityManager.Destroy(asteroid);
+			_EntityManager.Destroy(asteroid);
 			return retVal;
 	}
 
-	auto optionalParentTrans = transManager.GetMutable(asteroid);
+	auto optionalParentTrans = _TransManager.GetMutable(asteroid);
 	if(!optionalParentTrans.has_value())
 	{
 		return retVal;
@@ -148,19 +148,19 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 
 	for(auto i = 0; i < 4; i++)
 	{
-		auto entity = entityManager.Create();
+		auto entity = _EntityManager.Create();
 
 		Transform trans;
 		trans.pos = parentTransform->pos + (directions.at(i) * (parentRadius + 0.0001f));
 		trans.rot = parentTransform->rot;
-		transManager.Add(entity, trans);
-		rigidbodyManager.Add(entity, colliderType, parentRigid->velocity + (directions.at(i) * splitImpulse), parentRigid->angularVelocity);
-		spriteManager.Create(entity, sprites.at(i), RenderQueue::Layer::DEFAULT);
+		_TransManager.Add(entity, trans);
+		_RigidbodyManager.Add(entity, colliderType, parentRigid->velocity + (directions.at(i) * splitImpulse), parentRigid->angularVelocity);
+		_SpriteManager.Create(entity, sprites.at(i), RenderQueue::Layer::DEFAULT);
 
 		retVal.at(i) = entity;
 	}
 
-	entityManager.Destroy(asteroid);
+	_EntityManager.Destroy(asteroid);
 
 	return retVal;
 }
@@ -168,29 +168,34 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 Entity
 Create::SmallExplosion(const Vector2& position) const
 {
-	const auto entity = entityManager.Create();
+	const auto entity = _EntityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
 	trans.rot = Math::RandomRange(0.0f, 360.0f);
-	transManager.Add(entity, trans);
-	spriteManager.Create(entity, SpriteID::SMALL_EXPLOSION, RenderQueue::Layer::PARTICLE);
-	entityManager.DestroyDelayed(entity, 0.5f);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, SpriteID::SMALL_EXPLOSION, RenderQueue::Layer::PARTICLE);
+	_EntityManager.DestroyDelayed(entity, 0.5f);
 
 	return entity;
 }
 
 Entity
-Create::LargeExplosion(const Vector2& position) const
+Create::LargeExplosion(const Vector2& position, const Vector2& velocity, const float& rotVelocity) const
 {
-	const auto entity = entityManager.Create();
+	const auto entity = _EntityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
 	trans.rot = Math::RandomRange(0.0f, 360.0f);
-	transManager.Add(entity, trans);
-	spriteManager.Create(entity, SpriteID::EXPLOSION, RenderQueue::Layer::PARTICLE);
-	entityManager.DestroyDelayed(entity, 0.8f);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, SpriteID::EXPLOSION, RenderQueue::Layer::PARTICLE);
+	if(velocity != Vector2::zero())
+	{
+		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
+	}
+	_EntityManager.DestroyDelayed(entity, 0.8f);
+
 
 	return entity;
 }
@@ -255,18 +260,18 @@ Create::GetSpriteFor(const AsteroidType& asteroidType) const
 Entity
 Create::Bullet(const Vector2& position, const float& rotation, const float& speed, const float& secondsToLive) const
 {
-	const auto entity = entityManager.Create();
+	const auto entity = _EntityManager.Create();
 
 	// std::cout << "Created bullet with EID " << entity.ToString() << ".\n";
 
 	Transform trans;
 	trans.pos = position;
 	trans.rot = rotation + 180;
-	transManager.Add(entity, trans);
-	spriteManager.Create(entity, SpriteID::BULLET, RenderQueue::Layer::PARTICLE);
-	rigidbodyManager.Add(entity, ColliderType::BULLET, -Vector2::Forward().RotateDeg(rotation) * speed, 0);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, SpriteID::BULLET, RenderQueue::Layer::PARTICLE);
+	_RigidbodyManager.Add(entity, ColliderType::BULLET, -Vector2::Forward().RotateDeg(rotation) * speed, 0);
 
-	entityManager.DestroyDelayed(entity, secondsToLive);
+	_EntityManager.DestroyDelayed(entity, secondsToLive);
 
 	return entity;
 }
@@ -274,15 +279,15 @@ Create::Bullet(const Vector2& position, const float& rotation, const float& spee
 Entity
 Create::Ship(const Vector2& position, const float& rotation, const Vector2& initialVelocity, const float& initialAngularVelocity) const
 {
-	const auto entity = entityManager.Create();
+	const auto entity = _EntityManager.Create();
 
 	Transform trans;
 	trans.pos = position;
 	trans.rot = rotation;
-	transManager.Add(entity, trans);
-	spriteManager.Create(entity, SpriteID::SHIP, RenderQueue::Layer::DEFAULT);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, SpriteID::SHIP, RenderQueue::Layer::DEFAULT);
 
-	rigidbodyManager.Add(entity, ColliderType::SHIP, initialVelocity, initialAngularVelocity);
+	_RigidbodyManager.Add(entity, ColliderType::SHIP, initialVelocity, initialAngularVelocity);
 
 	return entity;
 }
@@ -290,19 +295,19 @@ Create::Ship(const Vector2& position, const float& rotation, const Vector2& init
 Entity
 Create::ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const float& thrusterRotation, SpriteID spriteID) const
 {
-	auto parentTrans = transManager.Get(ship);
+	auto parentTrans = _TransManager.Get(ship);
 	if(! parentTrans.has_value())
 	{
 		return Entity::Null();
 	}
 
-	const auto entity = entityManager.Create();
+	const auto entity = _EntityManager.Create();
 
 	Transform trans;
 	trans.pos = parentTrans.value().pos + thrusterOffset.RotateDeg(parentTrans.value().rot);
 	trans.rot = parentTrans.value().rot;
-	transManager.Add(entity, trans);
-	spriteManager.Create(entity, spriteID, RenderQueue::Layer::PARTICLE);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, spriteID, RenderQueue::Layer::PARTICLE);
 
 	return entity;
 }
@@ -310,8 +315,8 @@ Create::ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const fl
 Entity
 Create::UIButton(const AABB& position, const SpriteID spriteID, const std::function<void()> callback) const
 {
-	const auto entity = entityManager.Create();
-	uiManager.MakeButton(entity, position, spriteID, callback);
+	const auto entity = _EntityManager.Create();
+	_UIManager.MakeButton(entity, position, spriteID, callback);
 
 	return entity;
 }
@@ -319,15 +324,15 @@ Create::UIButton(const AABB& position, const SpriteID spriteID, const std::funct
 Entity
 Create::GameOver(int score, const Vector2& gameOverPos)
 {
-	const auto entity = entityManager.Create();
+	const auto entity = _EntityManager.Create();
 
 	Transform trans;
 	trans.pos = gameOverPos;
 	trans.rot = 0;
-	transManager.Add(entity, trans);
-	spriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, false);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, true);
 
-	timer.ExecuteDelayed(5.0f, [&]() { game.ChangeState<MenuState>(true); });
+	_Timer.ExecuteDelayed(5.0f, [&]() { _Game.ChangeState<MenuState>(true); });
 
 	return entity;
 }

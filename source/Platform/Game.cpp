@@ -43,11 +43,11 @@ void Game::ProcessInput()
 	Input.ProcessInput();
 }
 
-void Game::Update(float deltaTime)
+void Game::Update(const float deltaTime)
 {
 	Time.Update(deltaTime);
 
-	const InputBuffer& inputBuffer = Input.GetBuffer();
+	const auto& inputBuffer = Input.GetBuffer();
 
 	CurrentState->Update(inputBuffer, deltaTime);
 
@@ -98,4 +98,5 @@ Game::ResetAllSystems()
 	Rigidbodies.Clear();
 	UI.Clear();
 	Sprites.Clear();
+	RenderQueue.SetCameraLocation(0,0);
 }

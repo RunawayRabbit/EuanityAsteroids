@@ -12,48 +12,67 @@
 
 
 RenderQueue::RenderQueue(Renderer& renderer, const int screenWidth, const int screenHeight)
-	: screenWidth(screenWidth),
-	  screenHeight(screenHeight),
-	  spriteAtlas(renderer)
+	: ScreenWidth(screenWidth),
+	  ScreenHeight(screenHeight),
+	  _FocalPointX(0),
+	  _FocalPointY(0),
+	  _SpriteAtlas(renderer)
 {
-	renderQueue.reserve(128); // arbitrary, but a decent starting size for total number of rendered sprites?)
+	_RenderQueue.reserve(256); // arbitrary, but a decent starting size for total number of rendered sprites?)
 }
 
 
 void
 RenderQueue::Enqueue(const SpriteID spriteID, const SDL_Rect& targetRect, const float rotation, const Layer layer)
 {
-	//@NOTE: I used to do some complex queueing here where sorted insertion became O(log k) where k is the number of layers in use.
-	// It turns out that having an O(1) insert and doing the sort at the end is faster, since we enqueue far more often than we
-	// fetch.
-	const auto [id, texture, source] = spriteAtlas.Get(spriteID);
+	auto finalTargetRect = targetRect;
+	finalTargetRect.x -= _FocalPointX;
+	finalTargetRect.y -= _FocalPointY;
 
-	Element el;
-	el.tex     = texture;
-	el.srcRect = source;
-	el.dstRect = targetRect;
-	el.angle   = rotation;
-	el.layer   = layer;
-
-	renderQueue.push_back(el);
+	EnqueueScreenSpace(spriteID, finalTargetRect, rotation, layer);
 }
 
 void
-RenderQueue::Enqueue(const SpriteID spriteID, const float rotation, const RenderQueue::Layer layer)
+RenderQueue::Enqueue(const SpriteID spriteID, const float rotation, const Layer layer)
 {
 	SDL_Rect targetRect;
-	targetRect.w = screenWidth;
-	targetRect.h = screenHeight;
+	targetRect.w = ScreenWidth;
+	targetRect.h = ScreenHeight;
 	targetRect.x = 0;
 	targetRect.y = 0;
 	Enqueue(spriteID, targetRect, rotation, layer);
 }
 
 void
+RenderQueue::EnqueueScreenSpace(const SpriteID spriteID, const SDL_Rect& targetRect, const float rotation, const Layer layer)
+{
+	//@NOTE: I used to do some complex queueing here where sorted insertion became O(log k) where k is the number of layers in use.
+	// It turns out that having an O(1) insert and doing the sort at the end is faster, since we enqueue far more often than we
+	// fetch.
+	const auto [id, texture, source] = _SpriteAtlas.Get(spriteID);
+
+	Element el;
+	el.Tex     = texture;
+	el.SrcRect = source;
+	el.DstRect = targetRect;
+	el.Angle   = rotation;
+	el.Layer   = layer;
+
+	_RenderQueue.push_back(el);
+}
+
+void
 RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 {
-	const AABB screenAABB(Vector2::zero(), Vector2(static_cast<float>(screenWidth), static_cast<float>(screenHeight)));
-	const auto spriteOBB = OBB(transform.Position, transform.Rotation);
+	const AABB screenAABB(Vector2::zero(), Vector2(static_cast<float>(ScreenWidth), static_cast<float>(ScreenHeight)));
+
+	// world-to-screenspace
+	auto spriteWorldPos = transform.Position;
+	spriteWorldPos.x -= _FocalPointX;
+	spriteWorldPos.y -= _FocalPointY;
+
+	const auto spriteOBB = OBB(spriteWorldPos, transform.Rotation);
+
 	if(!screenAABB.FullyContains(spriteOBB))
 	{
 		// Sprite is visible on the opposite side. Determine which!
@@ -146,6 +165,13 @@ RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 	Enqueue(transform.ID, transform.Position, transform.Rotation, transform.Layer);
 }
 
+void
+RenderQueue::SetCameraLocation(const int& x, const int& y)
+{
+	_FocalPointX = x - ScreenWidth/2;
+	_FocalPointY = y - ScreenHeight/2;
+}
+
 
 void
 RenderQueue::DrawAtTop(const SpriteTransform& transform, const AABB& screenAABB)
@@ -184,17 +210,17 @@ RenderQueue::DrawAtRight(const SpriteTransform& transform, const AABB& screenAAB
 const std::vector<RenderQueue::Element>&
 RenderQueue::GetRenderQueue()
 {
-	std::sort(renderQueue.begin(), renderQueue.end(),
+	std::sort(_RenderQueue.begin(), _RenderQueue.end(),
 	          [](const Element& a, const Element& b) -> bool
 	          {
-		          return a.layer < b.layer;
+		          return a.Layer < b.Layer;
 	          });
 
-	return renderQueue;
+	return _RenderQueue;
 }
 
 void
 RenderQueue::Clear()
 {
-	renderQueue.clear();
+	_RenderQueue.clear();
 }

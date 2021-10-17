@@ -8,7 +8,7 @@ public:
 		Rigidbody Rb;
 		Vector2 Pos;
 
-		bool operator==(const MoveList::Entry& other) const
+		bool operator==(const Entry& other) const
 		{
 			return (Rb.entity == other.Rb.entity);
 		}
@@ -16,19 +16,19 @@ public:
 
 	struct ColliderRanges
 	{
-		std::vector<MoveList::Entry>::iterator ShipBegin;
-		std::vector<MoveList::Entry>::iterator ShipEnd;
-		std::vector<MoveList::Entry>::iterator BulletBegin;
-		std::vector<MoveList::Entry>::iterator BulletEnd;
-		std::vector<MoveList::Entry>::iterator LargeBegin;
-		std::vector<MoveList::Entry>::iterator LargeEnd;
-		std::vector<MoveList::Entry>::iterator MediumBegin;
-		std::vector<MoveList::Entry>::iterator MediumEnd;
-		std::vector<MoveList::Entry>::iterator SmallBegin;
-		std::vector<MoveList::Entry>::iterator SmallEnd;
+		std::vector<Entry>::iterator ShipBegin;
+		std::vector<Entry>::iterator ShipEnd;
+		std::vector<Entry>::iterator BulletBegin;
+		std::vector<Entry>::iterator BulletEnd;
+		std::vector<Entry>::iterator LargeBegin;
+		std::vector<Entry>::iterator LargeEnd;
+		std::vector<Entry>::iterator MediumBegin;
+		std::vector<Entry>::iterator MediumEnd;
+		std::vector<Entry>::iterator SmallBegin;
+		std::vector<Entry>::iterator SmallEnd;
 	};
 
-	void Enqueue(const MoveList::Entry& entry)
+	void Enqueue(const Entry& entry)
 	{
 		_Data.push_back(entry);
 		++_ColliderCounts[static_cast<int>(entry.Rb.colliderType)];
@@ -37,8 +37,8 @@ public:
 	void Clear()
 	{
 		_Data.clear();
-		for (auto& Count : _ColliderCounts)
-			Count = 0;
+		for (auto& count : _ColliderCounts)
+			count = 0;
 	}
 
 	size_t Size() const
@@ -47,12 +47,12 @@ public:
 	}
 
 	// ReSharper disable once CppInconsistentNaming
-	std::vector<MoveList::Entry>::iterator begin()
+	std::vector<Entry>::iterator begin()
 	{
 		return _Data.begin();
 	}
 	// ReSharper disable once CppInconsistentNaming
-	std::vector<MoveList::Entry>::iterator end()
+	std::vector<Entry>::iterator end()
 	{
 		return _Data.end();
 	}
@@ -62,7 +62,7 @@ public:
 	}
 
 private:
-	std::vector<MoveList::Entry> _Data;
+	std::vector<Entry> _Data;
 	std::array<int, static_cast<int>(ColliderType::COUNT)> _ColliderCounts = {};
 };
 

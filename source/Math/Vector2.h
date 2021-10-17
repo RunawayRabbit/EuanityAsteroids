@@ -54,8 +54,17 @@ public:
 	}
 
 	Vector2 operator-(const Vector2& b) const
+    	{
+    		return (*this) + (-b);
+    	}
+
+	bool operator==(const Vector2& b) const
 	{
-		return (*this) + (-b);
+		return ( x == b.x ) && (y == b.y);
+	}
+	bool operator!=(const Vector2& b) const
+	{
+		return !(*this==b);
 	}
 
 	// Rotation
