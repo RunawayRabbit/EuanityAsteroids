@@ -4,6 +4,8 @@
 
 #include <SDL_render.h>
 
+
+#include "Camera.h"
 #include "SpriteAtlas.h"
 #include "SpriteID.h"
 
@@ -14,7 +16,7 @@ struct SpriteTransform;
 class RenderQueue
 {
 public:
-	RenderQueue(Renderer& renderer, int screenWidth, int screenHeight);
+	RenderQueue(Renderer& renderer, Camera& camera, int screenWidth, int screenHeight);
 
 	enum class Layer
 	{
@@ -57,6 +59,7 @@ private:
 	void DrawAtLeft(const SpriteTransform& transform, const AABB& screenAABB);
 	void DrawAtRight(const SpriteTransform& transform, const AABB& screenAABB);
 
+	Camera& _Camera;
 
 	int _FocalPointX;
 	int _FocalPointY;

@@ -60,6 +60,7 @@ public:
 	void ResetAllSystems();
 
 	// Renderer Stuff
+	Camera Camera;
 	Renderer Renderer;
 	RenderQueue RenderQueue;
 	BackgroundRenderer BackgroundRenderer;

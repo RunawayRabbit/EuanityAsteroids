@@ -8,6 +8,7 @@ class AABB
 public:
 	AABB(const float& top, const float& bottom, const float& left, const float& right);
 	AABB(const Vector2& min, const Vector2& max);
+	AABB(const float& width, const float& height);
 
 	bool Contains(const Vector2& point) const;
 	bool FullyContains(const OBB& box) const;

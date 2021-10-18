@@ -1,25 +1,24 @@
-
-
 #include "Game.h"
 
 #include "../GameObject/Create.h"
 #include "../Math/EuanityMath.h"
 #include "../Physics/Physics.h"
 
-Game::Game(std::string windowName, int width, int height) :
-	Entities(Time),
-	Renderer(windowName, width, height),
-	RenderQueue(Renderer, width, height),
-	Input(InputHandler(_IsRunning)),
-	UI(Entities, Input.GetBuffer()),
-	GameField(0.0f, (float)height, 0.0f, (float)width),
-	Xforms(1024), //intial capacity. Can resize dynamically.
-	BackgroundRenderer(Xforms, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
-	Rigidbodies(Entities, 1024),
-	Sprites(Xforms, Entities, RenderQueue.GetSpriteAtlas(), 128),
-	Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
-	Physics(Xforms, Rigidbodies, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
-	_IsRunning(true)
+Game::Game(const std::string windowName, const int width, const int height)
+	: Camera(AABB(static_cast<float>(width), static_cast<float>(height)), AABB(static_cast<float>(width), static_cast<float>(height))),
+	  Renderer(windowName, width, height),
+	  RenderQueue(Renderer, Camera, width, height),
+	  BackgroundRenderer(Xforms, AABB(static_cast<float>(width), static_cast<float>(height))),
+	  Input(InputHandler(_IsRunning)),
+	  Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
+	  Entities(Time),
+	  Xforms(1024),
+	  Sprites(Xforms, Entities, RenderQueue.GetSpriteAtlas(), 128),
+	  UI(Entities, Input.GetBuffer()),
+	  Physics(Xforms, Rigidbodies, AABB(static_cast<float>(width), static_cast<float>(height))),
+	  Rigidbodies(Entities, 1024),
+	  GameField(static_cast<float>(width), static_cast<float>(height)),
+	  _IsRunning(true)
 {
 	CurrentState = std::make_unique<MenuState>(*this);
 	CurrentState->OnEnter();
@@ -27,21 +26,23 @@ Game::Game(std::string windowName, int width, int height) :
 
 Game::~Game()
 {
-
 }
 
-bool Game::IsRunning() const
+bool
+Game::IsRunning() const
 {
 	return _IsRunning;
 }
 
-void Game::ProcessInput()
+void
+Game::ProcessInput()
 {
 	Input.Clear();
 	Input.ProcessInput();
 }
 
-void Game::Update(const float deltaTime)
+void
+Game::Update(const float deltaTime)
 {
 	Time.Update(deltaTime);
 
@@ -61,7 +62,8 @@ void Game::Update(const float deltaTime)
 	//	xforms.Count() << "\n";
 }
 
-void Game::Render()
+void
+Game::Render()
 {
 	RenderQueue.Clear();
 
@@ -74,12 +76,14 @@ void Game::Render()
 	Renderer.Render(RenderQueue.GetRenderQueue());
 }
 
-void Game::Quit()
+void
+Game::Quit()
 {
 	_IsRunning = false;
 }
 
-void Game::GarbageCollection()
+void
+Game::GarbageCollection()
 {
 	// @TODO: This can be better.
 
@@ -96,5 +100,5 @@ Game::ResetAllSystems()
 	Rigidbodies.Clear();
 	UI.Clear();
 	Sprites.Clear();
-	RenderQueue.SetCameraLocation(0,0);
+	RenderQueue.SetCameraLocation(0, 0);
 }

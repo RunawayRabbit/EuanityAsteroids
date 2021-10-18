@@ -17,6 +17,14 @@ AABB::AABB(const Vector2& min, const Vector2& max)
 	this->max = max;
 }
 
+AABB::AABB(const float& width, const float& height)
+{
+	this->top = 0;
+	this->bottom = height;
+	this->left = 0;
+	this->right = width;
+}
+
 bool AABB::Contains(const Vector2& point) const
 {
 	return point.x > left && point.x < right&&

@@ -7,13 +7,13 @@
 #include "Sprite.h"
 #include "SpriteTransform.h"
 
-#include "../Math/OBB.h"
 #include "../Math/AABB.h"
 
 
-RenderQueue::RenderQueue(Renderer& renderer, const int screenWidth, const int screenHeight)
+RenderQueue::RenderQueue(Renderer& renderer, Camera& camera, const int screenWidth, const int screenHeight)
 	: ScreenWidth(screenWidth),
 	  ScreenHeight(screenHeight),
+	  _Camera(camera),
 	  _FocalPointX(0),
 	  _FocalPointY(0),
 	  _SpriteAtlas(renderer)
@@ -64,6 +64,7 @@ RenderQueue::EnqueueScreenSpace(const SpriteID spriteID, const SDL_Rect& targetR
 void
 RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 {
+#if 1
 	const AABB screenAABB(Vector2::zero(), Vector2(static_cast<float>(ScreenWidth), static_cast<float>(ScreenHeight)));
 
 	// world-to-screenspace
@@ -163,6 +164,7 @@ RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 
 	// Render at the original position
 	Enqueue(transform.ID, transform.Position, transform.Rotation, transform.Layer);
+#endif
 }
 
 void
