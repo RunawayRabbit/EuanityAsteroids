@@ -19,7 +19,7 @@ class RigidbodyManager;
 class Physics
 {
 public:
-	Physics(TransformManager& transformManager, RigidbodyManager& rigidbodyManager, const AABB& screenAABB);
+	Physics(TransformManager& transformManager, RigidbodyManager& rigidbodyManager, const Vector2& gameFieldDim);
 
 	void Enqueue(const Rigidbody& rb, const float& deltaTime);
 
@@ -121,10 +121,10 @@ private:
 	TransformManager& _TransformManager;
 	RigidbodyManager& _RigidbodyManager;
 
-	const AABB _ScreenAABB;
+	const Vector2& _GameFieldDim;
 
-	static const int CHUNKS_X    = 6;
-	static const int CHUNKS_Y    = 4;
+	static const int CHUNKS_X    = 8;
+	static const int CHUNKS_Y    = 8;
 	static const int CHUNK_COUNT = CHUNKS_X * CHUNKS_Y;
 
 	const float _ChunkSizeX;

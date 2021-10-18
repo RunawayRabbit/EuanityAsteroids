@@ -38,9 +38,9 @@ Vector2
 Camera::WorldToCamera(const Vector2& point) const
 {
 	const auto x = Math::Remap(point.x, _CurrentView.left, _CurrentView.right,
-	                           _GameField.left, _GameField.right);
+	                           0, static_cast<float>(_WindowDim.x));
 	const auto y = Math::Remap(point.y, _CurrentView.top, _CurrentView.bottom,
-	                           _GameField.top, _GameField.bottom);
+	                           0, static_cast<float>(_WindowDim.y));
 
 	return Vector2(x, y);
 }
@@ -51,8 +51,8 @@ Camera::SetScale(const float& newScale)
 	const auto invScale   = 1.0f / newScale * 0.5f;
 	const auto focalPoint = GetFocalPoint();
 
-	_CurrentView.min = focalPoint - (_GameField.max * invScale);
-	_CurrentView.max = focalPoint + (_GameField.max * invScale);
+	_CurrentView.min = focalPoint - (_WindowDim * invScale);
+	_CurrentView.max = focalPoint + (_WindowDim * invScale);
 }
 
 float
@@ -60,11 +60,9 @@ Camera::GetCameraScale() const
 {
 	//@NOTE: Assuming that we are never squash/stretching the camera, because we really shouldn't ever do that.
 	const auto cameraDimX = _CurrentView.max.x - _CurrentView.min.x;
-	const auto worldDimX  = _GameField.max.x - _GameField.min.x;
 
-	return worldDimX / cameraDimX;
+	return _WindowDim.x / cameraDimX;
 }
-
 
 void
 Camera::SetFocalPoint(const Vector2& focalPoint)

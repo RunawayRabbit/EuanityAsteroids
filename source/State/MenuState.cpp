@@ -44,7 +44,7 @@ MenuState::Render()
 void
 MenuState::SpawnMenuButtons()
 {
-	const auto screenCenter = _Game.GameField.max * 0.5f;
+	const auto screenCenter = _Game.Renderer.GetWindowDim() * 0.5f;
 	const Vector2 buttonSize(200.0f, 80.0f);
 
 	const AABB titleAABB(screenCenter.y * 0.4f,
@@ -108,8 +108,8 @@ MenuState::SpawnRandomAsteroids() const
 			const auto asteroidRadius = Create::GetCollisionRadiusFromColliderType(asteroidSize);
 
 			auto startPos = Vector2 {
-				Math::RandomRange(asteroidRadius, _Game.GameField.max.x - asteroidRadius),
-				Math::RandomRange(asteroidRadius, _Game.GameField.max.y - asteroidRadius)
+				Math::RandomRange(asteroidRadius, _Game.GameFieldDim.x - asteroidRadius),
+				Math::RandomRange(asteroidRadius, _Game.GameFieldDim.y - asteroidRadius)
 			};
 
 			isValidPosition = true;

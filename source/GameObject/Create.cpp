@@ -174,7 +174,7 @@ Create::MuzzleFlash(const Vector2& position, const Vector2& velocity) const
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::MUZZLE_FLASH, RenderQueue::Layer::PARTICLE);
 	_EntityManager.DestroyDelayed(entity, 0.05f);
-	if(velocity != Vector2::zero())
+	if(velocity != Vector2::Zero())
 	{
 		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, Math::RandomRange(20.0f, 40.0f));
 	}
@@ -192,7 +192,7 @@ Create::TinyExplosion(const Vector2& position, const Vector2& velocity, const fl
 	trans.rot = Math::RandomRange(0.0f, 360.0f);
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::BULLET, RenderQueue::Layer::PARTICLE);
-	if(velocity != Vector2::zero() || rotVelocity != 0.0f)
+	if(velocity != Vector2::Zero() || rotVelocity != 0.0f)
 	{
 		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
 	}
@@ -211,7 +211,7 @@ Create::SmallExplosion(const Vector2& position, const Vector2& velocity, const f
 	trans.rot = Math::RandomRange(0.0f, 360.0f);
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::SMALL_EXPLOSION, RenderQueue::Layer::PARTICLE);
-	if(velocity != Vector2::zero() || rotVelocity != 0.0f)
+	if(velocity != Vector2::Zero() || rotVelocity != 0.0f)
 	{
 		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
 	}
@@ -230,7 +230,7 @@ Create::LargeExplosion(const Vector2& position, const Vector2& velocity, const f
 	trans.rot = Math::RandomRange(0.0f, 360.0f);
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::EXPLOSION, RenderQueue::Layer::PARTICLE);
-	if(velocity != Vector2::zero() || rotVelocity != 0.0f)
+	if(velocity != Vector2::Zero() || rotVelocity != 0.0f)
 	{
 		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
 	}
@@ -396,7 +396,7 @@ Create::GameOver(int score)
 	const auto entity = _EntityManager.Create();
 
 	Transform trans;
-	trans.pos = { _Game.GameField.max * 0.5f };
+	trans.pos = { _Game.Renderer.GetWindowDim() * 0.5f };
 	trans.rot = 0;
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, SpriteManager::RenderFlags::SCREEN_SPACE);

@@ -25,7 +25,7 @@ public:
 
 	// ARITHMETIC OVERLOADS
 
-	inline Vector2 operator*(const float& b) const
+	Vector2 operator*(const float& b) const
 	{
 		return { x * b, y * b };
 	}
@@ -38,13 +38,13 @@ public:
 
 		return ret;
 	}
-	inline void operator+=(const Vector2& b)
+	void operator+=(const Vector2& b)
 	{
 		this->x = this->x + b.x;
 		this->y = this->y + b.y;
 	}
 
-	inline Vector2 operator-() const
+	Vector2 operator-() const
 	{
 		Vector2 ret;
 		ret.x = -x;
@@ -68,38 +68,38 @@ public:
 	}
 
 	// Rotation
-	inline Vector2 RotateRad(const float& radians) const
+	Vector2 RotateRad(const float& radians) const
 	{
 		Vector2 ret;
-		ret.x = (float)(x * cos(radians) - y * sin(radians));
-		ret.y = (float)(x * sin(radians) + y * cos(radians));
+		ret.x = (x * cos(radians) - y * sin(radians));
+		ret.y = (x * sin(radians) + y * cos(radians));
 
 		return ret;
 	}
-	inline Vector2 RotateDeg(const float& degrees) const
+	Vector2 RotateDeg(const float& degrees) const
 	{
 		Vector2 ret;
-		ret.x = (float)(x * cos(degrees * Math::DEG2RAD) - y * sin(degrees * Math::DEG2RAD));
-		ret.y = (float)(x * sin(degrees * Math::DEG2RAD) + y * cos(degrees * Math::DEG2RAD));
+		ret.x = (x * cos(degrees * Math::DEG2RAD) - y * sin(degrees * Math::DEG2RAD));
+		ret.y = (x * sin(degrees * Math::DEG2RAD) + y * cos(degrees * Math::DEG2RAD));
 
 		return ret;
 	}
 
-	inline Vector2 Rot90CCW() const
+	Vector2 Rot90CCW() const
 	{
 		return Vector2{ y, -x };
 	}
-	inline Vector2 Rot90CW() const
+	Vector2 Rot90CW() const
 	{
 		return Vector2{ -y, x };
 	}
-	inline Vector2 Rot180() const
+	Vector2 Rot180() const
 	{
 		return -*this;
 	}
 
-	inline Vector2 normalized();
-	inline Vector2 SafeNormalized();
+	inline Vector2 Normalized() const;
+	inline Vector2 SafeNormalized() const;
 	inline float Length() const;
 	inline float LengthSq() const;
 	float GetAngleRadFromVector() const
@@ -111,10 +111,11 @@ public:
 		return GetAngleRadFromVector() * Math::RAD2DEG;
 	}
 
-	inline static Vector2 zero() { return { 0.0f, 0.0f }; }
+	static Vector2 Zero() { return { 0.0f, 0.0f }; }
+	static Vector2 One() { return { 1.0f, 1.0f }; }
 
-	inline static Vector2 Right() { return { 1.0f, 0.0f }; }
-	inline static Vector2 Forward() { return { 0.0f, 1.0f }; }
+	static Vector2 Right() { return { 1.0f, 0.0f }; }
+	static Vector2 Forward() { return { 0.0f, 1.0f }; }
 
 };
 
@@ -124,12 +125,12 @@ inline float Dot(const Vector2& a, const Vector2& b)
 		+ a.y * b.y;
 }
 
-inline Vector2 Vector2::normalized()
+inline Vector2 Vector2::Normalized() const
 {
 	return *this * (1.0f / sqrt(Dot(*this, *this)));
 }
 
-inline Vector2 Vector2::SafeNormalized()
+inline Vector2 Vector2::SafeNormalized() const
 {
 	float dot = Dot(*this, *this);
 	if (dot == 0.0f)

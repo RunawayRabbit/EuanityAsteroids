@@ -4,22 +4,24 @@
 #include "../Math/EuanityMath.h"
 #include "../Physics/Physics.h"
 
-Game::Game(const std::string windowName, const int width, const int height)
-	: Camera(AABB(static_cast<float>(width), static_cast<float>(height)), AABB(static_cast<float>(width), static_cast<float>(height))),
-	  Renderer(windowName, width, height),
-	  RenderQueue(Renderer, Camera, width, height),
-	  BackgroundRenderer(Xforms, AABB(static_cast<float>(width), static_cast<float>(height))),
+Game::Game(const std::string windowName, const int windowWidth, const int windowHeight, const Vector2& gameWorldDim)
+	: Camera(windowWidth, windowHeight),
+	  Renderer(windowName, windowWidth, windowHeight),
+	  RenderQueue(Renderer, Camera, gameWorldDim),
+	  BackgroundRenderer(Xforms, AABB(static_cast<float>(windowWidth), static_cast<float>(windowHeight))),
 	  Input(InputHandler(_IsRunning)),
 	  Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
 	  Entities(Time),
-	  Xforms(1024),
-	  Sprites(Xforms, Entities, RenderQueue.GetSpriteAtlas(), 128),
+	  Xforms(512),
+	  Sprites(Xforms, Entities, RenderQueue.GetSpriteAtlas(), 512),
 	  UI(Entities, Input.GetBuffer()),
-	  Physics(Xforms, Rigidbodies, AABB(static_cast<float>(width), static_cast<float>(height))),
+	  Physics(Xforms, Rigidbodies, gameWorldDim),
 	  Rigidbodies(Entities, 1024),
-	  GameField(static_cast<float>(width), static_cast<float>(height)),
+	  GameFieldDim(gameWorldDim),
 	  _IsRunning(true)
 {
+	Camera.SetFocalPoint(gameWorldDim * 0.5f);
+
 	CurrentState = std::make_unique<MenuState>(*this);
 	CurrentState->OnEnter();
 }
@@ -66,6 +68,7 @@ void
 Game::Render()
 {
 	RenderQueue.Clear();
+	RenderQueue.CacheCameraInfo();
 
 	UI.Render(RenderQueue);
 
@@ -100,5 +103,6 @@ Game::ResetAllSystems()
 	Rigidbodies.Clear();
 	UI.Clear();
 	Sprites.Clear();
-	Camera.SetCameraView(GameField);
+	Camera.SetFocalPoint(GameFieldDim * 0.5f);
+	Camera.SetScale(1.0f);
 }

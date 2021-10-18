@@ -27,7 +27,7 @@
 class Game
 {
 public:
-	Game(std::string windowName, int width, int height);
+	Game(std::string windowName, int windowWidth, int windowHeight, const Vector2& gameWorldDim);
 	Game() = delete;
 	Game(Game&) = delete;
 
@@ -83,7 +83,7 @@ public:
 	// Physics
 	Physics Physics;
 	RigidbodyManager Rigidbodies;
-	const AABB GameField;
+	const Vector2 GameFieldDim;
 
 	// Gameplay
 	std::unique_ptr<IState> CurrentState;

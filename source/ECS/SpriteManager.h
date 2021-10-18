@@ -38,8 +38,6 @@ private:
 	{
 	public:
 
-
-
 		SpriteCategory(const TransformManager& transManager, const EntityManager& entityManager, int capacity);
 		SpriteCategory() = delete;
 
@@ -49,7 +47,6 @@ private:
 
 		void Update(const SpriteAtlas& spriteAtlas, float deltaTime);
 
-		void Render(RenderQueue& renderQueue) const;
 		void RenderScreenSpace(RenderQueue& renderQueue) const;
 		void RenderLooped(RenderQueue& renderQueue) const;
 

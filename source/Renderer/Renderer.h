@@ -3,6 +3,7 @@
 #include <string>
 #include <SDL_render.h>
 
+#include "../Math/Vector2Int.h"
 #include "RenderQueue.h"
 
 class Renderer
@@ -13,11 +14,11 @@ public:
 	Renderer(Renderer&) = delete;
 	~Renderer();
 
-	void SetCameraLocation(const int& x, const int& y);
-
 	void Render(const std::vector<RenderQueue::Element>& renderQueue) const;
 
 	SDL_Renderer* GetRenderer() const { return _Renderer; } // @TODO: This should never be necessary, get rid of it!
+	Vector2Int GetWindowDim() const;
+	Vector2 GetWindowDimFloat() const;
 
 private:
 	static void ExitWithSDLError(std::string errorMessage);
@@ -26,7 +27,4 @@ private:
 
 	int _Width;
 	int _Height;
-
-	int _FocalPointX;
-	int _FocalPointY;
 };

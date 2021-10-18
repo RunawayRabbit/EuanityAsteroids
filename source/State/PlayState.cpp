@@ -112,6 +112,7 @@ PlayState::RespawnAsteroids()
 	// Max difficulty at 8.
 	const int difficultyLevel = static_cast<uint32_t>(floorf(logf(_Score) - 5.0f)) - 1;
 
+#pragma region DifficultySettings
 	int numDesiredAsteroids;
 	float asteroidSpeedMin;
 	float asteroidSpeedMax;
@@ -123,40 +124,41 @@ PlayState::RespawnAsteroids()
 	}
 	else if(difficultyLevel == 3)
 	{
-		numDesiredAsteroids = 3;
+		numDesiredAsteroids = 5;
 		asteroidSpeedMin    = 40.0f;
 		asteroidSpeedMax    = 50.0f;
 	}
 	else if(difficultyLevel == 4)
 	{
-		numDesiredAsteroids = 4;
+		numDesiredAsteroids = 7;
 		asteroidSpeedMin    = 50.0f;
 		asteroidSpeedMax    = 60.0f;
 	}
 	else if(difficultyLevel == 5)
 	{
-		numDesiredAsteroids = 5;
+		numDesiredAsteroids = 10;
 		asteroidSpeedMin    = 60.0f;
 		asteroidSpeedMax    = 80.0f;
 	}
 	else if(difficultyLevel == 6)
 	{
-		numDesiredAsteroids = 6;
+		numDesiredAsteroids = 15;
 		asteroidSpeedMin    = 80.0f;
 		asteroidSpeedMax    = 100.0f;
 	}
 	else if(difficultyLevel == 7)
 	{
-		numDesiredAsteroids = 7;
+		numDesiredAsteroids = 20;
 		asteroidSpeedMin    = 100.0f;
 		asteroidSpeedMax    = 140.0f;
 	}
 	else // >= 8
 	{
-		numDesiredAsteroids = 10;
+		numDesiredAsteroids = 30;
 		asteroidSpeedMin    = 140.0f;
 		asteroidSpeedMax    = 180.0f;
 	}
+#pragma endregion DifficultySettings
 
 	_CurrentAsteroids.reserve(numDesiredAsteroids);
 	for(auto i = _CurrentAsteroids.size(); i < numDesiredAsteroids; ++i)
@@ -165,18 +167,18 @@ PlayState::RespawnAsteroids()
 		Vector2 spawnPosition;
 		do
 		{
-			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 500.0f);
-			spawnPosition.x = Math::Repeat(spawnPosition.x, _Game.GameField.max.x);
-			spawnPosition.y = Math::Repeat(spawnPosition.y, _Game.GameField.max.y);
-		} while((playerPos - spawnPosition).LengthSq() < 300.0f * 300.0f);
+			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 900.0f);
+			spawnPosition.x = Math::Repeat(spawnPosition.x, _Game.GameFieldDim.x);
+			spawnPosition.y = Math::Repeat(spawnPosition.y, _Game.GameFieldDim.y);
+		} while((playerPos - spawnPosition).LengthSq() < 600.0f * 600.0f);
 
 
 		auto spawnVelocity = Math::RandomOnUnitCircle() * Math::RandomRange(asteroidSpeedMin, asteroidSpeedMax);
 
 		_CurrentAsteroids.push_back(_Game.Create.Asteroid(spawnPosition,
-		                                                  Math::RandomRange(0, 360),
+		                                                  Math::RandomRange(0.0f, 360.0f),
 		                                                  spawnVelocity,
-		                                                  Math::RandomRange(15, 40),
+		                                                  Math::RandomRange(15.0f, 40.0f),
 		                                                  Create::AsteroidType::LARGE));
 	}
 }
@@ -186,8 +188,9 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 {
 	ProcessCollisions();
 
-	_Player.Update(inputBuffer, deltaTime);
+	auto playerPos = _Player.GetPlayerPosition();
 
+	_Player.Update(inputBuffer, deltaTime);
 
 	if(_Player.IsAlive())
 	{
@@ -196,13 +199,13 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 
 		const auto cameraScale =
 			Math::Remap(playerVel.Length(),
-			            0, 400.0f,
-			            2.0f, 1.0f);
+			            0, 300.0f,
+			            1.7f, 1.0f);
 		_Game.Camera.SetScale(cameraScale);
 
 		_Game.Camera.SetFocalPoint(
-			static_cast<int>(x + (playerVel.x * CAMERA_VELOCITY_FACTOR)),
-			static_cast<int>(y + (playerVel.y * CAMERA_VELOCITY_FACTOR)));
+			x + (playerVel.x * CAMERA_VELOCITY_FACTOR),
+			y + (playerVel.y * CAMERA_VELOCITY_FACTOR));
 	}
 	else
 	{
@@ -231,7 +234,7 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 void
 PlayState::SpawnPlayer()
 {
-	_Player.Spawn(_Game.GameField.max * 0.5f, 0);
+	_Player.Spawn(_Game.GameFieldDim * 0.5f, 0);
 }
 
 void
@@ -239,7 +242,7 @@ PlayState::SpawnFirstAsteroid()
 {
 	const auto playerPos = _Player.GetPlayerPosition();
 	const auto startPos  = playerPos + Vector2(-400.0f, 0.0f);
-	const auto velocity  = (playerPos - startPos).normalized() * 30.0f;
+	const auto velocity  = (playerPos - startPos).Normalized() * 30.0f;
 
 	_CurrentAsteroids.push_back(_Game.Create.Asteroid(startPos, 240, velocity, 60, Create::AsteroidType::LARGE));
 }

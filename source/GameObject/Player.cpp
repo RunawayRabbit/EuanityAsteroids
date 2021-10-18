@@ -231,7 +231,7 @@ Vector2
 Player::GetPlayerVelocity() const
 {
 	auto rigid  = _RigidbodyManager.Get(_Entity);
-	auto retVal = Vector2::zero();
+	auto retVal = Vector2::Zero();
 	if(rigid.has_value())
 	{
 		retVal = rigid.value().velocity;
@@ -245,7 +245,7 @@ Player::TakeDamage(const int damage)
 	_Health -= damage;
 	if(_Health <= 0)
 	{
-		Kill(_Entity, Vector2::zero());
+		Kill(_Entity, Vector2::Zero());
 	}
 }
 

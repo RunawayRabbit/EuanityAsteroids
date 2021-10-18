@@ -16,7 +16,7 @@ struct SpriteTransform;
 class RenderQueue
 {
 public:
-	RenderQueue(Renderer& renderer, Camera& camera, int screenWidth, int screenHeight);
+	RenderQueue(Renderer& renderer, Camera& camera, const Vector2& gameWorldDim);
 
 	enum class Layer
 	{
@@ -38,27 +38,25 @@ public:
 		Layer Layer;
 	};
 
-	void Enqueue(SpriteID spriteID, float rotation, Layer layer);
+	void EnqueueBackground(SpriteID spriteID, float rotation, Layer layer);
 	void EnqueueScreenSpace(SpriteID spriteID, const SDL_Rect& targetRect, float rotation, Layer layer);
 	void EnqueueLooped(const SpriteTransform& transform);
 
 
 	const SpriteAtlas& GetSpriteAtlas() const { return _SpriteAtlas; }
 	const std::vector<Element>& GetRenderQueue();
+	void CacheCameraInfo();
 	void Clear();
 
 private:
-	// helper functions
-	void DrawAtTop(const SpriteTransform& transform, const AABB& screenAABB);
-	void DrawAtBottom(const SpriteTransform& transform, const AABB& screenAABB);
-	void DrawAtLeft(const SpriteTransform& transform, const AABB& screenAABB);
-	void DrawAtRight(const SpriteTransform& transform, const AABB& screenAABB);
 
 	Camera& _Camera;
 
-	const int _GameFieldWidth;
-	const int _GameFieldHeight;
+	Vector2 _GameWorldDim;
 
 	SpriteAtlas _SpriteAtlas;
 	std::vector<Element> _RenderQueue;
+
+	AABB _CameraAABB;
+	float _CameraScale;
 };

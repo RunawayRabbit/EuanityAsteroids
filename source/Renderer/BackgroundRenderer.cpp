@@ -42,6 +42,7 @@ BackgroundRenderer::BackgroundRenderer(const TransformManager& transformManager,
 void
 BackgroundRenderer::Render(RenderQueue& renderQueue, const float& deltaTime)
 {
+#if 0
 	// Static background
 	renderQueue.Enqueue(SpriteID::STATIC_BACKGROUND, 0, RenderQueue::Layer::BACKGROUND);
 
@@ -106,4 +107,5 @@ BackgroundRenderer::Render(RenderQueue& renderQueue, const float& deltaTime)
 	renderQueue.EnqueueLooped(parallax1);
 	renderQueue.EnqueueLooped(parallax2);
 	renderQueue.EnqueueLooped(parallax3);
+#endif
 }

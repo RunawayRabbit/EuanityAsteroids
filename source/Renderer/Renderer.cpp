@@ -7,9 +7,7 @@
 
 Renderer::Renderer(const std::string windowName, const int width, const int height)
 	: _Width(width),
-	  _Height(height),
-	  _FocalPointX(0),
-	  _FocalPointY(0)
+	  _Height(height)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		ExitWithSDLError("Error initializing SDL");
@@ -25,18 +23,24 @@ Renderer::Renderer(const std::string windowName, const int width, const int heig
 		ExitWithSDLError("Error getting renderer from window");
 
 	SDL_SetRenderDrawColor(_Renderer, 0, 0, 0, 255);
-
-	// @TODO: How exactly do we use this as a render target?
-	/*
-	postprocess = SDL_CreateTexture(renderer, SDL_GetWindowPixelFormat(window),
-		SDL_TEXTUREACCESS_STREAMING, width, height);
-	SDL_SetTextureBlendMode(postprocess, SDL_BLENDMODE_ADD); */
 }
 
 Renderer::~Renderer()
 {
 	SDL_DestroyRenderer(_Renderer);
 	SDL_DestroyWindow(_Window);
+}
+
+Vector2Int
+Renderer::GetWindowDim() const
+{
+	return Vector2Int{_Width, _Height};
+}
+
+Vector2
+Renderer::GetWindowDimFloat() const
+{
+	return Vector2(static_cast<float>(_Width), static_cast<float>(_Height));
 }
 
 void
@@ -53,45 +57,10 @@ Renderer::Render(const std::vector<RenderQueue::Element>& renderQueue) const
 
 	for(const auto& [tex, srcRect, dstRect, angle, layer] : renderQueue)
 	{
-		auto finalDstRect = dstRect;
-		finalDstRect.x += _FocalPointX;
-		finalDstRect.y += _FocalPointY;
 		const auto flip  = SDL_FLIP_NONE; // not yet supported
 		SDL_Point* pivot = nullptr;       // not yet supported
-		SDL_RenderCopyEx(_Renderer, tex, &srcRect, &finalDstRect, angle, pivot, flip);
+		SDL_RenderCopyEx(_Renderer, tex, &srcRect, &dstRect, angle, pivot, flip);
 	}
 
 	SDL_RenderPresent(_Renderer);
 }
-
-
-#if 0
-void Renderer::ApplyBloom()
-{
-	constexpr uint8_t lumiThreshold = 180;
-
-	Color* pixels;
-	int pitch;
-	SDL_LockTexture(postprocess, NULL, (void**)&pixels, &pitch);
-	SDL_RenderReadPixels(renderer, NULL, 0, pixels, pitch);
-
-
-	// Converts image to greyscale based on lumi
-	/*
-	for (auto i = 0; i < width*height; i++)
-	{
-		Color* pixel = pixels + i;
-		if (pixel->value == 0) continue;
-
-		uint8_t lumi = (uint8_t)((0.299f * pixel->red) + (0.587f * pixel->green) + (0.114f * pixel->blue));
-		lumi = lumi < lumiThreshold ? 0 : lumi;
-
-		pixel->value = lumi;
-	}*/
-
-	GaussianBlur(pixels, width, height, 10.0f);
-
-	SDL_UnlockTexture(postprocess);
-	SDL_RenderCopy(renderer, postprocess, NULL, NULL);
-}
-#endif

@@ -12,12 +12,12 @@
 #include "../Math/OBB.h"
 #include "../Math/Vector2.h"
 
-Physics::Physics(TransformManager& transformManager, RigidbodyManager& rigidbodyManager, const AABB& screenAABB)
+Physics::Physics(TransformManager& transformManager, RigidbodyManager& rigidbodyManager, const Vector2& gameFieldDim)
 	: _TransformManager(transformManager),
 	  _RigidbodyManager(rigidbodyManager),
-	  _ScreenAABB(screenAABB),
-	  _ChunkSizeX(screenAABB.max.x / CHUNKS_X),
-	  _ChunkSizeY(screenAABB.max.y / CHUNKS_Y),
+	  _GameFieldDim(gameFieldDim),
+	  _ChunkSizeX(gameFieldDim.x / CHUNKS_X),
+	  _ChunkSizeY(gameFieldDim.y / CHUNKS_Y),
 	  _MoveLists()
 {
 }
@@ -46,7 +46,7 @@ Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 	rbAABB.max.x = std::max(rbAABB.max.x, rbAABB.max.x + deltaPosition.x + padding);
 	rbAABB.max.y = std::max(rbAABB.max.y, rbAABB.max.y + deltaPosition.y + padding);
 
-	auto accumulator = Vector2::zero();
+	auto accumulator = Vector2::Zero();
 	auto startTileX  = -1;
 	auto startTileY  = -1;
 	while(accumulator.x < rbAABB.min.x)
@@ -83,18 +83,18 @@ Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 		// Wrap our Y coordinate if we have to.
 		auto wrappedY = rbTrans.pos.y;
 		if(y < 0)
-			wrappedY += _ScreenAABB.max.y;
+			wrappedY += _GameFieldDim.y;
 		else if(y >= CHUNKS_Y)
-			wrappedY -= _ScreenAABB.max.y;
+			wrappedY -= _GameFieldDim.y;
 
 		for(auto x = startTileX; x <= endTileX; ++x)
 		{
 			// Wrap the element in X if we have to.
 			auto wrappedX = rbTrans.pos.x;
 			if(x < 0)
-				wrappedX += _ScreenAABB.max.x;
+				wrappedX += _GameFieldDim.x;
 			else if(x >= CHUNKS_X)
-				wrappedX -= _ScreenAABB.max.x;
+				wrappedX -= _GameFieldDim.x;
 
 			// Calculate the chunk index and enqueue
 			auto mod              = [](const int A, const int B) { return (B + (A % B)) % B; };
@@ -506,7 +506,7 @@ Physics::ResolveMove(const float& deltaTime, const CollisionListEntry collision)
 	// Split the problem into two parts: the component normal to the collision
 	// and the component tangential to the collision.
 
-	const auto impactNormal  = relPos.normalized();
+	const auto impactNormal  = relPos.Normalized();
 	const auto impactTangent = impactNormal.Rot90CW();
 
 	// Conservation of Momentum (tangential)
@@ -577,9 +577,9 @@ Physics::FinalizeMoves(const float& deltaTime)
 		const auto trans = optTrans.value();
 
 		trans->pos.x =
-			Math::Repeat(trans->pos.x + (rigidbody.velocity.x * deltaTime), _ScreenAABB.right);
+			Math::Repeat(trans->pos.x + (rigidbody.velocity.x * deltaTime), _GameFieldDim.x);
 		trans->pos.y =
-			Math::Repeat(trans->pos.y + (rigidbody.velocity.y * deltaTime), _ScreenAABB.bottom);
+			Math::Repeat(trans->pos.y + (rigidbody.velocity.y * deltaTime), _GameFieldDim.y);
 
 		trans->rot = Math::Repeat(trans->rot + (rigidbody.angularVelocity * deltaTime), 360.0f);
 	}
@@ -599,8 +599,8 @@ Physics::FinalizeMoves(const float& deltaTime)
 
 		const auto finalPos = position + (velocity * ((1.0f - entry.Time) * deltaTime));
 
-		trans->pos.x = Math::Repeat(finalPos.x, _ScreenAABB.right);
-		trans->pos.y = Math::Repeat(finalPos.y, _ScreenAABB.bottom);
+		trans->pos.x = Math::Repeat(finalPos.x, _GameFieldDim.x);
+		trans->pos.y = Math::Repeat(finalPos.y, _GameFieldDim.y);
 
 		Rigidbody* rigid;
 		_RigidbodyManager.GetMutable(entry.Entity, rigid);

@@ -5,20 +5,25 @@
 #include "Game.h"
 #include "FrameTimer.h"
 
-int main(int /*argc*/, char* /*args[]*/)
+int
+main(int /*argc*/, char* /*args[]*/)
 {
 	// Game Setup
 	const std::string windowName = "Just Asteroids";
-	const auto screenWidth = 1600;
+
+	const auto screenWidth  = 1600;
 	const auto screenHeight = 900;
-	Game game(windowName, screenWidth, screenHeight);
+
+	const auto gameWorldDim = Vector2::One() * 2000.0f;
+	Game game(windowName, screenWidth, screenHeight, gameWorldDim);
 
 	// Frame Timer Setup
 	const auto updatesPerSecond = 60;
+
 	const auto frameTime = 1.0f / updatesPerSecond;
 	FrameTimer timer(updatesPerSecond);
 
-	while (game.IsRunning())
+	while(game.IsRunning())
 	{
 		const auto updateBegin = timer.Now();
 

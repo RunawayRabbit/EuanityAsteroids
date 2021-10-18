@@ -2,13 +2,14 @@
 
 #include "../Math/Vector2.h"
 #include "../Math/AABB.h"
+#include "../Math/Vector2Int.h"
 
 class Camera
 {
 public:
-	Camera(const AABB startingView, const AABB worldBounds)
-		: _GameField(worldBounds),
-		  _CurrentView(startingView)
+	explicit Camera(const int& windowWidth, const int& windowHeight)
+		: _WindowDim({windowWidth, windowHeight}),
+		  _CurrentView(AABB(static_cast<float>(windowWidth), static_cast<float>(windowHeight)))
 	{
 	}
 
@@ -16,7 +17,6 @@ public:
 	void SetCameraView(const AABB& aabb);
 
 	void OffsetCamera(const Vector2& offset);
-	void SetViewSize(const int& width, const int& height);
 
 	Vector2 GetFocalPoint() const;
 	void SetFocalPoint(const Vector2& focalPoint);
@@ -30,7 +30,7 @@ public:
 
 private:
 
-	AABB _GameField;
+	const Vector2Int _WindowDim;
 	AABB _CurrentView;
 	Vector2 _Velocity;
 
