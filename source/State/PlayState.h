@@ -19,6 +19,7 @@ public:
 
 	void Update(const InputBuffer& inputBuffer, const float& deltaTime) override;
 	void Render() override;
+	void ProcessCollisions();
 
 private:
 	Game& _Game;

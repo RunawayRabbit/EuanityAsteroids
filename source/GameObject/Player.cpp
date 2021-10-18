@@ -90,6 +90,7 @@ Player::Kill(const Entity& playerEntity, const Vector2& playerVelocity)
 	// ReSharper restore CppExpressionWithoutSideEffects
 
 	_Entity = Entity::Null();
+	_Health = _Ship.StartingHealth;
 }
 
 void
@@ -237,6 +238,16 @@ Player::GetPlayerVelocity() const
 		retVal = rigid.value().velocity;
 	}
 	return retVal;
+}
+
+void
+Player::TakeDamage(const int damage)
+{
+	_Health -= damage;
+	if(_Health <= 0)
+	{
+		Kill(_Entity, Vector2::zero());
+	}
 }
 
 void

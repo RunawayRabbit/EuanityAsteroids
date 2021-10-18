@@ -89,7 +89,7 @@ private:
 	                                  std::vector<MoveList::Entry>::iterator asteroidBegin,
 	                                  std::vector<MoveList::Entry>::iterator asteroidEnd,
 	                                  const float& asteroidRadius,
-	                                  std::vector<CollisionListEntry>& Collisions);
+	                                  std::vector<CollisionListEntry>& collisions);
 
 
 	// Circle Collisions

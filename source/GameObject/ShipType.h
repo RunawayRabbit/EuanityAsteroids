@@ -17,6 +17,8 @@ struct ShipType
 
 	float MaxSpeedSq;
 
+	int StartingHealth;
+
 	static ShipType GetFastAgileShip()
 	{
 		ShipType ship;
@@ -34,6 +36,8 @@ struct ShipType
 		ship.RotateDeceleration = ship.RotateAcceleration * 2.0f;
 
 		ship.MaxSpeedSq = ship.MaxSpeed * ship.MaxSpeed;
+
+		ship.StartingHealth = 3;
 
 		return ship;
 	}
@@ -56,6 +60,8 @@ struct ShipType
 
 		ship.MaxSpeedSq = ship.MaxSpeed * ship.MaxSpeed;
 
+		ship.StartingHealth = 3;
+
 		return ship;
 	}
 
@@ -76,6 +82,8 @@ struct ShipType
 		ship.RotateDeceleration = ship.RotateAcceleration * 2.0f;
 
 		ship.MaxSpeedSq = ship.MaxSpeed * ship.MaxSpeed;
+
+		ship.StartingHealth = 5;
 
 		return ship;
 	}

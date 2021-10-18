@@ -37,20 +37,49 @@ PlayState::Render()
 
 
 void
-PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
+PlayState::ProcessCollisions()
 {
-	// Find out what collided, do stuff to fix it.
 	for(const auto& [A, B, EntityAType, EntityBType, MassA, MassB, TimeOfCollision] : _Game.Physics.GetCollisionReport())
 	{
-		if(EntityAType == ColliderType::SHIP &&
-			(EntityBType == ColliderType::LARGE_ASTEROID ||
-				EntityBType == ColliderType::MEDIUM_ASTEROID))
+		if(!_Game.Entities.Exists(A) || !_Game.Entities.Exists(B))
 		{
-			// Players don't die to small asteroids. I have decided this.
-			auto playerVel = _Game.Rigidbodies.Get(A).value().velocity;
-			_Player.Kill(A, playerVel);
+			// Don't double-process things that were destroyed earlier in the collision list!
+			continue;
 		}
+		if(EntityAType == ColliderType::SHIP)
+		{
+			if(EntityBType == ColliderType::LARGE_ASTEROID ||
+				EntityBType == ColliderType::MEDIUM_ASTEROID)
+			{
+				// Player dies when they crash into Large or Medium asteroids.
+				auto playerVel = _Game.Rigidbodies.Get(A).value().velocity;
+				_Player.Kill(A, playerVel);
+			}
+			else if(EntityBType == ColliderType::SMOL_ASTEROID)
+			{
+				// Small asteroids bounce if slow, explode if fast.
+				// Fast collisions reduce player HP.
+				auto playerVel = _Game.Rigidbodies.Get(A).value().velocity;
+				auto asteroidVel = _Game.Rigidbodies.Get(B).value().velocity;
 
+				const auto relativeSpeedSq = (playerVel - asteroidVel).LengthSq();
+
+				if(relativeSpeedSq > 50.0f*50.0f)
+				{
+					// Too fast, deal damage
+					_Player.TakeDamage(1);
+					auto asteroidPos = _Game.Xforms.Get(B).value().pos;
+					// ReSharper disable once CppExpressionWithoutSideEffects
+					_Game.Create.SmallExplosion(asteroidPos,asteroidVel);
+					_Game.Entities.Destroy(B);
+				}
+				else
+				{
+					// just bounce!
+				}
+
+			}
+		}
 		if(EntityAType == ColliderType::BULLET)
 		{
 			auto [BulletPos, BulletRot] = _Game.Xforms.Get(A).value();
@@ -74,6 +103,12 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 			_Score += 10;
 		}
 	}
+}
+
+void
+PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
+{
+	ProcessCollisions();
 
 	_Player.Update(inputBuffer, deltaTime);
 

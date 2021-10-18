@@ -247,7 +247,7 @@ Physics::OBBVsSpecificAsteroid(const OBB& ship,
                                const std::vector<MoveList::Entry>::iterator asteroidBegin,
                                const std::vector<MoveList::Entry>::iterator asteroidEnd,
                                const float& asteroidRadius,
-                               std::vector<CollisionListEntry>& Collisions)
+                               std::vector<CollisionListEntry>& collisions)
 {
 	for(auto Asteroid = asteroidBegin; Asteroid != asteroidEnd; ++Asteroid)
 	{
@@ -264,7 +264,7 @@ Physics::OBBVsSpecificAsteroid(const OBB& ship,
 
 			entry.TimeOfCollision = 0.0f; // Made-up.
 
-			Collisions.push_back(entry);
+			collisions.push_back(entry);
 		}
 	}
 }

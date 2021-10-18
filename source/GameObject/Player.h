@@ -35,6 +35,7 @@ public:
 	Vector2Int GetPlayerPositionInt() const;
 
 	Vector2 GetPlayerVelocity() const;
+	void TakeDamage(int damage);
 
 private:
 
@@ -53,6 +54,8 @@ private:
 	Entity _MainThruster;
 	Entity _StrafeThrusterLeft;
 	Entity _StrafeThrusterRight;
+
+	int _Health;
 
 	float _ShotTimer;
 
