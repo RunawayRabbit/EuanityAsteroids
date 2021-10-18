@@ -1,6 +1,8 @@
 #pragma once
 
-#include "ShipTypes.h"
+#include "ShipType.h"
+#include "WeaponType.h"
+
 #include "../ECS/Entity.h"
 #include "../ECS/EntityManager.h"
 #include "../Physics/Physics.h"
@@ -54,5 +56,6 @@ private:
 
 	float _ShotTimer;
 
-	ShipType _ShipType;
+	ShipType _Ship;
+	WeaponType _Weapon;
 };

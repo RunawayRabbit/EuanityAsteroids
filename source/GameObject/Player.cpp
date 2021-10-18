@@ -32,7 +32,8 @@ Player::Player(EntityManager& entityManager,
 	  _StrafeThrusterLeft(Entity::Null()),
 	  _StrafeThrusterRight(Entity::Null()),
 	  _ShotTimer(0),
-	  _ShipType(ShipType::GetSlowPowerfulShip())
+	  _Ship(ShipType::GetNormalShip()),
+	  _Weapon(WeaponType::GetMediumWideWeapon())
 {
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,
 	// have all of our initialization done at startup time.
@@ -127,15 +128,15 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		const auto rotatingRight = inputBuffer.Contains(InputToggle::RotateRight);
 		if(!rotatingLeft && !rotatingRight)
 		{
-			newAngularVelocity = Math::MoveTowards(newAngularVelocity, 0, _ShipType.RotateAcceleration * deltaTime);
+			newAngularVelocity = Math::MoveTowards(newAngularVelocity, 0, _Ship.RotateAcceleration * deltaTime);
 		}
 		else
 		{
 			// Apply torque
 			if(rotatingLeft)
-				trailRotation = -_ShipType.RotateAcceleration * deltaTime;
+				trailRotation = -_Ship.RotateAcceleration * deltaTime;
 			if(rotatingRight)
-				trailRotation = _ShipType.RotateAcceleration * deltaTime;
+				trailRotation = _Ship.RotateAcceleration * deltaTime;
 
 			newAngularVelocity += trailRotation;
 		}
@@ -146,8 +147,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	{
 		if(inputBuffer.Contains(InputToggle::StrafeLeft))
 		{
-			newVelocity += right * (-_ShipType.StrafeAcceleration * deltaTime);
-			RenderThruster(_StrafeThrusterRight, Vector2(_ShipType.StrafeThrusterX, _ShipType.StrafeThrusterY), 90.0f, transform, SpriteID::MUZZLE_FLASH);
+			newVelocity += right * (-_Ship.StrafeAcceleration * deltaTime);
+			RenderThruster(_StrafeThrusterRight, Vector2(_Ship.StrafeThrusterX, _Ship.StrafeThrusterY), 90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -156,8 +157,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 
 		if(inputBuffer.Contains(InputToggle::StrafeRight))
 		{
-			newVelocity += right * (_ShipType.StrafeAcceleration * deltaTime);
-			RenderThruster(_StrafeThrusterLeft, Vector2(-_ShipType.StrafeThrusterX, _ShipType.StrafeThrusterY), -90.0f, transform, SpriteID::MUZZLE_FLASH);
+			newVelocity += right * (_Ship.StrafeAcceleration * deltaTime);
+			RenderThruster(_StrafeThrusterLeft, Vector2(-_Ship.StrafeThrusterX, _Ship.StrafeThrusterY), -90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -170,8 +171,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	{
 		if(inputBuffer.Contains(InputToggle::MoveForward))
 		{
-			newVelocity += forward * (_ShipType.ForwardAcceleration * deltaTime);
-			RenderThruster(_MainThruster, Vector2(_ShipType.MainThrusterX, _ShipType.MainThrusterY), trailRotation, transform, SpriteID::SHIP_TRAIL);
+			newVelocity += forward * (_Ship.ForwardAcceleration * deltaTime);
+			RenderThruster(_MainThruster, Vector2(_Ship.MainThrusterX, _Ship.MainThrusterY), trailRotation, transform, SpriteID::SHIP_TRAIL);
 		}
 		else
 		{
@@ -182,24 +183,24 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 
 	// Write back our updated values.
 	const auto newSpeedSq  = newVelocity.LengthSq();
-	rigid->velocity        = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, _ShipType.MaxSpeedSq));
-	rigid->angularVelocity = std::clamp(newAngularVelocity, -_ShipType.MaxAngularVelocity, _ShipType.MaxAngularVelocity);
+	rigid->velocity        = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, _Ship.MaxSpeedSq));
+	rigid->angularVelocity = std::clamp(newAngularVelocity, -_Ship.MaxAngularVelocity, _Ship.MaxAngularVelocity);
 
 #pragma region Shoot
 	if(_ShotTimer < 0.0f && inputBuffer.Contains(InputToggle::Shoot))
 	{
-		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + _ShipType.ShotCooldown : _ShipType.ShotCooldown;
+		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + _Weapon.ShotCooldown : _Weapon.ShotCooldown;
 
 		// ReSharper disable once CppExpressionWithoutSideEffects
-		_Create.MuzzleFlash(transform.pos + forward * _ShipType.BulletSpawnOffsetY, newVelocity);
+		_Create.MuzzleFlash(transform.pos + forward * _Weapon.BulletSpawnOffsetY, newVelocity);
 
-		auto bulletForward = forward.RotateDeg(-_ShipType.BulletSpawnArcDeg * 0.5f);
+		auto bulletForward = forward.RotateDeg(-_Weapon.BulletSpawnArcDeg * 0.5f);
 
-		const auto spawnArcIncrement = _ShipType.BulletSpawnArcDeg / (_ShipType.BulletSpawnCount - 1);
-		for(auto i = 0; i < _ShipType.BulletSpawnCount; ++i)
+		const auto spawnArcIncrement = _Weapon.BulletSpawnArcDeg / (_Weapon.BulletSpawnCount - 1);
+		for(auto i = 0; i < _Weapon.BulletSpawnCount; ++i)
 		{
 			// ReSharper disable once CppExpressionWithoutSideEffects
-			_Create.Bullet(transform.pos + (bulletForward * _ShipType.BulletSpawnOffsetY), rigid->velocity + (bulletForward * _ShipType.BulletSpeed), _ShipType.BulletLifetime);
+			_Create.Bullet(transform.pos + (bulletForward * _Weapon.BulletSpawnOffsetY), rigid->velocity + (bulletForward * _Weapon.BulletSpeed), _Weapon.BulletLifetime);
 			bulletForward = bulletForward.RotateDeg(spawnArcIncrement);
 		}
 	}

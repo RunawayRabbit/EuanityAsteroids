@@ -29,7 +29,8 @@
     <ClInclude Include="source\ECS\UIManager.h" />
     <ClInclude Include="source\GameObject\Create.h" />
     <ClInclude Include="source\GameObject\Player.h" />
-    <ClInclude Include="source\GameObject\ShipTypes.h" />
+    <ClInclude Include="source\GameObject\ShipType.h" />
+    <ClInclude Include="source\GameObject\WeaponType.h" />
     <ClInclude Include="source\Input\InputBuffer.h" />
     <ClInclude Include="source\Input\InputContext.h" />
     <ClInclude Include="source\Input\InputDefinitions.h" />

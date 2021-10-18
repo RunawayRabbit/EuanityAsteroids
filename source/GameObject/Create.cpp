@@ -1,8 +1,5 @@
 #include "Create.h"
 
-#include <iostream>
-
-
 #include "../Platform/Game.h"
 
 #include "../ECS/RigidbodyManager.h"
@@ -218,7 +215,7 @@ Create::SmallExplosion(const Vector2& position, const Vector2& velocity, const f
 	{
 		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
 	}
-	_EntityManager.DestroyDelayed(entity, 0.9f);
+	_EntityManager.DestroyDelayed(entity, Math::RandomRange(0.3f, 0.8f));
 
 	return entity;
 }
@@ -290,8 +287,8 @@ Create::GetSpriteFor(const AsteroidType& asteroidType) const
 		case AsteroidType::RANDOM_SMALL:
 		{
 			//@NOTE: Janky hack to deal with SMOL_ASTEROID_11 being basically invisible.
-			const auto candidate = static_cast<SpriteID>(static_cast<int>(SpriteID::SMOL_ASTEROID_1) + Math::RandomRange(0, 15));
-			//if (Candidate == SpriteID::SMOL_ASTEROID_11) Candidate = SpriteID::SMOL_ASTEROID_12;
+			auto candidate = static_cast<SpriteID>(static_cast<int>(SpriteID::SMOL_ASTEROID_1) + Math::RandomRange(0, 15));
+			if (candidate == SpriteID::SMOL_ASTEROID_11) candidate = SpriteID::SMOL_ASTEROID_12;
 			return candidate;
 		}
 

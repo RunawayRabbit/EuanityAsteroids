@@ -5,22 +5,20 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Bigger Explosions!">
-      <change afterPath="$PROJECT_DIR$/source/GameObject/ShipTypes.h" afterDir="false" />
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Refactored ship types to allow variety later on.">
+      <change afterPath="$PROJECT_DIR$/source/GameObject/WeaponType.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Create.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Player.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Player.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Platform/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/State/MenuState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/State/MenuState.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/ShipTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/ShipType.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.read.1.tlog" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,14 +85,16 @@
       <option value="$PROJECT_DIR$/source/Math/Vector2.h" />
       <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
-      <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
       <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/EntityManager.cpp" />
       <option value="$PROJECT_DIR$/source/State/MenuState.h" />
       <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/ShipTypes.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/ShipType.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
+      <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -183,7 +183,7 @@
       <workItem from="1634357204179" duration="18530000" />
       <workItem from="1634380940031" duration="3562000" />
       <workItem from="1634428806740" duration="8537000" />
-      <workItem from="1634527613747" duration="8808000" />
+      <workItem from="1634527613747" duration="10502000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -262,7 +262,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634534705267</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Refactored ship types to allow variety later on.">
+      <created>1634539433920</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1634539433920</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -292,7 +299,8 @@
     <MESSAGE value="Added spread bullets" />
     <MESSAGE value="Juiced the player death a bit." />
     <MESSAGE value="Bigger Explosions!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bigger Explosions!" />
+    <MESSAGE value="Refactored ship types to allow variety later on." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored ship types to allow variety later on." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
