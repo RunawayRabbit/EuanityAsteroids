@@ -50,6 +50,7 @@
     <ClInclude Include="source\Platform\Game.h" />
     <ClInclude Include="source\Platform\RingBuffer.h" />
     <ClInclude Include="source\Renderer\BackgroundRenderer.h" />
+    <ClInclude Include="source\Renderer\Camera.h" />
     <ClInclude Include="source\Renderer\Color.h" />
     <ClInclude Include="source\Renderer\Renderer.h" />
     <ClInclude Include="source\Renderer\RenderQueue.h" />
@@ -78,6 +79,7 @@
     <ClCompile Include="source\Platform\Game.cpp" />
     <ClCompile Include="source\Platform\Main.cpp" />
     <ClCompile Include="source\Renderer\BackgroundRenderer.cpp" />
+    <ClCompile Include="source\Renderer\Camera.cpp" />
     <ClCompile Include="source\Renderer\Renderer.cpp" />
     <ClCompile Include="source\Renderer\RenderQueue.cpp" />
     <ClCompile Include="source\Renderer\SpriteAtlas.cpp" />
