@@ -75,7 +75,23 @@ struct WeaponType
 		weapon.ShotCooldown       = 0.4f;
 		weapon.BulletSpawnOffsetY = 11.0f;
 		weapon.BulletSpawnCount   = 1;
-		weapon.BulletSpawnArcDeg  = 15.0f;
+		weapon.BulletSpawnArcDeg  = 0.0f;
+
+		weapon.BulletType = BulletType::BOUNCY_BULLET;
+
+		return weapon;
+	}
+
+	static WeaponType GetOverpoweredTestWeapon()
+	{
+		WeaponType weapon;
+
+		weapon.BulletSpeed        = 450.0f;
+		weapon.BulletLifetime     = 1.9f;
+		weapon.ShotCooldown       = 0.2f;
+		weapon.BulletSpawnOffsetY = 11.0f;
+		weapon.BulletSpawnCount   = 9;
+		weapon.BulletSpawnArcDeg  = 25.0f;
 
 		weapon.BulletType = BulletType::BOUNCY_BULLET;
 

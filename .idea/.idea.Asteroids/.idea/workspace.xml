@@ -5,20 +5,10 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Gameplay changes make to small asteroids more meaningful">
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Bouncy Bullets">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Player.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/WeaponType.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/WeaponType.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Physics/ColliderType.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/ColliderType.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/State/PlayState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,13 +79,13 @@
       <option value="$PROJECT_DIR$/source/Math/MathConstants.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
       <option value="$PROJECT_DIR$/source/GameObject/ShipType.h" />
-      <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
       <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
+      <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -184,7 +174,7 @@
       <workItem from="1634357204179" duration="18530000" />
       <workItem from="1634380940031" duration="3562000" />
       <workItem from="1634428806740" duration="8537000" />
-      <workItem from="1634527613747" duration="14525000" />
+      <workItem from="1634527613747" duration="15256000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -284,7 +274,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634542594208</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Bouncy Bullets">
+      <created>1634545467670</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1634545467670</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -317,7 +314,8 @@
     <MESSAGE value="Refactored ship types to allow variety later on." />
     <MESSAGE value="Separated weapon types" />
     <MESSAGE value="Gameplay changes make to small asteroids more meaningful" />
-    <option name="LAST_COMMIT_MESSAGE" value="Gameplay changes make to small asteroids more meaningful" />
+    <MESSAGE value="Bouncy Bullets" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bouncy Bullets" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -331,11 +329,6 @@
           <url>file://$PROJECT_DIR$/source/State/PlayState.cpp</url>
           <line>84</line>
           <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/source/GameObject/Player.cpp</url>
-          <line>203</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/source/Physics/Physics.cpp</url>
