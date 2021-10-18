@@ -97,9 +97,9 @@ private:
 	static void BulletVsAsteroid(const MoveList::ColliderRanges& ranges,
 	                             std::vector<CollisionListEntry>& collisions,
 	                             const float& deltaTime);
-	static void AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
-	                               std::vector<CollisionListEntry>& Collisions,
-	                               const float& DeltaTime);
+	static void AsteroidVsAsteroid(const MoveList::ColliderRanges& ranges,
+	                               std::vector<CollisionListEntry>& collisions,
+	                               const float& deltaTime);
 
 	static void CircleVsCircles(const MoveList::Entry& Circle,
 	                            const float& CircleRadius,

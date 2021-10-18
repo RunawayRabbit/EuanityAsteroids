@@ -190,7 +190,7 @@ Physics::DetectInitialCollisions(MoveList& moveList, const float& deltaTime) con
 	MoveList::ColliderRanges ranges;
 	ranges.ShipBegin = moveList.begin() + moveList.GetColliderCount(ColliderType::NONE);
 	ranges.ShipEnd   = ranges.BulletBegin = ranges.ShipBegin + moveList.GetColliderCount(ColliderType::SHIP);
-	ranges.BulletEnd = ranges.LargeBegin  = ranges.BulletBegin + moveList.GetColliderCount(ColliderType::BULLET);
+	ranges.BulletEnd = ranges.LargeBegin  = ranges.BulletBegin + moveList.GetColliderCount(ColliderType::BULLET) + moveList.GetColliderCount(ColliderType::BOUNCY_BULLET);
 	ranges.LargeEnd  = ranges.MediumBegin = ranges.LargeBegin + moveList.GetColliderCount(ColliderType::LARGE_ASTEROID);
 	ranges.MediumEnd = ranges.SmallBegin  = ranges.MediumBegin + moveList.GetColliderCount(ColliderType::MEDIUM_ASTEROID);
 	ranges.SmallEnd  = moveList.end();
@@ -298,7 +298,7 @@ Physics::BulletVsAsteroid(const MoveList::ColliderRanges& ranges,
 		CircleVsCircles(*bullet, ColliderRadius::Bullet, bulletMass,
 		                ranges.LargeBegin, ranges.LargeEnd,
 		                ASTEROID_MASSES[0], bulletVsLargeRadius, deltaTime,
-		                ColliderType::BULLET, ColliderType::LARGE_ASTEROID,
+		                bullet->Rb.colliderType, ColliderType::LARGE_ASTEROID,
 		                collisions);
 
 		const auto BulletVsMediumRadius =
@@ -307,7 +307,7 @@ Physics::BulletVsAsteroid(const MoveList::ColliderRanges& ranges,
 		CircleVsCircles(*bullet, ColliderRadius::Bullet, bulletMass,
 		                ranges.MediumBegin, ranges.MediumEnd,
 		                ASTEROID_MASSES[1], BulletVsMediumRadius, deltaTime,
-		                ColliderType::BULLET, ColliderType::MEDIUM_ASTEROID,
+		                bullet->Rb.colliderType, ColliderType::MEDIUM_ASTEROID,
 		                collisions);
 
 		const auto BulletVsSmallRadius =
@@ -317,17 +317,17 @@ Physics::BulletVsAsteroid(const MoveList::ColliderRanges& ranges,
 		CircleVsCircles(*bullet, ColliderRadius::Bullet, bulletMass,
 		                ranges.SmallBegin, ranges.SmallEnd,
 		                ASTEROID_MASSES[2], BulletVsSmallRadius, deltaTime,
-		                ColliderType::BULLET, ColliderType::SMOL_ASTEROID,
+		                bullet->Rb.colliderType, ColliderType::SMOL_ASTEROID,
 		                collisions);
 	}
 }
 
 void
-Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
-                            std::vector<CollisionListEntry>& Collisions,
-                            const float& DeltaTime)
+Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& ranges,
+                            std::vector<CollisionListEntry>& collisions,
+                            const float& deltaTime)
 {
-	for(auto Large = Ranges.LargeBegin; Large != Ranges.LargeEnd; ++Large)
+	for(auto large = ranges.LargeBegin; large != ranges.LargeEnd; ++large)
 	{
 		// Large Vs Large
 		const auto LargeVsLargeSqRadius =
@@ -336,11 +336,11 @@ Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
 
 		// @NOTE: starting the range at large+1 guarantees that we don't check A against itself,
 		// and that we don't repeat test pairs that have already been computed.
-		CircleVsCircles(*Large, ColliderRadius::Large, ASTEROID_MASSES[0],
-		                Large + 1, Ranges.LargeEnd,
-		                ASTEROID_MASSES[0], LargeVsLargeSqRadius, DeltaTime,
+		CircleVsCircles(*large, ColliderRadius::Large, ASTEROID_MASSES[0],
+		                large + 1, ranges.LargeEnd,
+		                ASTEROID_MASSES[0], LargeVsLargeSqRadius, deltaTime,
 		                ColliderType::LARGE_ASTEROID, ColliderType::LARGE_ASTEROID,
-		                Collisions);
+		                collisions);
 
 
 		// Large Vs Medium
@@ -348,11 +348,11 @@ Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
 			(ColliderRadius::Large + ColliderRadius::Medium) *
 			(ColliderRadius::Large + ColliderRadius::Medium);
 
-		CircleVsCircles(*Large, ColliderRadius::Large, ASTEROID_MASSES[0],
-		                Ranges.MediumBegin, Ranges.MediumEnd,
-		                ASTEROID_MASSES[1], LargeVsMediumSqRadius, DeltaTime,
+		CircleVsCircles(*large, ColliderRadius::Large, ASTEROID_MASSES[0],
+		                ranges.MediumBegin, ranges.MediumEnd,
+		                ASTEROID_MASSES[1], LargeVsMediumSqRadius, deltaTime,
 		                ColliderType::LARGE_ASTEROID, ColliderType::MEDIUM_ASTEROID,
-		                Collisions);
+		                collisions);
 
 
 		// Large Vs Small
@@ -360,14 +360,14 @@ Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
 			(ColliderRadius::Large + ColliderRadius::Small) *
 			(ColliderRadius::Large + ColliderRadius::Small);
 
-		CircleVsCircles(*Large, ColliderRadius::Large, ASTEROID_MASSES[0],
-		                Ranges.SmallBegin, Ranges.SmallEnd,
-		                ASTEROID_MASSES[2], LargeVsSmallSqRadius, DeltaTime,
+		CircleVsCircles(*large, ColliderRadius::Large, ASTEROID_MASSES[0],
+		                ranges.SmallBegin, ranges.SmallEnd,
+		                ASTEROID_MASSES[2], LargeVsSmallSqRadius, deltaTime,
 		                ColliderType::LARGE_ASTEROID, ColliderType::SMOL_ASTEROID,
-		                Collisions);
+		                collisions);
 	}
 
-	for(auto Medium = Ranges.MediumBegin; Medium != Ranges.MediumEnd; ++Medium)
+	for(auto Medium = ranges.MediumBegin; Medium != ranges.MediumEnd; ++Medium)
 	{
 		// Medium Vs Medium
 		const auto MediumVsMediumSqRadius =
@@ -377,10 +377,10 @@ Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
 		// @NOTE: starting the range at medium+1 guarantees that we don't check A against itself,
 		// and that we don't repeat test pairs that have already been computed.
 		CircleVsCircles(*Medium, ColliderRadius::Medium, ASTEROID_MASSES[1],
-		                Medium + 1, Ranges.MediumEnd,
-		                ASTEROID_MASSES[1], MediumVsMediumSqRadius, DeltaTime,
+		                Medium + 1, ranges.MediumEnd,
+		                ASTEROID_MASSES[1], MediumVsMediumSqRadius, deltaTime,
 		                ColliderType::MEDIUM_ASTEROID, ColliderType::MEDIUM_ASTEROID,
-		                Collisions);
+		                collisions);
 
 
 		// Medium Vs Small
@@ -389,14 +389,14 @@ Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
 			(ColliderRadius::Medium + ColliderRadius::Small);
 
 		CircleVsCircles(*Medium, ColliderRadius::Medium, ASTEROID_MASSES[1],
-		                Ranges.SmallBegin, Ranges.SmallEnd,
-		                ASTEROID_MASSES[2], MediumVsSmallSqRadius, DeltaTime,
+		                ranges.SmallBegin, ranges.SmallEnd,
+		                ASTEROID_MASSES[2], MediumVsSmallSqRadius, deltaTime,
 		                ColliderType::MEDIUM_ASTEROID, ColliderType::SMOL_ASTEROID,
-		                Collisions);
+		                collisions);
 	}
 
 
-	for(auto Small = Ranges.SmallBegin; Small != Ranges.SmallEnd; ++Small)
+	for(auto Small = ranges.SmallBegin; Small != ranges.SmallEnd; ++Small)
 	{
 		// Small Vs Small
 		const auto SmallVsSmallSqRadius =
@@ -406,10 +406,10 @@ Physics::AsteroidVsAsteroid(const MoveList::ColliderRanges& Ranges,
 		// @NOTE: starting the range at small+1 guarantees that we don't check A against itself,
 		// and that we don't repeat test pairs that have already been computed.
 		CircleVsCircles(*Small, ColliderRadius::Small, ASTEROID_MASSES[2],
-		                Small + 1, Ranges.SmallEnd,
-		                ASTEROID_MASSES[2], SmallVsSmallSqRadius, DeltaTime,
+		                Small + 1, ranges.SmallEnd,
+		                ASTEROID_MASSES[2], SmallVsSmallSqRadius, deltaTime,
 		                ColliderType::SMOL_ASTEROID, ColliderType::SMOL_ASTEROID,
-		                Collisions);
+		                collisions);
 	}
 }
 

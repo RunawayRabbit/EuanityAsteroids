@@ -9,6 +9,7 @@ enum class ColliderType
 	SHIP,
 
 	BULLET,
+	BOUNCY_BULLET,
 
 	LARGE_ASTEROID,
 	MEDIUM_ASTEROID,
@@ -34,7 +35,8 @@ GetRadiusFromType(const ColliderType& type)
 	switch(type)
 	{
 		case ColliderType::SHIP: return Ship;
-		case ColliderType::BULLET: return Bullet;
+		case ColliderType::BULLET:
+		case ColliderType::BOUNCY_BULLET: return Bullet;
 		case ColliderType::LARGE_ASTEROID: return Large;
 		case ColliderType::MEDIUM_ASTEROID: return Medium;
 		case ColliderType::SMOL_ASTEROID: return Small;

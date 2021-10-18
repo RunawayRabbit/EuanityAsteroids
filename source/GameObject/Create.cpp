@@ -16,16 +16,15 @@
 float
 Create::GetCollisionRadiusFromColliderType(const AsteroidType& type)
 {
-	switch(type) {
-		case AsteroidType::LARGE:
-			return ColliderRadius::Large;
+	switch(type)
+	{
+		case AsteroidType::LARGE: return ColliderRadius::Large;
 
 		case AsteroidType::RANDOM_MEDIUM:
 		case AsteroidType::MEDIUM_1:
 		case AsteroidType::MEDIUM_2:
 		case AsteroidType::MEDIUM_3:
-		case AsteroidType::MEDIUM_4:
-			return ColliderRadius::Medium;
+		case AsteroidType::MEDIUM_4: return ColliderRadius::Medium;
 
 		case AsteroidType::RANDOM_SMALL:
 		case AsteroidType::SMALL_1:
@@ -43,8 +42,7 @@ Create::GetCollisionRadiusFromColliderType(const AsteroidType& type)
 		case AsteroidType::SMALL_13:
 		case AsteroidType::SMALL_14:
 		case AsteroidType::SMALL_15:
-		case AsteroidType::SMALL_16:
-			return ColliderRadius::Small;
+		case AsteroidType::SMALL_16: return ColliderRadius::Small;
 	}
 	return 0;
 }
@@ -199,8 +197,8 @@ Create::TinyExplosion(const Vector2& position, const Vector2& velocity, const fl
 	_EntityManager.DestroyDelayed(entity, Math::RandomRange(0.5f, 1.0f));
 
 	return entity;
-
 }
+
 Entity
 Create::SmallExplosion(const Vector2& position, const Vector2& velocity, const float& rotVelocity) const
 {
@@ -288,7 +286,8 @@ Create::GetSpriteFor(const AsteroidType& asteroidType) const
 		{
 			//@NOTE: Janky hack to deal with SMOL_ASTEROID_11 being basically invisible.
 			auto candidate = static_cast<SpriteID>(static_cast<int>(SpriteID::SMOL_ASTEROID_1) + Math::RandomRange(0, 15));
-			if (candidate == SpriteID::SMOL_ASTEROID_11) candidate = SpriteID::SMOL_ASTEROID_12;
+			if(candidate == SpriteID::SMOL_ASTEROID_11)
+				candidate = SpriteID::SMOL_ASTEROID_12;
 			return candidate;
 		}
 
@@ -298,18 +297,37 @@ Create::GetSpriteFor(const AsteroidType& asteroidType) const
 
 
 Entity
-Create::Bullet(const Vector2& position, const Vector2& velocity, const float& secondsToLive) const
+Create::Bullet(const BulletType bulletType, const Vector2& position, const Vector2& velocity, const float& secondsToLive) const
 {
 	const auto entity = _EntityManager.Create();
 
 	// std::cout << "Created bullet with EID " << entity.ToString() << ".\n";
 
+	auto spriteID     = SpriteID::NONE;
+	auto colliderType = ColliderType::NONE;
+	switch(bulletType)
+	{
+		case BulletType::REGULAR_BULLET:
+		{
+			spriteID     = SpriteID::BULLET;
+			colliderType = ColliderType::BULLET;
+			break;
+		}
+		case BulletType::BOUNCY_BULLET:
+		{
+			spriteID     = SpriteID::BULLET;
+			colliderType = ColliderType::BOUNCY_BULLET;
+			break;
+		}
+		default:assert(!"Missing Bullet Type");
+	}
+
 	Transform trans;
 	trans.pos = position;
 	trans.rot = velocity.GetAngleDegFromVector();
 	_TransManager.Add(entity, trans);
-	_SpriteManager.Create(entity, SpriteID::BULLET, RenderQueue::Layer::PARTICLE);
-	_RigidbodyManager.Add(entity, ColliderType::BULLET, velocity, 0);
+	_SpriteManager.Create(entity, spriteID, RenderQueue::Layer::PARTICLE);
+	_RigidbodyManager.Add(entity, colliderType, velocity, 0);
 
 	_EntityManager.DestroyDelayed(entity, secondsToLive);
 
@@ -367,7 +385,7 @@ Create::GameOver(int score)
 	const auto entity = _EntityManager.Create();
 
 	Transform trans;
-	trans.pos = {_Game.GameField.max * 0.5f};
+	trans.pos = { _Game.GameField.max * 0.5f };
 	trans.rot = 0;
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, SpriteManager::RenderFlags::SCREEN_SPACE);

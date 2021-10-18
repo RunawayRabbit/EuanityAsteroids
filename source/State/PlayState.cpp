@@ -80,7 +80,7 @@ PlayState::ProcessCollisions()
 
 			}
 		}
-		if(EntityAType == ColliderType::BULLET)
+		if(EntityAType == ColliderType::BULLET || EntityAType == ColliderType::BOUNCY_BULLET)
 		{
 			auto [BulletPos, BulletRot] = _Game.Xforms.Get(A).value();
 
@@ -98,7 +98,12 @@ PlayState::ProcessCollisions()
 
 			// ReSharper disable once CppExpressionWithoutSideEffects
 			_Game.Create.SmallExplosion(BulletPos);
-			_Game.Entities.Destroy(A);
+
+			if(EntityAType == ColliderType::BULLET)
+			{
+				// Regular bullets die on collision, super ones don't!
+				_Game.Entities.Destroy(A);
+			}
 
 			_Score += 10;
 		}

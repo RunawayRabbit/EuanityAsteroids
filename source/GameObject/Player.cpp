@@ -33,7 +33,7 @@ Player::Player(EntityManager& entityManager,
 	  _StrafeThrusterRight(Entity::Null()),
 	  _ShotTimer(0),
 	  _Ship(ShipType::GetNormalShip()),
-	  _Weapon(WeaponType::GetMediumWideWeapon())
+	  _Weapon(WeaponType::GetBouncyWeapon())
 {
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,
 	// have all of our initialization done at startup time.
@@ -201,7 +201,7 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		for(auto i = 0; i < _Weapon.BulletSpawnCount; ++i)
 		{
 			// ReSharper disable once CppExpressionWithoutSideEffects
-			_Create.Bullet(transform.pos + (bulletForward * _Weapon.BulletSpawnOffsetY), rigid->velocity + (bulletForward * _Weapon.BulletSpeed), _Weapon.BulletLifetime);
+			_Create.Bullet(_Weapon.BulletType,transform.pos + (bulletForward * _Weapon.BulletSpawnOffsetY), rigid->velocity + (bulletForward * _Weapon.BulletSpeed), _Weapon.BulletLifetime);
 			bulletForward = bulletForward.RotateDeg(spawnArcIncrement);
 		}
 	}
