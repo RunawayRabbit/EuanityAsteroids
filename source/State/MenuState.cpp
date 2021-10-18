@@ -1,7 +1,7 @@
 #include "MenuState.h"
 #include "PlayState.h"
 
-#include "../Math/Math.h"
+#include "../Math/EuanityMath.h"
 
 #include "../ECS/Entity.h"
 

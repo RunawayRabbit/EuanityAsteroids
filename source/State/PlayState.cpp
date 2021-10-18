@@ -2,10 +2,8 @@
 
 #include "PlayState.h"
 
-#include <iostream>
 
-
-#include "../Math/Math.h"
+#include "../Math/EuanityMath.h"
 
 PlayState::PlayState(Game& game)
 	: _Game(game),
@@ -23,8 +21,8 @@ PlayState::PlayState(Game& game)
 void
 PlayState::OnEnter()
 {
-	SpawnFreshAsteroids(1, 20.0f, 25.0f);
 	SpawnPlayer();
+	SpawnFirstAsteroid();
 }
 
 void
@@ -62,25 +60,24 @@ PlayState::ProcessCollisions()
 			{
 				// Small asteroids bounce if slow, explode if fast.
 				// Fast collisions reduce player HP.
-				auto playerVel = _Game.Rigidbodies.Get(A).value().velocity;
+				auto playerVel   = _Game.Rigidbodies.Get(A).value().velocity;
 				auto asteroidVel = _Game.Rigidbodies.Get(B).value().velocity;
 
 				const auto relativeSpeedSq = (playerVel - asteroidVel).LengthSq();
 
-				if(relativeSpeedSq > 50.0f*50.0f)
+				if(relativeSpeedSq > 50.0f * 50.0f)
 				{
 					// Too fast, deal damage
 					_Player.TakeDamage(1);
 					auto asteroidPos = _Game.Xforms.Get(B).value().pos;
 					// ReSharper disable once CppExpressionWithoutSideEffects
-					_Game.Create.SmallExplosion(asteroidPos,asteroidVel);
+					_Game.Create.SmallExplosion(asteroidPos, asteroidVel);
 					_Game.Entities.Destroy(B);
 				}
 				else
 				{
 					// just bounce!
 				}
-
 			}
 		}
 		if(EntityAType == ColliderType::BULLET || EntityAType == ColliderType::BOUNCY_BULLET)
@@ -91,16 +88,12 @@ PlayState::ProcessCollisions()
 				std::remove(_CurrentAsteroids.begin(), _CurrentAsteroids.end(), B),
 				_CurrentAsteroids.end());
 
-			auto newAsteroids = _Game.Create.SplitAsteroid(B, 15.0f);
 
-			if(EntityBType == ColliderType::LARGE_ASTEROID &&
-				newAsteroids.at(0) != Entity::Null())
-			{
-				_CurrentAsteroids.insert(_CurrentAsteroids.end(), newAsteroids.begin(), newAsteroids.end());
-			}
+			// ReSharper disable CppExpressionWithoutSideEffects
+			_Game.Create.SplitAsteroid(B, 15.0f);
 
-			// ReSharper disable once CppExpressionWithoutSideEffects
 			_Game.Create.SmallExplosion(BulletPos);
+			// ReSharper restore CppExpressionWithoutSideEffects
 
 			if(EntityAType == ColliderType::BULLET)
 			{
@@ -113,13 +106,79 @@ PlayState::ProcessCollisions()
 	}
 }
 
-void PlayState::RespawnAsteroids()
+void
+PlayState::RespawnAsteroids()
 {
-	//std::cout << static_cast<float>(_Score) / static_cast<float>(UINT_MAX) << ": " << log(_Score)-5 << "\n";
 	// Max difficulty at 8.
+	const int difficultyLevel = static_cast<uint32_t>(floorf(logf(_Score) - 5.0f)) - 1;
 
-	if(_CurrentAsteroids.size() == 0)
-		QueueNextLevel();
+	int numDesiredAsteroids;
+	float asteroidSpeedMin;
+	float asteroidSpeedMax;
+	if(difficultyLevel <= 2)
+	{
+		numDesiredAsteroids = 1;
+		asteroidSpeedMin    = 30.0f;
+		asteroidSpeedMax    = 45.0f;
+	}
+	else if(difficultyLevel == 3)
+	{
+		numDesiredAsteroids = 3;
+		asteroidSpeedMin    = 40.0f;
+		asteroidSpeedMax    = 50.0f;
+	}
+	else if(difficultyLevel == 4)
+	{
+		numDesiredAsteroids = 4;
+		asteroidSpeedMin    = 50.0f;
+		asteroidSpeedMax    = 60.0f;
+	}
+	else if(difficultyLevel == 5)
+	{
+		numDesiredAsteroids = 5;
+		asteroidSpeedMin    = 60.0f;
+		asteroidSpeedMax    = 80.0f;
+	}
+	else if(difficultyLevel == 6)
+	{
+		numDesiredAsteroids = 6;
+		asteroidSpeedMin    = 80.0f;
+		asteroidSpeedMax    = 100.0f;
+	}
+	else if(difficultyLevel == 7)
+	{
+		numDesiredAsteroids = 7;
+		asteroidSpeedMin    = 100.0f;
+		asteroidSpeedMax    = 140.0f;
+	}
+	else // >= 8
+	{
+		numDesiredAsteroids = 10;
+		asteroidSpeedMin    = 140.0f;
+		asteroidSpeedMax    = 180.0f;
+	}
+
+	_CurrentAsteroids.reserve(numDesiredAsteroids);
+	for(auto i = _CurrentAsteroids.size(); i < numDesiredAsteroids; ++i)
+	{
+		auto playerPos = _Player.GetPlayerPosition();
+		Vector2 spawnPosition;
+		do
+		{
+			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 500.0f);
+			spawnPosition.x = Math::Repeat(spawnPosition.x, _Game.GameField.max.x);
+			spawnPosition.y = Math::Repeat(spawnPosition.y, _Game.GameField.max.y);
+		} while((playerPos - spawnPosition).LengthSq() < 300.0f*300.0f);
+
+
+		auto spawnVelocity = Math::RandomOnUnitCircle() * Math::RandomRange(asteroidSpeedMin, asteroidSpeedMax);
+
+		_CurrentAsteroids.push_back(_Game.Create.Asteroid(spawnPosition,
+		                                                  Math::RandomRange(0, 360),
+		                                                  spawnVelocity,
+		                                                  Math::RandomRange(15, 40),
+		                                                  Create::AsteroidType::LARGE));
+	}
 }
 
 void
@@ -163,82 +222,17 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 }
 
 void
-PlayState::QueueNextLevel()
-{
-	if(_WaitingForNextLevel)
-		return;
-	_WaitingForNextLevel = true;
-
-	_Game.Time.ExecuteDelayed(2.0f, [&]()
-	{
-		SpawnNextLevel();
-	});
-}
-
-void
-PlayState::SpawnNextLevel()
-{
-	++_Level;
-	if(_Level == 1)
-		SpawnFreshAsteroids(5, 30.0f, 40.0f);
-	else if(_Level == 2)
-		SpawnFreshAsteroids(8, 35.0f, 45.0f);
-	else if(_Level == 3)
-		SpawnFreshAsteroids(12, 45.0f, 50.0f);
-	else if(_Level == 4)
-		SpawnFreshAsteroids(15, 60.0f, 65.0f);
-	else if(_Level == 5)
-		SpawnFreshAsteroids(20, 70.0f, 80.0f);
-	else
-		SpawnFreshAsteroids(30, 100.0f, 120.0f);
-
-	_WaitingForNextLevel = false;
-}
-
-void
 PlayState::SpawnPlayer()
 {
 	_Player.Spawn(_Game.GameField.max * 0.5f, 0);
 }
 
 void
-PlayState::SpawnFreshAsteroids(const int& count, const float& minVelocity, const float& maxVelocity)
+PlayState::SpawnFirstAsteroid()
 {
-	_CurrentAsteroids.reserve(count);
+	const auto playerPos = _Player.GetPlayerPosition();
+	const auto startPos = playerPos + Vector2(-400.0f, 0.0f);
+	const auto velocity = (playerPos-startPos).normalized() * 30.0f;
 
-	const auto leftRightCount = count / 3;
-	const auto yBucketWidth   = (_Game.GameField.max.y - ColliderRadius::Large) / leftRightCount;
-	for(auto i = 0; i < leftRightCount; ++i)
-	{
-		// Static in X, variable in Y
-		Vector2 startPos {};
-		startPos.x = 0;
-		startPos.y = Math::RandomRange(ColliderRadius::Large + (yBucketWidth) * i, ColliderRadius::Large + (yBucketWidth) * i + 1);
-
-		auto startRot = static_cast<float>(rand() % 360);
-
-		auto velDir = Vector2::Forward().RotateDeg(Math::RandomRange(0.0f, 360.0f));
-		auto vel    = velDir * Math::RandomRange(minVelocity, maxVelocity);
-		auto rotVel = Math::RandomRange(-45.0f, 45.0f);
-
-		_CurrentAsteroids.push_back(_Game.Create.Asteroid(startPos, startRot, vel, rotVel, Create::AsteroidType::LARGE));
-	}
-
-	const auto topBottomCount = count - leftRightCount;
-	const auto xBucketWidth   = (_Game.GameField.max.x - ColliderRadius::Large) / topBottomCount;
-	for(auto i = 0; i < topBottomCount; ++i)
-	{
-		// Static in Y, variable in X
-		Vector2 startPos {};
-		startPos.x = Math::RandomRange(ColliderRadius::Large + (xBucketWidth) * i, ColliderRadius::Large + (xBucketWidth) * i + 1);
-		startPos.y = 0;
-
-		auto startRot = static_cast<float>(rand() % 360);
-
-		auto velDir = Vector2::Forward().RotateDeg(Math::RandomRange(0.0f, 360.0f));
-		auto vel    = velDir * Math::RandomRange(minVelocity, maxVelocity);
-		auto rotVel = Math::RandomRange(-45.0f, 45.0f);
-
-		_CurrentAsteroids.push_back(_Game.Create.Asteroid(startPos, startRot, vel, rotVel, Create::AsteroidType::LARGE));
-	}
+	_CurrentAsteroids.push_back(_Game.Create.Asteroid(startPos, 240, velocity, 60, Create::AsteroidType::LARGE));
 }

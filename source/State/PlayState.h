@@ -38,9 +38,7 @@ private:
 	bool _WaitingToSpawn;
 	inline static const float CAMERA_VELOCITY_FACTOR = 0.3f;;
 
-	void SpawnFreshAsteroids(const int& count, const float& minVelocity, const float& maxVelocity);
 	void SpawnPlayer();
-	void QueueNextLevel();
-	void SpawnNextLevel();
+	void SpawnFirstAsteroid();
 
 };

@@ -3,7 +3,7 @@
 #include "Game.h"
 
 #include "../GameObject/Create.h"
-#include "../Math/Math.h"
+#include "../Math/EuanityMath.h"
 #include "../Physics/Physics.h"
 
 Game::Game(std::string windowName, int width, int height) :

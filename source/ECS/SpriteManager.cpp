@@ -36,8 +36,14 @@ SpriteManager::Create(const Entity entity, const SpriteID spriteID, const Render
 {
 	//@TODO: These APIs aren't following the same conventions...
 
-	// Get the date we need to work with.
-	const auto [TransPos, TransRot] = _TransManager.Get(entity).value();
+	auto transOpt = _TransManager.Get(entity);
+	if(!transOpt.has_value())
+	{
+		assert(!"SpriteManager needs the Transform to already exist " +
+			"before calling Create on an entity, please make sure you always make the transform first!");
+	}
+
+	const auto [TransPos, TransRot] = transOpt.value();
 
 	const auto [id, tex, rect] = _SpriteAtlas.Get(spriteID);
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math.h> // sqrt
+#include <cmath> // sqrt
 #include <ostream>
 
 #include "MathConstants.h"

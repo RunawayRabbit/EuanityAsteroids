@@ -5,13 +5,25 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="More OP weapons">
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Create.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Player.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/WeaponType.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/WeaponType.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Math/Math.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/EuanityMath.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Math/Vector2.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/Vector2.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Physics/CollisionTests.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/CollisionTests.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Platform/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/State/MenuState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/State/PlayState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/State/PlayState.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,29 +78,34 @@
       <option value="$PROJECT_DIR$/source/BugList.txt" />
       <option value="$PROJECT_DIR$/source/Renderer/Renderer.h" />
       <option value="$PROJECT_DIR$/source/Renderer/Renderer.cpp" />
-      <option value="$PROJECT_DIR$/source/ECS/UIManager.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.h" />
       <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/MoveList.h" />
       <option value="$PROJECT_DIR$/source/ECS/SpriteManager.h" />
-      <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
-      <option value="$PROJECT_DIR$/source/Math/Vector2.h" />
-      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/EntityManager.cpp" />
       <option value="$PROJECT_DIR$/source/State/MenuState.h" />
-      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/ShipTypes.h" />
-      <option value="$PROJECT_DIR$/source/Math/MathConstants.h" />
       <option value="$PROJECT_DIR$/source/GameObject/ShipType.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
-      <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.h" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
+      <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
+      <option value="$PROJECT_DIR$/source/Math/Circle.h" />
+      <option value="$PROJECT_DIR$/source/Math/AABB.h" />
+      <option value="$PROJECT_DIR$/source/ECS/UIManager.cpp" />
+      <option value="$PROJECT_DIR$/source/Math/Meth.h" />
+      <option value="$PROJECT_DIR$/source/Math/MathConstants.h" />
+      <option value="$PROJECT_DIR$/source/Physics/CollisionTests.h" />
+      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
+      <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
+      <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
+      <option value="$PROJECT_DIR$/source/Math/Vector2.h" />
+      <option value="$PROJECT_DIR$/source/Math/EuanityMath.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
+      <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.h" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -98,8 +115,8 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.1694847" />
-    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.26771337" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.16981132" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.26792452" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="XThreadsFramesViewSplitterKey" value="0.3909091" />
@@ -177,7 +194,9 @@
       <workItem from="1634357204179" duration="18530000" />
       <workItem from="1634380940031" duration="3562000" />
       <workItem from="1634428806740" duration="8537000" />
-      <workItem from="1634527613747" duration="17769000" />
+      <workItem from="1634527613747" duration="19162000" />
+      <workItem from="1634549960062" duration="353000" />
+      <workItem from="1634550360827" duration="3743000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -298,7 +317,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634546825979</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Yet more ridiculous weapons for stress-testing">
+      <created>1634548851022</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1634548851022</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -334,7 +360,8 @@
     <MESSAGE value="Bouncy Bullets" />
     <MESSAGE value="Added the OP Debug Weapon(tm)" />
     <MESSAGE value="More OP weapons" />
-    <option name="LAST_COMMIT_MESSAGE" value="More OP weapons" />
+    <MESSAGE value="Yet more ridiculous weapons for stress-testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Yet more ridiculous weapons for stress-testing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -349,6 +376,7 @@
     <watches-manager>
       <configuration name="CppProject">
         <watch expression="_Player._Weapon" language="C++" />
+        <watch expression="_CurrentAsteroids" language="C++" />
       </configuration>
     </watches-manager>
   </component>

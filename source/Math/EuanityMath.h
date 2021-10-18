@@ -77,6 +77,11 @@ namespace Math
 		return range(generator);
 	}
 
+	static Vector2 RandomOnUnitCircle()
+	{
+		return Vector2::Forward().RotateRad(RandomRange(0.0f, TAU));
+	}
+
 
 	// Random Numbery Stuff
 	static float Repeat(float t, float length)

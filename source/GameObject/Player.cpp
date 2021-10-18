@@ -7,7 +7,7 @@
 #include "../ECS/TransformManager.h"
 #include "../GameObject/Create.h"
 #include "../Input/InputBuffer.h"
-#include "../Math/Math.h"
+#include "../Math/EuanityMath.h"
 #include "../Math/Vector2Int.h"
 #include "../Physics/Physics.h"
 
@@ -27,7 +27,7 @@ Player::Player(EntityManager& entityManager,
 	  _StrafeThrusterRight(Entity::Null()),
 	  _ShotTimer(0),
 	  _Ship(ShipType::GetNormalShip()),
-	  _Weapon(WeaponType::GetGammaRayBurstWeapon())
+	  _Weapon(WeaponType::GetOverpoweredTestWeapon())
 {
 	_Health = _Ship.StartingHealth;
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,

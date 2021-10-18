@@ -8,7 +8,7 @@
 #include "../ECS/RigidbodyManager.h"
 #include "../ECS/TransformManager.h"
 
-#include "../Math/Math.h"
+#include "../Math/EuanityMath.h"
 #include "../Math/OBB.h"
 #include "../Math/Vector2.h"
 

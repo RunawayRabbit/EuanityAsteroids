@@ -35,8 +35,8 @@
     <ClInclude Include="source\Input\InputContext.h" />
     <ClInclude Include="source\Input\InputDefinitions.h" />
     <ClInclude Include="source\Input\InputHandler.h" />
-    <ClInclude Include="source\Math\Math.h" />
     <ClInclude Include="source\Math\AABB.h" />
+    <ClInclude Include="source\Math\EuanityMath.h" />
     <ClInclude Include="source\Math\MathConstants.h" />
     <ClInclude Include="source\Math\OBB.h" />
     <ClInclude Include="source\Math\Circle.h" />

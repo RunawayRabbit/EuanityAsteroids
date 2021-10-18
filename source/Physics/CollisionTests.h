@@ -1,11 +1,9 @@
 #pragma once
 
-#include <iostream>
-
-#include "..\Math\Math.h"
-#include "..\Math\Vector2.h"
-#include "..\Math\Circle.h"
-#include "..\Math\AABB.h"
+#include "../Math/EuanityMath.h"
+#include "../Math/Vector2.h"
+#include "../Math/Circle.h"
+#include "../Math/AABB.h"
 
 namespace CollisionTests
 {
@@ -68,5 +66,5 @@ namespace CollisionTests
 	bool OBBToCircle(const OBB& OBB, const Circle& circle)
 	{
 		return OBB.DistanceBetweenSq(circle.center) < circle.radius * circle.radius;
-	}	
+	}
 }

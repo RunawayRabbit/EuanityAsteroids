@@ -11,7 +11,7 @@
 #include "../State/Timer.h"
 #include "../State/MenuState.h"
 
-#include "../Math/Math.h"
+#include "../Math/EuanityMath.h"
 
 float
 Create::GetCollisionRadiusFromColliderType(const AsteroidType& type)
@@ -330,16 +330,15 @@ Create::Bullet(const BulletType bulletType, const Vector2& position, const Vecto
 		default:assert(!"Missing Bullet Type");
 	}
 
-	if(spriteID != SpriteID::NONE)
-		_SpriteManager.Create(entity, spriteID, RenderQueue::Layer::PARTICLE);
-
-
 	Transform trans;
 	trans.pos = position;
 	trans.rot = velocity.GetAngleDegFromVector();
 
 	_TransManager.Add(entity, trans);
 	_RigidbodyManager.Add(entity, colliderType, velocity, 0);
+
+	if(spriteID != SpriteID::NONE)
+		_SpriteManager.Create(entity, spriteID, RenderQueue::Layer::PARTICLE);
 
 	_EntityManager.DestroyDelayed(entity, secondsToLive);
 
