@@ -9,6 +9,8 @@
 
 #include "../Math/Vector2Int.h"
 
+#include "../Renderer/SpriteID.h"
+
 class RigidbodyManager;
 class EntityManager;
 class TransformManager;
@@ -39,7 +41,7 @@ public:
 
 private:
 
-	void RenderThruster(Entity& thruster, const Vector2& thrusterOffset, const float& thrusterRotation, const Transform& parentTrans, const SpriteID spriteID) const;
+	void RenderThruster(Entity& thruster, const Vector2& thrusterOffset, const float& thrusterRotation, const Transform& parentTrans, SpriteID spriteID) const;
 	void DestroyThruster(Entity& thruster) const;
 
 	RigidbodyManager& _RigidbodyManager;

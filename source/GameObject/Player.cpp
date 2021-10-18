@@ -1,21 +1,15 @@
+#include "Player.h"
+
 #include <algorithm> // min
 
 #include "../ECS/EntityManager.h"
 #include "../ECS/RigidbodyManager.h"
 #include "../ECS/TransformManager.h"
-
-#include "../Physics/Physics.h"
-
-#include "../Input/InputBuffer.h"
-
 #include "../GameObject/Create.h"
-
+#include "../Input/InputBuffer.h"
 #include "../Math/Math.h"
-
-#include "Player.h"
-
 #include "../Math/Vector2Int.h"
-
+#include "../Physics/Physics.h"
 
 Player::Player(EntityManager& entityManager,
                RigidbodyManager& rigidbodyManager,
@@ -33,8 +27,9 @@ Player::Player(EntityManager& entityManager,
 	  _StrafeThrusterRight(Entity::Null()),
 	  _ShotTimer(0),
 	  _Ship(ShipType::GetNormalShip()),
-	  _Weapon(WeaponType::GetOverpoweredTestWeapon())
+	  _Weapon(WeaponType::GetChaosWeapon())
 {
+	_Health = _Ship.StartingHealth;
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,
 	// have all of our initialization done at startup time.
 }
@@ -149,7 +144,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		if(inputBuffer.Contains(InputToggle::StrafeLeft))
 		{
 			newVelocity += right * (-_Ship.StrafeAcceleration * deltaTime);
-			RenderThruster(_StrafeThrusterRight, Vector2(_Ship.StrafeThrusterX, _Ship.StrafeThrusterY), 90.0f, transform, SpriteID::MUZZLE_FLASH);
+			RenderThruster(_StrafeThrusterRight, Vector2(_Ship.StrafeThrusterX, _Ship.StrafeThrusterY), 90.0f, transform,
+			               SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -159,7 +155,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		if(inputBuffer.Contains(InputToggle::StrafeRight))
 		{
 			newVelocity += right * (_Ship.StrafeAcceleration * deltaTime);
-			RenderThruster(_StrafeThrusterLeft, Vector2(-_Ship.StrafeThrusterX, _Ship.StrafeThrusterY), -90.0f, transform, SpriteID::MUZZLE_FLASH);
+			RenderThruster(_StrafeThrusterLeft, Vector2(-_Ship.StrafeThrusterX, _Ship.StrafeThrusterY), -90.0f, transform,
+			               SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -173,7 +170,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		if(inputBuffer.Contains(InputToggle::MoveForward))
 		{
 			newVelocity += forward * (_Ship.ForwardAcceleration * deltaTime);
-			RenderThruster(_MainThruster, Vector2(_Ship.MainThrusterX, _Ship.MainThrusterY), trailRotation, transform, SpriteID::SHIP_TRAIL);
+			RenderThruster(_MainThruster, Vector2(_Ship.MainThrusterX, _Ship.MainThrusterY), trailRotation, transform,
+			               SpriteID::SHIP_TRAIL);
 		}
 		else
 		{
@@ -201,7 +199,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		for(auto i = 0; i < _Weapon.BulletSpawnCount; ++i)
 		{
 			// ReSharper disable once CppExpressionWithoutSideEffects
-			_Create.Bullet(_Weapon.BulletType,transform.pos + (bulletForward * _Weapon.BulletSpawnOffsetY), rigid->velocity + (bulletForward * _Weapon.BulletSpeed), _Weapon.BulletLifetime);
+			_Create.Bullet(_Weapon.BulletType, transform.pos + (bulletForward * _Weapon.BulletSpawnOffsetY),
+			               rigid->velocity + (bulletForward * _Weapon.BulletSpeed), _Weapon.BulletLifetime);
 			bulletForward = bulletForward.RotateDeg(spawnArcIncrement);
 		}
 	}

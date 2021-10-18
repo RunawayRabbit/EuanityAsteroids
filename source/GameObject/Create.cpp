@@ -107,6 +107,7 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 			sprites.at(3) = SpriteID::MEDIUM_ASTEROID_4;
 			colliderType  = ColliderType::MEDIUM_ASTEROID;
 			parentRadius  = ColliderRadius::Large;
+
 			break;
 
 		case ColliderType::MEDIUM_ASTEROID: sprites.at(0) = GetSpriteFor(AsteroidType::RANDOM_SMALL);
@@ -156,6 +157,7 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 		retVal.at(i) = entity;
 	}
 
+	LargeExplosion(parentTransform->pos, -parentRigid.velocity, Math::RandomRange(5.0f, 50.0f) );
 	_EntityManager.Destroy(asteroid);
 
 	return retVal;

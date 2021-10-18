@@ -1,6 +1,7 @@
 #pragma once
+#include <cstdint>
 
-enum class BulletType: uint8_t
+enum class BulletType : uint8_t
 {
 	REGULAR_BULLET,
 	BOUNCY_BULLET,
@@ -94,6 +95,22 @@ struct WeaponType
 		weapon.BulletSpawnArcDeg  = 25.0f;
 
 		weapon.BulletType = BulletType::BOUNCY_BULLET;
+
+		return weapon;
+	}
+
+	static WeaponType GetChaosWeapon()
+	{
+		WeaponType weapon;
+
+		weapon.BulletSpeed        = 250.0f;
+		weapon.BulletLifetime     = 1.7f;
+		weapon.ShotCooldown       = 1.0f;
+		weapon.BulletSpawnOffsetY = 11.0f;
+		weapon.BulletSpawnCount   = 500;
+		weapon.BulletSpawnArcDeg  = 360.0f;
+
+		weapon.BulletType = BulletType::REGULAR_BULLET;
 
 		return weapon;
 	}
