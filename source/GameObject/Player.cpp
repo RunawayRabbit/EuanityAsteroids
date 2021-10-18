@@ -27,7 +27,7 @@ Player::Player(EntityManager& entityManager,
 	  _StrafeThrusterRight(Entity::Null()),
 	  _ShotTimer(0),
 	  _Ship(ShipType::GetNormalShip()),
-	  _Weapon(WeaponType::GetChaosWeapon())
+	  _Weapon(WeaponType::GetGammaRayBurstWeapon())
 {
 	_Health = _Ship.StartingHealth;
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,

@@ -321,14 +321,24 @@ Create::Bullet(const BulletType bulletType, const Vector2& position, const Vecto
 			colliderType = ColliderType::BOUNCY_BULLET;
 			break;
 		}
+		case BulletType::INVISIBLE_BULLET:
+		{
+			spriteID     = SpriteID::NONE;
+			colliderType = ColliderType::BOUNCY_BULLET;
+			break;
+		}
 		default:assert(!"Missing Bullet Type");
 	}
+
+	if(spriteID != SpriteID::NONE)
+		_SpriteManager.Create(entity, spriteID, RenderQueue::Layer::PARTICLE);
+
 
 	Transform trans;
 	trans.pos = position;
 	trans.rot = velocity.GetAngleDegFromVector();
+
 	_TransManager.Add(entity, trans);
-	_SpriteManager.Create(entity, spriteID, RenderQueue::Layer::PARTICLE);
 	_RigidbodyManager.Add(entity, colliderType, velocity, 0);
 
 	_EntityManager.DestroyDelayed(entity, secondsToLive);

@@ -5,6 +5,7 @@ enum class BulletType : uint8_t
 {
 	REGULAR_BULLET,
 	BOUNCY_BULLET,
+	INVISIBLE_BULLET,
 };
 
 
@@ -111,6 +112,22 @@ struct WeaponType
 		weapon.BulletSpawnArcDeg  = 360.0f;
 
 		weapon.BulletType = BulletType::REGULAR_BULLET;
+
+		return weapon;
+	}
+
+	static WeaponType GetGammaRayBurstWeapon()
+	{
+		WeaponType weapon;
+
+		weapon.BulletSpeed = 10000.0f;
+		weapon.BulletLifetime     = 0.1f;
+		weapon.ShotCooldown       = 1.0f;
+		weapon.BulletSpawnOffsetY = 11.0f;
+		weapon.BulletSpawnCount   = 500;
+		weapon.BulletSpawnArcDeg  = 360.0f;
+
+		weapon.BulletType = BulletType::INVISIBLE_BULLET;
 
 		return weapon;
 	}

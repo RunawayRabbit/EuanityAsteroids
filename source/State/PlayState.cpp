@@ -2,6 +2,9 @@
 
 #include "PlayState.h"
 
+#include <iostream>
+
+
 #include "../Math/Math.h"
 
 PlayState::PlayState(Game& game)
@@ -105,9 +108,18 @@ PlayState::ProcessCollisions()
 				_Game.Entities.Destroy(A);
 			}
 
-			_Score += 10;
+			_Score += 100;
 		}
 	}
+}
+
+void PlayState::RespawnAsteroids()
+{
+	//std::cout << static_cast<float>(_Score) / static_cast<float>(UINT_MAX) << ": " << log(_Score)-5 << "\n";
+	// Max difficulty at 8.
+
+	if(_CurrentAsteroids.size() == 0)
+		QueueNextLevel();
 }
 
 void
@@ -147,9 +159,7 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		}
 	}
 
-
-	if(_CurrentAsteroids.size() == 0)
-		QueueNextLevel();
+	RespawnAsteroids();
 }
 
 void

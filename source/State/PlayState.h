@@ -20,6 +20,7 @@ public:
 	void Update(const InputBuffer& inputBuffer, const float& deltaTime) override;
 	void Render() override;
 	void ProcessCollisions();
+	void RespawnAsteroids();
 
 private:
 	Game& _Game;
@@ -31,7 +32,7 @@ private:
 
 	int _Level;
 	int _Lives;
-	int _Score;
+	uint32_t _Score;
 
 	bool _WaitingForNextLevel;
 	bool _WaitingToSpawn;
