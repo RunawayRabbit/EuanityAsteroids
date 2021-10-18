@@ -185,6 +185,25 @@ Create::MuzzleFlash(const Vector2& position, const Vector2& velocity) const
 }
 
 Entity
+Create::TinyExplosion(const Vector2& position, const Vector2& velocity, const float& rotVelocity) const
+{
+	const auto entity = _EntityManager.Create();
+
+	Transform trans;
+	trans.pos = position;
+	trans.rot = Math::RandomRange(0.0f, 360.0f);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, SpriteID::BULLET, RenderQueue::Layer::PARTICLE);
+	if(velocity != Vector2::zero() || rotVelocity != 0.0f)
+	{
+		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
+	}
+	_EntityManager.DestroyDelayed(entity, Math::RandomRange(0.5f, 1.0f));
+
+	return entity;
+
+}
+Entity
 Create::SmallExplosion(const Vector2& position, const Vector2& velocity, const float& rotVelocity) const
 {
 	const auto entity = _EntityManager.Create();
@@ -194,11 +213,12 @@ Create::SmallExplosion(const Vector2& position, const Vector2& velocity, const f
 	trans.rot = Math::RandomRange(0.0f, 360.0f);
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::SMALL_EXPLOSION, RenderQueue::Layer::PARTICLE);
-	_EntityManager.DestroyDelayed(entity, 0.5f);
 	if(velocity != Vector2::zero() || rotVelocity != 0.0f)
 	{
 		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
 	}
+	_EntityManager.DestroyDelayed(entity, 0.9f);
+
 	return entity;
 }
 

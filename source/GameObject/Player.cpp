@@ -71,12 +71,19 @@ Player::Kill(const Entity& playerEntity, const Vector2& playerVelocity)
 		_Create.LargeExplosion(shipPos + offset);
 		_Create.LargeExplosion(shipPos + offset);
 		_Create.LargeExplosion(shipPos + offset);
+		_Create.LargeExplosion(shipPos + offset);
 	}
 
 	for(auto i = 0; i < 12; ++i)
 	{
-		const auto randomVelocity = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * Math::RandomRange(40.0f, 180.0f);
+		const auto randomVelocity = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * Math::RandomRange(10.0f, 140.0f);
 		_Create.SmallExplosion(shipPos, (playerVelocity * 0.1f) + randomVelocity);
+	}
+
+	for(auto i = 0; i < 12; ++i)
+	{
+		const auto randomVelocity = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * Math::RandomRange(60.0f, 240.0f);
+		_Create.TinyExplosion(shipPos, (playerVelocity * 0.1f) + randomVelocity);
 	}
 	// ReSharper restore CppExpressionWithoutSideEffects
 
