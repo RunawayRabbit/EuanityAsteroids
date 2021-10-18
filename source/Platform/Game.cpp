@@ -100,5 +100,5 @@ Game::ResetAllSystems()
 	Rigidbodies.Clear();
 	UI.Clear();
 	Sprites.Clear();
-	RenderQueue.SetCameraLocation(0, 0);
+	Camera.SetCameraView(GameField);
 }

@@ -8,8 +8,6 @@
 #include "../Renderer/RenderQueue.h"
 #include "../Renderer/SpriteTransform.h"
 
-#include "../Math/OBB.h"
-
 
 SpriteManager::SpriteManager(const TransformManager& transManager,
                              const EntityManager& entityManager,
@@ -27,7 +25,7 @@ void
 SpriteManager::Render(RenderQueue& renderQueue) const
 {
 	_Repeating.RenderLooped(renderQueue);
-	_NonRepeating.Render(renderQueue);
+	_NonRepeating.RenderScreenSpace(renderQueue);
 	_ScreenSpace.RenderScreenSpace(renderQueue);
 }
 
@@ -137,15 +135,6 @@ SpriteManager::SpriteCategory::Allocate(const int newCapacity)
 	_Buffer = newBuffer;
 }
 
-void
-SpriteManager::SpriteCategory::Render(RenderQueue& renderQueue) const
-{
-	for(auto i = 0; i < _Size; i++)
-	{
-		const SpriteTransform* transform = _Transforms + i;
-		renderQueue.Enqueue(transform->ID, transform->Position, transform->Rotation, transform->Layer);
-	}
-}
 
 void
 SpriteManager::SpriteCategory::RenderScreenSpace(RenderQueue& renderQueue) const

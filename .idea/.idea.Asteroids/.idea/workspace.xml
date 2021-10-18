@@ -5,13 +5,24 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Fixed a bug where the game over screen wasn't positioned correctly.">
-      <change beforePath="$PROJECT_DIR$/source/Math/AABB.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/AABB.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Math/AABB.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/AABB.h" afterDir="false" />
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="About to rewrite RenderQueue for the new system.">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Math/EuanityMath.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/EuanityMath.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Platform/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Platform/Game.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Renderer/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/Camera.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Renderer/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/Camera.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Renderer/RenderQueue.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/RenderQueue.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/State/PlayState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.command.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/link.write.1.tlog" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +49,7 @@
     <setting file="file://C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include/optional" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include/stdint.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include/ostream" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/source/Renderer/Camera.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/source/Renderer/Camera.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://E:/git/EuanityAsteroids/source/Platform/Game.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include/unordered_set" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/include/xutility" root0="SKIP_HIGHLIGHTING" />
@@ -51,7 +62,6 @@
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
-      <option value="$PROJECT_DIR$/source/Platform/FrameTimer.h" />
       <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/Entity.h" />
       <option value="$PROJECT_DIR$/EuanityAsteroids.vcxproj" />
@@ -89,18 +99,20 @@
       <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
       <option value="$PROJECT_DIR$/source/Math/Vector2.h" />
-      <option value="$PROJECT_DIR$/source/Math/EuanityMath.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
-      <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
       <option value="$PROJECT_DIR$/source/State/PlayState.h" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
-      <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" />
-      <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.h" />
       <option value="$PROJECT_DIR$/source/Platform/Game.h" />
-      <option value="$PROJECT_DIR$/source/Math/AABB.h" />
       <option value="$PROJECT_DIR$/source/Math/AABB.cpp" />
+      <option value="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" />
+      <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.h" />
+      <option value="$PROJECT_DIR$/source/Math/EuanityMath.h" />
       <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
+      <option value="$PROJECT_DIR$/source/Renderer/Camera.h" />
+      <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" />
+      <option value="$PROJECT_DIR$/source/Math/AABB.h" />
+      <option value="$PROJECT_DIR$/source/Renderer/Camera.cpp" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -113,8 +125,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.16981132" />
-    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.26792452" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.16988727" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.26811594" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="XThreadsFramesViewSplitterKey" value="0.3909091" />
@@ -322,7 +334,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634548851022</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="About to rewrite RenderQueue for the new system.">
+      <created>1634559792241</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1634559792241</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -360,7 +379,8 @@
     <MESSAGE value="Added the OP Debug Weapon(tm)" />
     <MESSAGE value="More OP weapons" />
     <MESSAGE value="Yet more ridiculous weapons for stress-testing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Yet more ridiculous weapons for stress-testing" />
+    <MESSAGE value="About to rewrite RenderQueue for the new system." />
+    <option name="LAST_COMMIT_MESSAGE" value="About to rewrite RenderQueue for the new system." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -369,6 +389,16 @@
           <url>file://$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp</url>
           <line>39</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/source/Renderer/RenderQueue.cpp</url>
+          <line>139</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/source/Renderer/Camera.cpp</url>
+          <line>60</line>
+          <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

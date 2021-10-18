@@ -38,15 +38,10 @@ public:
 		Layer Layer;
 	};
 
-	const int ScreenWidth;
-	const int ScreenHeight;
-
-	void Enqueue(SpriteID spriteID, const SDL_Rect& targetRect, float rotation, Layer layer);
 	void Enqueue(SpriteID spriteID, float rotation, Layer layer);
 	void EnqueueScreenSpace(SpriteID spriteID, const SDL_Rect& targetRect, float rotation, Layer layer);
 	void EnqueueLooped(const SpriteTransform& transform);
 
-	void SetCameraLocation(const int& x, const int& y);
 
 	const SpriteAtlas& GetSpriteAtlas() const { return _SpriteAtlas; }
 	const std::vector<Element>& GetRenderQueue();
@@ -61,8 +56,8 @@ private:
 
 	Camera& _Camera;
 
-	int _FocalPointX;
-	int _FocalPointY;
+	const int _GameFieldWidth;
+	const int _GameFieldHeight;
 
 	SpriteAtlas _SpriteAtlas;
 	std::vector<Element> _RenderQueue;

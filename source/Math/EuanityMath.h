@@ -14,90 +14,130 @@
 
 namespace Math
 {
-	// Angle Deltas
+// Angle Deltas
 
-	static float AngleDelta(float a, float b)
-	{
-		return fmod((b - a + PI), TAU) - PI;
-	}
-	static float AngleDeltaDeg(float a, float b)
-	{
-		return fmod((b - a + 180.0f), 360.0f) - 180.0f;
-	}
+static float
+AngleDelta(float a, float b)
+{
+	return fmod((b - a + PI), TAU) - PI;
+}
 
-	// Angle Lerps
+static float
+AngleDeltaDeg(float a, float b)
+{
+	return fmod((b - a + 180.0f), 360.0f) - 180.0f;
+}
 
-	static float LerpAngle(float a, float b, float t)
-	{
-		float delta = AngleDelta(a, b);
-		if (delta > PI) delta -= TAU;
+// Angle Lerps
 
-		return a + delta * t;
-	}
-	static float LerpAngleDeg(float a, float b, float t)
-	{
-		float delta = AngleDeltaDeg(a, b);
-		if (delta > 180.0f) delta -= 360.0f;
+static float
+LerpAngle(float a, float b, float t)
+{
+	float delta = AngleDelta(a, b);
+	if(delta > PI)
+		delta -= TAU;
 
-		return a + delta * t;
-	}
+	return a + delta * t;
+}
 
-	// Clamped Angle Lerps
+static float
+LerpAngleDeg(float a, float b, float t)
+{
+	float delta = AngleDeltaDeg(a, b);
+	if(delta > 180.0f)
+		delta -= 360.0f;
 
-	static float LerpAngleClamped(float a, float b, float t)
-	{
-		float delta = AngleDelta(a, b);
-		if (delta > PI) delta -= TAU;
+	return a + delta * t;
+}
 
-		return a + delta * std::clamp(t, 0.0f, 1.0f);
-	}
-	static float LerpAngleDegClamped(float a, float b, float t)
-	{
-		float delta = AngleDeltaDeg(a, b);
-		if (delta > 180.0f) delta -= 360.0f;
+// Clamped Angle Lerps
 
-		return a + delta * std::clamp(t, 0.0f, 1.0f);
-	}
+static float
+LerpAngleClamped(float a, float b, float t)
+{
+	float delta = AngleDelta(a, b);
+	if(delta > PI)
+		delta -= TAU;
 
-	// RNG
+	return a + delta * std::clamp(t, 0.0f, 1.0f);
+}
 
-	static float RandomRange(float min, float max)
-	{
-		static std::random_device device;
-		static std::mt19937 generator(device());
-		std::uniform_real<float> range(min, max);
-		return range(generator);
-	}
+static float
+LerpAngleDegClamped(float a, float b, float t)
+{
+	float delta = AngleDeltaDeg(a, b);
+	if(delta > 180.0f)
+		delta -= 360.0f;
 
-	static int RandomRange(int min, int max)
-	{
-		static std::random_device device;
-		static std::mt19937 generator(device());
-		std::uniform_int range(min, max);
-		return range(generator);
-	}
+	return a + delta * std::clamp(t, 0.0f, 1.0f);
+}
 
-	static Vector2 RandomOnUnitCircle()
-	{
-		return Vector2::Forward().RotateRad(RandomRange(0.0f, TAU));
-	}
+// RNG
+
+static float
+RandomRange(float min, float max)
+{
+	static std::random_device device;
+	static std::mt19937 generator(device());
+	std::uniform_real<float> range(min, max);
+	return range(generator);
+}
+
+static int
+RandomRange(int min, int max)
+{
+	static std::random_device device;
+	static std::mt19937 generator(device());
+	std::uniform_int range(min, max);
+	return range(generator);
+}
+
+static Vector2
+RandomOnUnitCircle()
+{
+	return Vector2::Forward().RotateRad(RandomRange(0.0f, TAU));
+}
 
 
-	// Random Numbery Stuff
-	static float Repeat(float t, float length)
-	{
-		return std::clamp(t - floor(t / length) * length, 0.0f, length);
-	}
+// Random Numbery Stuff
+static float
+Repeat(float t, float length)
+{
+	return std::clamp(t - floor(t / length) * length, 0.0f, length);
+}
 
-	static float SignOf(float t)
-	{
-		return (t >= 0.0f) ? 1.0f : -1.0f;
-	}
+static float
+SignOf(float t)
+{
+	return (t >= 0.0f) ? 1.0f : -1.0f;
+}
 
-	static float MoveTowards(float current, float target, float maxDelta)
-	{
-		if (std::abs(target - current) <= maxDelta)
-			return target;
-		return current + Math::SignOf(target - current) * maxDelta;
-	}
+static float
+MoveTowards(float current, float target, float maxDelta)
+{
+	if(std::abs(target - current) <= maxDelta)
+		return target;
+	return current + Math::SignOf(target - current) * maxDelta;
+}
+
+static float
+Lerp(const float& t, const float& a, const float& b)
+{
+	return (1.0f - t) * a + b * t;
+}
+
+static float
+InvLerp(const float& t, const float& a, const float& b)
+{
+	return (t - a) / (b - a);
+}
+
+
+static float
+Remap(const float& t, const float& inputMin, const float& inputMax,
+	const float& outputMin, const float& outputMax)
+{
+	auto inputT = InvLerp(t, inputMin, inputMax);
+	return Lerp(inputT, outputMin, outputMax);
+}
 }

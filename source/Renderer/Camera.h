@@ -7,24 +7,30 @@ class Camera
 {
 public:
 	Camera(const AABB startingView, const AABB worldBounds)
-		: _WorldBounds(worldBounds),
+		: _GameField(worldBounds),
 		  _CurrentView(startingView)
 	{
 	}
 
-	AABB WorldToCamera(const AABB& rect);
+	AABB GetCameraView() const;
+	void SetCameraView(const AABB& aabb);
 
+	void OffsetCamera(const Vector2& offset);
+	void SetViewSize(const int& width, const int& height);
+
+	Vector2 GetFocalPoint() const;
+	void SetFocalPoint(const Vector2& focalPoint);
+	void SetFocalPoint(const float& x, const float& y);
+
+	Vector2 WorldToCamera(const Vector2& point) const;
+	void SetScale(const float& newScale);
+	float GetCameraScale() const;
 
 	void Update();
 
-	Vector2 GetFocalPoint();
-	AABB GetScreenAABB() const;
-	void SetScale();
-	void DebugMoveCamera(int x, int y);
-
 private:
 
-	AABB _WorldBounds;
+	AABB _GameField;
 	AABB _CurrentView;
 	Vector2 _Velocity;
 

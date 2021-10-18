@@ -11,36 +11,23 @@
 
 
 RenderQueue::RenderQueue(Renderer& renderer, Camera& camera, const int screenWidth, const int screenHeight)
-	: ScreenWidth(screenWidth),
-	  ScreenHeight(screenHeight),
+	: _GameFieldWidth(screenWidth),
+	  _GameFieldHeight(screenHeight),
 	  _Camera(camera),
-	  _FocalPointX(0),
-	  _FocalPointY(0),
 	  _SpriteAtlas(renderer)
 {
 	_RenderQueue.reserve(256); // arbitrary, but a decent starting size for total number of rendered sprites?)
-}
-
-
-void
-RenderQueue::Enqueue(const SpriteID spriteID, const SDL_Rect& targetRect, const float rotation, const Layer layer)
-{
-	auto finalTargetRect = targetRect;
-	finalTargetRect.x -= _FocalPointX;
-	finalTargetRect.y -= _FocalPointY;
-
-	EnqueueScreenSpace(spriteID, finalTargetRect, rotation, layer);
 }
 
 void
 RenderQueue::Enqueue(const SpriteID spriteID, const float rotation, const Layer layer)
 {
 	SDL_Rect targetRect;
-	targetRect.w = ScreenWidth;
-	targetRect.h = ScreenHeight;
+	targetRect.w = _GameFieldWidth;
+	targetRect.h = _GameFieldHeight;
 	targetRect.x = 0;
 	targetRect.y = 0;
-	Enqueue(spriteID, targetRect, rotation, layer);
+	EnqueueScreenSpace(spriteID, targetRect, rotation, layer);
 }
 
 void
@@ -65,6 +52,112 @@ void
 RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 {
 #if 1
+
+	// THINKY McTHINKFACE
+	/*
+	 *	How to place a looped box within a camera box.
+	 *
+	 *	OBSERVATION 1:
+	 *		The camera space could, in theory, be crazy. It could
+	 *		be -WorldWidth*10 to +WorldWidth*10.
+	 *
+	 *	OBSERVATION 2:
+	 *		More likely, it'll range in x * WorldWidth where
+	 *		-1 < x < 1.
+	 *
+	 *	OBSERVATION 3:
+	 *		The problem is the same in 1 dimension as it is in 2.
+	 *
+	 *	OBSERVATION 4:
+	 *		We can probably do some kind of progressive scan.
+	 *
+	 *	OBSERVATION 5:
+	 *		That progressive scan probably starts by stepping
+	 *		SpriteMax.X in decrements of WorldWidth until
+	 *		SpriteMax.X < CameraMin.X.
+	 *
+	 *	OBSERVATION 6:
+	 *		We then follow this algorithm:
+	 *			Increment SpriteMax and SpriteMin by WorldWidth
+	 *			If SpriteMin is less than CameraMax, then the
+	 *				sprite is on screen and needs to be drawn.
+	 *			If SpriteMin is greater than CameraMax, break.
+	 *			Otherwise, loop.
+	 *
+	 *	OBSERVATION 7:
+	 *		2D-izing this problem means storing a list of
+	 *		X-Ranges and a list of Y-Ranges, and then blitting
+	 *		at every available combination of those.
+	 *
+	 *	OBSERVATION 8:
+	 *		This doesn't support scaling (yet), but I think the
+	 *		approach is one I can add to later.
+	 *
+	 */
+
+	const auto cameraAABB = _Camera.GetCameraView();
+	//@TODO: This doesn't change between draws, only between frames. Cache it?
+	const auto cameraScale = _Camera.GetCameraScale();
+
+	auto spriteStartMinX = static_cast<float>(transform.Position.x);
+	auto spriteStartMaxX = static_cast<float>(transform.Position.w) + spriteStartMinX;
+
+	auto spriteMinY = static_cast<float>(transform.Position.y);
+	auto spriteMaxY = static_cast<float>(transform.Position.h) + spriteMinY;
+
+	// Scroll backwards until we go "too far".
+	//We step forward one at the beginning of the next step.
+	while(spriteMaxY > cameraAABB.top)
+	{
+		spriteMaxY -= _GameFieldHeight;
+		spriteMinY -= _GameFieldHeight;
+	}
+
+	while(spriteStartMaxX > cameraAABB.left)
+	{
+		spriteStartMaxX -= _GameFieldWidth;
+		spriteStartMinX -= _GameFieldWidth;
+	}
+
+	while(true)
+	{
+		auto newPos = transform.Position;
+
+		spriteMinY += _GameFieldHeight;
+
+		if(spriteMinY < cameraAABB.bottom)
+		{
+			auto spriteMinX = spriteStartMinX;
+
+			while(true)
+			{
+				spriteMinX += _GameFieldWidth;
+
+				if(spriteMinX < cameraAABB.right)
+				{
+					const auto spriteMin = _Camera.WorldToCamera(Vector2(spriteMinX, spriteMinY));
+
+					newPos.x = spriteMin.x;
+					newPos.y = spriteMin.y;
+					newPos.w *= cameraScale;
+					newPos.h *= cameraScale;
+					EnqueueScreenSpace(transform.ID, newPos, transform.Rotation, transform.Layer);
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
+
+#else
+
 	const AABB screenAABB(Vector2::zero(), Vector2(static_cast<float>(ScreenWidth), static_cast<float>(ScreenHeight)));
 
 	// world-to-screenspace
@@ -167,20 +260,13 @@ RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 #endif
 }
 
-void
-RenderQueue::SetCameraLocation(const int& x, const int& y)
-{
-	_FocalPointX = x - ScreenWidth/2;
-	_FocalPointY = y - ScreenHeight/2;
-}
-
 
 void
 RenderQueue::DrawAtTop(const SpriteTransform& transform, const AABB& screenAABB)
 {
 	auto newPos = transform.Position;
 	newPos.y -= static_cast<int>(floor(screenAABB.bottom));
-	Enqueue(transform.ID, newPos, transform.Rotation, transform.Layer);
+	EnqueueScreenSpace(transform.ID, newPos, transform.Rotation, transform.Layer);
 }
 
 void
@@ -188,7 +274,7 @@ RenderQueue::DrawAtBottom(const SpriteTransform& transform, const AABB& screenAA
 {
 	auto newPos = transform.Position;
 	newPos.y += static_cast<int>(floor(screenAABB.bottom));
-	Enqueue(transform.ID, newPos, transform.Rotation, transform.Layer);
+	EnqueueScreenSpace(transform.ID, newPos, transform.Rotation, transform.Layer);
 }
 
 void
@@ -196,7 +282,7 @@ RenderQueue::DrawAtLeft(const SpriteTransform& transform, const AABB& screenAABB
 {
 	auto newPos = transform.Position;
 	newPos.x -= static_cast<int>(floor(screenAABB.right));
-	Enqueue(transform.ID, newPos, transform.Rotation, transform.Layer);
+	EnqueueScreenSpace(transform.ID, newPos, transform.Rotation, transform.Layer);
 }
 
 void
@@ -204,7 +290,7 @@ RenderQueue::DrawAtRight(const SpriteTransform& transform, const AABB& screenAAB
 {
 	auto newPos = transform.Position;
 	newPos.x += static_cast<int>(floor(screenAABB.right));
-	Enqueue(transform.ID, newPos, transform.Rotation, transform.Layer);
+	EnqueueScreenSpace(transform.ID, newPos, transform.Rotation, transform.Layer);
 }
 
 
