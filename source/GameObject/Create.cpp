@@ -93,17 +93,18 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 {
 	std::array<Entity, 4> retVal = { Entity::Null(), Entity::Null(), Entity::Null(), Entity::Null() };
 
-	Rigidbody* parentRigid {};
-	if(!_RigidbodyManager.GetMutable(asteroid, parentRigid))
+	auto parentRigidOpt = _RigidbodyManager.Get(asteroid);
+	if(!parentRigidOpt.has_value())
 	{
 		return retVal;
 	}
+	const auto parentRigid = parentRigidOpt.value();
 
 	std::array<SpriteID, 4> sprites {};
 	ColliderType colliderType;
 	float parentRadius;
 
-	switch(parentRigid->colliderType)
+	switch(parentRigid.colliderType)
 	{
 		case ColliderType::LARGE_ASTEROID: sprites.at(0) = SpriteID::MEDIUM_ASTEROID_1;
 			sprites.at(1) = SpriteID::MEDIUM_ASTEROID_2;
@@ -154,7 +155,7 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 		trans.pos = parentTransform->pos + (directions.at(i) * (parentRadius + 0.0001f));
 		trans.rot = parentTransform->rot;
 		_TransManager.Add(entity, trans);
-		_RigidbodyManager.Add(entity, colliderType, parentRigid->velocity + (directions.at(i) * splitImpulse), parentRigid->angularVelocity);
+		_RigidbodyManager.Add(entity, colliderType, parentRigid.velocity + (directions.at(i) * splitImpulse), parentRigid.angularVelocity);
 		_SpriteManager.Create(entity, sprites.at(i), RenderQueue::Layer::DEFAULT);
 
 		retVal.at(i) = entity;

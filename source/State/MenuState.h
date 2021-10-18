@@ -23,11 +23,9 @@ public:
 
 private:
 	void SpawnMenuButtons();
-	void SpawnRandomAsteroids();
+	void SpawnRandomAsteroids() const;
 
-	Game& game;
-
-	std::vector<Entity> _FloatingAsteroids;
+	Game& _Game;
 
 	Entity _Title;
 

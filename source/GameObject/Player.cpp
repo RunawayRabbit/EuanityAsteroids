@@ -10,7 +10,7 @@
 
 #include "../GameObject/Create.h"
 
-#include "../Math/Math.h" // for MoveTowards
+#include "../Math/Math.h"
 
 #include "Player.h"
 
@@ -22,16 +22,17 @@ Player::Player(EntityManager& entityManager,
                TransformManager& transformManager,
                const Create& create,
                Physics& physics)
-	: _Entity(Entity::Null()),
-	  _RigidbodyManager(rigidbodyManager),
+	: _RigidbodyManager(rigidbodyManager),
 	  _Physics(physics),
 	  _EntityManager(entityManager),
 	  _TransformManager(transformManager),
 	  _Create(create),
+	  _Entity(Entity::Null()),
 	  _MainThruster(Entity::Null()),
 	  _StrafeThrusterLeft(Entity::Null()),
 	  _StrafeThrusterRight(Entity::Null()),
-	  _ShotTimer(0)
+	  _ShotTimer(0),
+	  _ShipType(ShipType::GetSlowPowerfulShip())
 {
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,
 	// have all of our initialization done at startup time.
@@ -126,15 +127,15 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		const auto rotatingRight = inputBuffer.Contains(InputToggle::RotateRight);
 		if(!rotatingLeft && !rotatingRight)
 		{
-			newAngularVelocity = Math::MoveTowards(newAngularVelocity, 0, ROTATE_DECELERATION * deltaTime);
+			newAngularVelocity = Math::MoveTowards(newAngularVelocity, 0, _ShipType.RotateAcceleration * deltaTime);
 		}
 		else
 		{
 			// Apply torque
 			if(rotatingLeft)
-				trailRotation = -ROTATE_ACCELERATION * deltaTime;
+				trailRotation = -_ShipType.RotateAcceleration * deltaTime;
 			if(rotatingRight)
-				trailRotation = ROTATE_ACCELERATION * deltaTime;
+				trailRotation = _ShipType.RotateAcceleration * deltaTime;
 
 			newAngularVelocity += trailRotation;
 		}
@@ -145,8 +146,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	{
 		if(inputBuffer.Contains(InputToggle::StrafeLeft))
 		{
-			newVelocity += right * (-STRAFE_ACCELERATION * deltaTime);
-			RenderThruster(_StrafeThrusterRight, Vector2(STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), 90.0f, transform, SpriteID::MUZZLE_FLASH);
+			newVelocity += right * (-_ShipType.StrafeAcceleration * deltaTime);
+			RenderThruster(_StrafeThrusterRight, Vector2(_ShipType.StrafeThrusterX, _ShipType.StrafeThrusterY), 90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -155,8 +156,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 
 		if(inputBuffer.Contains(InputToggle::StrafeRight))
 		{
-			newVelocity += right * (STRAFE_ACCELERATION * deltaTime);
-			RenderThruster(_StrafeThrusterLeft, Vector2(-STRAFE_THRUSTER_X, STRAFE_THRUSTER_Y), -90.0f, transform, SpriteID::MUZZLE_FLASH);
+			newVelocity += right * (_ShipType.StrafeAcceleration * deltaTime);
+			RenderThruster(_StrafeThrusterLeft, Vector2(-_ShipType.StrafeThrusterX, _ShipType.StrafeThrusterY), -90.0f, transform, SpriteID::MUZZLE_FLASH);
 		}
 		else
 		{
@@ -169,8 +170,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	{
 		if(inputBuffer.Contains(InputToggle::MoveForward))
 		{
-			newVelocity += forward * (FORWARD_ACCELERATION * deltaTime);
-			RenderThruster(_MainThruster, Vector2(MAIN_THRUSTER_X, MAIN_THRUSTER_Y), trailRotation, transform, SpriteID::SHIP_TRAIL);
+			newVelocity += forward * (_ShipType.ForwardAcceleration * deltaTime);
+			RenderThruster(_MainThruster, Vector2(_ShipType.MainThrusterX, _ShipType.MainThrusterY), trailRotation, transform, SpriteID::SHIP_TRAIL);
 		}
 		else
 		{
@@ -179,32 +180,30 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	}
 #pragma endregion
 
+	// Write back our updated values.
+	const auto newSpeedSq  = newVelocity.LengthSq();
+	rigid->velocity        = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, _ShipType.MaxSpeedSq));
+	rigid->angularVelocity = std::clamp(newAngularVelocity, -_ShipType.MaxAngularVelocity, _ShipType.MaxAngularVelocity);
 
 #pragma region Shoot
 	if(_ShotTimer < 0.0f && inputBuffer.Contains(InputToggle::Shoot))
 	{
-		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + SHOT_COOLDOWN : SHOT_COOLDOWN;
+		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + _ShipType.ShotCooldown : _ShipType.ShotCooldown;
 
 		// ReSharper disable once CppExpressionWithoutSideEffects
-		_Create.MuzzleFlash(transform.pos + forward * BULLET_SPAWN_OFFSET_Y, newVelocity);
+		_Create.MuzzleFlash(transform.pos + forward * _ShipType.BulletSpawnOffsetY, newVelocity);
 
-		auto bulletForward = forward.RotateDeg(-BULLET_SPAWN_ARC_DEG * 0.5f);
+		auto bulletForward = forward.RotateDeg(-_ShipType.BulletSpawnArcDeg * 0.5f);
 
-
-		const auto spawnArcIncrement = BULLET_SPAWN_ARC_DEG / (BULLET_SPAWN_COUNT - 1);
-		for(auto i = 0; i < BULLET_SPAWN_COUNT; ++i)
+		const auto spawnArcIncrement = _ShipType.BulletSpawnArcDeg / (_ShipType.BulletSpawnCount - 1);
+		for(auto i = 0; i < _ShipType.BulletSpawnCount; ++i)
 		{
 			// ReSharper disable once CppExpressionWithoutSideEffects
-			_Create.Bullet(transform.pos + (bulletForward * BULLET_SPAWN_OFFSET_Y), bulletForward * BULLET_SPEED, BULLET_LIFETIME);
+			_Create.Bullet(transform.pos + (bulletForward * _ShipType.BulletSpawnOffsetY), rigid->velocity + (bulletForward * _ShipType.BulletSpeed), _ShipType.BulletLifetime);
 			bulletForward = bulletForward.RotateDeg(spawnArcIncrement);
 		}
 	}
 #pragma endregion
-
-	// Write back our updated values.
-	const auto newSpeedSq  = newVelocity.LengthSq();
-	rigid->velocity        = newVelocity.SafeNormalized() * sqrt(std::min(newSpeedSq, MAX_SPEED_SQ));
-	rigid->angularVelocity = std::clamp(newAngularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
 }
 
 Vector2Int

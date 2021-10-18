@@ -8,8 +8,8 @@
 //@TODO: Does this class GUARANTEE that it will never return or create a null entity implicitly?
 
 EntityManager::EntityManager(const Timer& time)
-	//@NOTE @IMPORTANT: It is unlikely that we'll destroy more than 256 entities in two frames, but if we do, bump this number!
-	: ZombieList(2048),
+	//@NOTE @IMPORTANT: It is unlikely that we'll destroy more than 1024 entities in two frames, but if we do, bump this number!
+	: ZombieList(1024),
 	  _Time(time)
 {
 	// @NOTE: Entity.id == 0 is considered to be the null entity and is never available.

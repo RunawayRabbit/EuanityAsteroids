@@ -1,12 +1,10 @@
 
 
-#include "..\GameObject\Create.h"
-
-#include "..\Math\Math.h"
-
-#include "..\Physics\Physics.h"
-
 #include "Game.h"
+
+#include "../GameObject/Create.h"
+#include "../Math/Math.h"
+#include "../Physics/Physics.h"
 
 Game::Game(std::string windowName, int width, int height) :
 	Entities(Time),
@@ -15,9 +13,9 @@ Game::Game(std::string windowName, int width, int height) :
 	Input(InputHandler(_IsRunning)),
 	UI(Entities, Input.GetBuffer()),
 	GameField(0.0f, (float)height, 0.0f, (float)width),
-	Xforms(2), //intial capacity. Can resize dynamically.
+	Xforms(1024), //intial capacity. Can resize dynamically.
 	BackgroundRenderer(Xforms, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
-	Rigidbodies(Entities, 2),
+	Rigidbodies(Entities, 1024),
 	Sprites(Xforms, Entities, RenderQueue.GetSpriteAtlas(), 128),
 	Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
 	Physics(Xforms, Rigidbodies, AABB(Vector2::zero(), Vector2((float)width, (float)height))),
