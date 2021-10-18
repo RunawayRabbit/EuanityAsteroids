@@ -166,7 +166,26 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 }
 
 Entity
-Create::SmallExplosion(const Vector2& position) const
+Create::MuzzleFlash(const Vector2& position, const Vector2& velocity) const
+{
+	const auto entity = _EntityManager.Create();
+
+	Transform trans;
+	trans.pos = position;
+	trans.rot = Math::RandomRange(0.0f, 360.0f);
+	_TransManager.Add(entity, trans);
+	_SpriteManager.Create(entity, SpriteID::MUZZLE_FLASH, RenderQueue::Layer::PARTICLE);
+	_EntityManager.DestroyDelayed(entity, 0.05f);
+	if(velocity != Vector2::zero())
+	{
+		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, Math::RandomRange(20.0f, 40.0f));
+	}
+
+	return entity;
+}
+
+Entity
+Create::SmallExplosion(const Vector2& position, const Vector2& velocity, const float& rotVelocity) const
 {
 	const auto entity = _EntityManager.Create();
 
@@ -176,7 +195,10 @@ Create::SmallExplosion(const Vector2& position) const
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::SMALL_EXPLOSION, RenderQueue::Layer::PARTICLE);
 	_EntityManager.DestroyDelayed(entity, 0.5f);
-
+	if(velocity != Vector2::zero() || rotVelocity != 0.0f)
+	{
+		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
+	}
 	return entity;
 }
 
@@ -190,7 +212,7 @@ Create::LargeExplosion(const Vector2& position, const Vector2& velocity, const f
 	trans.rot = Math::RandomRange(0.0f, 360.0f);
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::EXPLOSION, RenderQueue::Layer::PARTICLE);
-	if(velocity != Vector2::zero())
+	if(velocity != Vector2::zero() || rotVelocity != 0.0f)
 	{
 		_RigidbodyManager.Add(entity, ColliderType::NONE, velocity, rotVelocity);
 	}

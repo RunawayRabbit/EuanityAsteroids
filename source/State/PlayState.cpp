@@ -47,7 +47,8 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 				EntityBType == ColliderType::MEDIUM_ASTEROID))
 		{
 			// Players don't die to small asteroids. I have decided this.
-			_Player.Kill(A);
+			auto playerVel = _Game.Rigidbodies.Get(A).value().velocity;
+			_Player.Kill(A, playerVel);
 		}
 
 		if(EntityAType == ColliderType::BULLET)

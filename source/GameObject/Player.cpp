@@ -47,21 +47,39 @@ Player::Spawn(const Vector2& startPos, const float& startRot)
 }
 
 void
-Player::Kill(const Entity& playerEntity)
+Player::Kill(const Entity& playerEntity, const Vector2& playerVelocity)
 {
 	// Don't destroy if it isn't our entity being destroyed!
 	if(_Entity != playerEntity)
 		return;
 
-	auto ship = _TransformManager.Get(_Entity);
-
+	auto ship    = _TransformManager.Get(_Entity);
+	auto shipPos = ship.value().pos;
 	DestroyThruster(_MainThruster);
 	DestroyThruster(_StrafeThrusterLeft);
 	DestroyThruster(_StrafeThrusterRight);
 
 	_EntityManager.Destroy(_Entity);
 
-	_Create.LargeExplosion(ship.value().pos, GetPlayerVelocity() * -0.4f);
+
+	// ReSharper disable CppExpressionWithoutSideEffects
+	for(auto i = 0; i < 3; ++i)
+	{
+		auto spawnDistanceFromPlayer = Math::RandomRange(10.0f, 17.0f);
+
+		const auto offset = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * spawnDistanceFromPlayer;
+		_Create.LargeExplosion(shipPos + offset);
+		_Create.LargeExplosion(shipPos + offset);
+		_Create.LargeExplosion(shipPos + offset);
+	}
+
+	for(auto i = 0; i < 12; ++i)
+	{
+		const auto randomVelocity = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * Math::RandomRange(40.0f, 180.0f);
+		_Create.SmallExplosion(shipPos, (playerVelocity * 0.1f) + randomVelocity);
+	}
+	// ReSharper restore CppExpressionWithoutSideEffects
+
 	_Entity = Entity::Null();
 }
 
@@ -159,10 +177,15 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	if(_ShotTimer < 0.0f && inputBuffer.Contains(InputToggle::Shoot))
 	{
 		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + SHOT_COOLDOWN : SHOT_COOLDOWN;
+
 		// ReSharper disable once CppExpressionWithoutSideEffects
-		auto bulletForward = (forward.RotateDeg(-BULLET_SPAWN_ARC_DEG*0.5f));
-		const auto spawnArcIncrement = BULLET_SPAWN_ARC_DEG / (BULLET_SPAWN_COUNT-1);
-		for(auto i=0; i< BULLET_SPAWN_COUNT; ++i)
+		_Create.MuzzleFlash(transform.pos + forward * BULLET_SPAWN_OFFSET_Y, newVelocity);
+
+		auto bulletForward = forward.RotateDeg(-BULLET_SPAWN_ARC_DEG * 0.5f);
+
+
+		const auto spawnArcIncrement = BULLET_SPAWN_ARC_DEG / (BULLET_SPAWN_COUNT - 1);
+		for(auto i = 0; i < BULLET_SPAWN_COUNT; ++i)
 		{
 			// ReSharper disable once CppExpressionWithoutSideEffects
 			_Create.Bullet(transform.pos + (bulletForward * BULLET_SPAWN_OFFSET_Y), bulletForward * BULLET_SPEED, BULLET_LIFETIME);
@@ -181,19 +204,18 @@ Vector2Int
 Player::GetPlayerPositionInt() const
 {
 	const auto floatPos     = GetPlayerPosition();
-	const Vector2Int retVal = {static_cast<int>(floatPos.x), static_cast<int>(floatPos.y)};
+	const Vector2Int retVal = { static_cast<int>(floatPos.x), static_cast<int>(floatPos.y) };
 	return retVal;
 }
 
 Vector2
 Player::GetPlayerPosition() const
 {
-	auto trans = _TransformManager.Get(_Entity);
-	Vector2 retVal = {0.0f,0.0f};
+	auto trans     = _TransformManager.Get(_Entity);
+	Vector2 retVal = { 0.0f, 0.0f };
 	if(trans.has_value())
 	{
 		retVal = trans.value().pos;
-
 	}
 	return retVal;
 }
@@ -201,7 +223,7 @@ Player::GetPlayerPosition() const
 Vector2
 Player::GetPlayerVelocity() const
 {
-	auto rigid = _RigidbodyManager.Get(_Entity);
+	auto rigid  = _RigidbodyManager.Get(_Entity);
 	auto retVal = Vector2::zero();
 	if(rigid.has_value())
 	{

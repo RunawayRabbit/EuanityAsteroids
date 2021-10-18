@@ -20,7 +20,7 @@ public:
 		TransformManager& transformManager, const Create& create, Physics& physics);
 
 	void Spawn(const Vector2& startPos, const float& startRot);
-	void Kill(const Entity& playerEntity);
+	void Kill(const Entity& playerEntity, const Vector2& playerVelocity);
 
 	void Update(const InputBuffer& inputBuffer, const float& deltaTime);
 	bool IsAlive() const
@@ -70,8 +70,8 @@ private:
 	inline static const float BULLET_LIFETIME = 2.8f;
 	inline static const float SHOT_COOLDOWN = 0.3f;
 	inline static const float BULLET_SPAWN_OFFSET_Y = 11.0f;
-	inline static const int BULLET_SPAWN_COUNT = 3;
-	inline static const float BULLET_SPAWN_ARC_DEG = 30.0f;
+	inline static const int BULLET_SPAWN_COUNT = 5;
+	inline static const float BULLET_SPAWN_ARC_DEG = 20.0f;
 
 	inline static const float MAX_ANGULAR_VELOCITY = 320.0f;
 	inline static const float ROTATE_ACCELERATION = MAX_ANGULAR_VELOCITY / 0.4f;

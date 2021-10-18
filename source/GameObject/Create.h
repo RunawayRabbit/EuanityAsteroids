@@ -59,12 +59,13 @@ public:
 		const Vector2& velocity, const float& rotVelocity, const AsteroidType& asteroidType) const;
 	std::array<Entity, 4> SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const;
 
+	Entity MuzzleFlash(const Vector2& position, const Vector2& velocity) const;
 	Entity Bullet(const Vector2& position, const Vector2& velocity, const float& secondsToLive) const;
 
 	Entity Ship(const Vector2& position, const float& rotation, const Vector2& initialVelocity = Vector2::zero(), const float& initialAngularVelocity = 0) const;
 	Entity ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const float& thrusterRotation, SpriteID spriteID) const;
 
-	[[maybe_unused]] Entity SmallExplosion(const Vector2& position) const;
+	[[maybe_unused]] Entity SmallExplosion(const Vector2& position, const Vector2& velocity = Vector2::zero(), const float& rotVelocity = 0) const;
 	[[maybe_unused]] Entity LargeExplosion(const Vector2& position, const Vector2& velocity = Vector2::zero(), const float& rotVelocity = 0) const;
 
 	Entity UIButton(const AABB& position, SpriteID spriteID, std::function<void()> callback) const;
