@@ -57,24 +57,25 @@ private:
 
 	// @TODO: Pull all of these out into a struct that we can use, so that we
 	//  can implement multiple ship types!
-	static constexpr float MAIN_THRUSTER_X = 0.0f;
-	static constexpr float MAIN_THRUSTER_Y = 18.0f;
+	inline static const float MAIN_THRUSTER_X = 0.0f;
+	inline static const float MAIN_THRUSTER_Y = 18.0f;
+	inline static const float STRAFE_THRUSTER_X = 4.0f;
+	inline static const float STRAFE_THRUSTER_Y = 13.0f;
 
-	static constexpr float STRAFE_THRUSTER_X = 4.0f;
-	static constexpr float STRAFE_THRUSTER_Y = 13.0f;
+	inline static const float MAX_SPEED = 210.0f;
+	inline static const float FORWARD_ACCELERATION = MAX_SPEED / 0.6f;
+	inline static const float STRAFE_ACCELERATION = MAX_SPEED / 1.5f;
 
-	static constexpr float MAX_SPEED = 210.0f;
-	static constexpr float FORWARD_ACCELERATION = MAX_SPEED / 0.6f;
-	static constexpr float STRAFE_ACCELERATION = MAX_SPEED / 1.5f;
+	inline static const float BULLET_SPEED = 400.0f;
+	inline static const float BULLET_LIFETIME = 2.8f;
+	inline static const float SHOT_COOLDOWN = 0.3f;
+	inline static const float BULLET_SPAWN_OFFSET_Y = 11.0f;
+	inline static const int BULLET_SPAWN_COUNT = 3;
+	inline static const float BULLET_SPAWN_ARC_DEG = 30.0f;
 
-	static constexpr float BULLET_SPEED = 400.0f;
-	static constexpr float BULLET_LIFETIME = 2.8f;
-	static constexpr float SHOT_COOLDOWN = 0.3f;
-	static constexpr float BULLET_SPAWN_OFFSET_Y = 11.0f;
+	inline static const float MAX_ANGULAR_VELOCITY = 320.0f;
+	inline static const float ROTATE_ACCELERATION = MAX_ANGULAR_VELOCITY / 0.4f;
+	inline static const float ROTATE_DECELERATION = ROTATE_ACCELERATION * 2.0f;
 
-	static constexpr float MAX_ANGULAR_VELOCITY = 320.0f;
-	static constexpr float ROTATE_ACCELERATION = MAX_ANGULAR_VELOCITY / 0.4f;
-	static constexpr float ROTATE_DECELERATION = ROTATE_ACCELERATION * 2.0f;
-
-	static constexpr float MAX_SPEED_SQ = MAX_SPEED * MAX_SPEED;
+	inline static const float MAX_SPEED_SQ = MAX_SPEED * MAX_SPEED;
 };

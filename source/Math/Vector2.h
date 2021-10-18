@@ -102,6 +102,14 @@ public:
 	inline Vector2 SafeNormalized();
 	inline float Length() const;
 	inline float LengthSq() const;
+	float GetAngleRadFromVector() const
+	{
+		return atan2(y,x);
+	}
+	float GetAngleDegFromVector() const
+	{
+		return GetAngleRadFromVector() * Math::RAD2DEG;
+	}
 
 	inline static Vector2 zero() { return { 0.0f, 0.0f }; }
 

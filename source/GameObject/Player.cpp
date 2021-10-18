@@ -160,7 +160,14 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 	{
 		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + SHOT_COOLDOWN : SHOT_COOLDOWN;
 		// ReSharper disable once CppExpressionWithoutSideEffects
-		_Create.Bullet(transform.pos + (forward * BULLET_SPAWN_OFFSET_Y), transform.rot, BULLET_SPEED, BULLET_LIFETIME);
+		auto bulletForward = (forward.RotateDeg(-BULLET_SPAWN_ARC_DEG*0.5f));
+		const auto spawnArcIncrement = BULLET_SPAWN_ARC_DEG / (BULLET_SPAWN_COUNT-1);
+		for(auto i=0; i< BULLET_SPAWN_COUNT; ++i)
+		{
+			// ReSharper disable once CppExpressionWithoutSideEffects
+			_Create.Bullet(transform.pos + (bulletForward * BULLET_SPAWN_OFFSET_Y), bulletForward * BULLET_SPEED, BULLET_LIFETIME);
+			bulletForward = bulletForward.RotateDeg(spawnArcIncrement);
+		}
 	}
 #pragma endregion
 

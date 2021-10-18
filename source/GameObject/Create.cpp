@@ -258,7 +258,7 @@ Create::GetSpriteFor(const AsteroidType& asteroidType) const
 
 
 Entity
-Create::Bullet(const Vector2& position, const float& rotation, const float& speed, const float& secondsToLive) const
+Create::Bullet(const Vector2& position, const Vector2& velocity, const float& secondsToLive) const
 {
 	const auto entity = _EntityManager.Create();
 
@@ -266,10 +266,10 @@ Create::Bullet(const Vector2& position, const float& rotation, const float& spee
 
 	Transform trans;
 	trans.pos = position;
-	trans.rot = rotation + 180;
+	trans.rot = velocity.GetAngleDegFromVector();
 	_TransManager.Add(entity, trans);
 	_SpriteManager.Create(entity, SpriteID::BULLET, RenderQueue::Layer::PARTICLE);
-	_RigidbodyManager.Add(entity, ColliderType::BULLET, -Vector2::Forward().RotateDeg(rotation) * speed, 0);
+	_RigidbodyManager.Add(entity, ColliderType::BULLET, velocity, 0);
 
 	_EntityManager.DestroyDelayed(entity, secondsToLive);
 
