@@ -59,6 +59,9 @@ public:
 	void GarbageCollection();
 	void ResetAllSystems();
 
+	Vector2 WrapToGameField(const Vector2& point) const;
+	bool GameFieldContains(const Vector2& point) const;
+
 	// Camera Stuff
 	bool IsDebugCamera;
 	Camera GameCam;

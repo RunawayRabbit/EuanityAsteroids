@@ -2,6 +2,7 @@
 
 #include <cmath> // for fmod
 #include <algorithm> // for clamp
+#include <cassert>
 #include <random> // for mersenne twister
 
 #include "Vector2.h"
@@ -107,6 +108,13 @@ Repeat(float t, float length)
 }
 
 static float
+RepeatNeg(float t, float length)
+{
+	while(t < 0) t += length;
+	return std::clamp(t - floor(t / length) * length, 0.0f, length);
+}
+
+static float
 SignOf(float t)
 {
 	return (t >= 0.0f) ? 1.0f : -1.0f;
@@ -134,10 +142,73 @@ InvLerp(const float& t, const float& a, const float& b)
 
 
 static float
-Remap(const float& t, const float& inputMin, const float& inputMax,
-	const float& outputMin, const float& outputMax)
+Remap(const float& t,
+      const float& inputMin,
+      const float& inputMax,
+      const float& outputMin,
+      const float& outputMax)
 {
 	auto inputT = InvLerp(t, inputMin, inputMax);
 	return Lerp(inputT, outputMin, outputMax);
+}
+
+static float
+SmoothDamp(const float& from,
+           const float& to,
+           float& velocity,
+           const float& maxSpeed,
+           const float& smoothTime,
+           const float& deltaTime)
+{
+	// Ripped shamelessly from Game Programming Gems 4, credit to Noel Llopis.
+	assert(smoothTime > 0.001f);
+
+	const auto omega = 2.0f / smoothTime;
+	const auto x     = omega * deltaTime;
+	const auto exp   = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+
+	const auto maxDelta   = maxSpeed * smoothTime;
+	const auto delta      = std::clamp(from - to, -maxDelta, maxDelta);
+	const auto stepTarget = from - delta;
+
+	const auto temp = (velocity + omega * delta) * deltaTime;
+
+	velocity = (velocity - omega * temp) * exp;
+
+	auto output = stepTarget + ((delta + temp) * exp);
+
+	// Prevent overshooting
+	if(to - from > 0.0f == output > to)
+	{
+		output   = to;
+		velocity = (output - to) / deltaTime;
+	}
+
+	return output;
+}
+
+static Vector2
+SmoothDamp(const Vector2& from,
+           const Vector2& to,
+           Vector2& velocity,
+           const float& maxSpeed,
+           const float& smoothTime,
+           const float& deltaTime)
+{
+	return Vector2(
+		SmoothDamp(from.x, to.x, velocity.x, maxSpeed, smoothTime, deltaTime),
+		SmoothDamp(from.y, to.y, velocity.y, maxSpeed, smoothTime, deltaTime));
+}
+
+static AABB
+SmoothDamp(const AABB& from,
+           const AABB& to,
+           AABB& velocity,
+           const float& maxSpeed,
+           const float& smoothTime,
+           const float& deltaTime)
+{
+	return AABB(SmoothDamp(from.min, to.min, velocity.min, maxSpeed, smoothTime, deltaTime),
+	            SmoothDamp(from.max, to.max, velocity.max, maxSpeed, smoothTime, deltaTime));
 }
 }

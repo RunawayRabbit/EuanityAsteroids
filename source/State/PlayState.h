@@ -21,7 +21,7 @@ public:
 	void Render() override;
 	void ProcessCollisions();
 	void RespawnAsteroids();
-	void UpdateCamera() const;
+	void UpdateCamera(const float& deltaTime);
 
 private:
 	Game& _Game;
@@ -36,7 +36,9 @@ private:
 
 	bool _WaitingForNextLevel;
 	bool _WaitingToSpawn;
-	inline static const float CAMERA_VELOCITY_FACTOR = 0.3f;;
+
+	float _CurrentCamZoom;
+	float _CamZoomVelocity;
 
 	void SpawnPlayer();
 	void SpawnFirstAsteroid();

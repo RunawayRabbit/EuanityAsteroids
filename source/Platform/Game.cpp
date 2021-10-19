@@ -5,8 +5,8 @@
 #include "../Physics/Physics.h"
 
 Game::Game(const std::string windowName, const int windowWidth, const int windowHeight, const Vector2& gameWorldDim)
-	: GameCam(windowWidth, windowHeight),
-	  DebugCam(windowWidth, windowHeight),
+	: GameCam(this, windowWidth, windowHeight),
+	  DebugCam(this, windowWidth, windowHeight),
 	  IsDebugCamera(false),
 	  Renderer(windowName, windowWidth, windowHeight),
 	  RenderQueue(Renderer, GameCam, gameWorldDim),
@@ -68,6 +68,9 @@ Game::Update(const float deltaTime)
 
 	GarbageCollection();
 
+	auto& cam = IsDebugCamera ? DebugCam : GameCam;
+	cam.Update(deltaTime);
+
 	//std::cout <<
 	//	rigidbodies.Count() << " " <<
 	//	entities.Count() << " " <<
@@ -116,4 +119,18 @@ Game::ResetAllSystems()
 	Sprites.Clear();
 	GameCam.SetFocalPoint(GameFieldDim * 0.5f);
 	GameCam.SetScale(1.0f);
+}
+
+Vector2
+Game::WrapToGameField(const Vector2& point) const
+{
+	return Vector2(Math::RepeatNeg(point.x, GameFieldDim.x),
+	               Math::RepeatNeg(point.y, GameFieldDim.y));
+}
+
+bool
+Game::GameFieldContains(const Vector2& point) const
+{
+	const auto gameField = AABB(0,GameFieldDim.y, 0, GameFieldDim.x);
+	return gameField.Contains(point);
 }

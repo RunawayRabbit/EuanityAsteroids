@@ -10,7 +10,9 @@ PlayState::PlayState(Game& game)
 	  _Lives(3),
 	  _Score(0),
 	  _WaitingForNextLevel(false),
-	  _WaitingToSpawn(false)
+	  _WaitingToSpawn(false),
+	  _CurrentCamZoom(1),
+	  _CamZoomVelocity(0)
 {
 }
 
@@ -170,7 +172,7 @@ PlayState::RespawnAsteroids()
 		Vector2 spawnPosition;
 		do
 		{
-			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 650.0f);
+			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 750.0f);
 			spawnPosition.x = Math::Repeat(spawnPosition.x, _Game.GameFieldDim.x);
 			spawnPosition.y = Math::Repeat(spawnPosition.y, _Game.GameFieldDim.y);
 		} while(_Game.GameCam.GetCameraView().Contains(spawnPosition));
@@ -188,20 +190,21 @@ PlayState::RespawnAsteroids()
 }
 
 void
-PlayState::UpdateCamera() const
+PlayState::UpdateCamera(const float& deltaTime)
 {
-	auto [x,y]           = _Player.GetPlayerPosition();
 	const auto playerVel = _Player.GetPlayerVelocity();
 
-	const auto cameraScale =
+	const auto newCamZoom =
 		Math::Remap(playerVel.Length(),
 		            0, 300.0f,
-		            1.7f, 1.0f);
-	_Game.GameCam.SetScale(cameraScale);
+		            1.5f, 0.8f);
 
-	_Game.GameCam.SetFocalPoint(
-		x + (playerVel.x * CAMERA_VELOCITY_FACTOR),
-		y + (playerVel.y * CAMERA_VELOCITY_FACTOR));
+
+	_CurrentCamZoom = Math::SmoothDamp(_CurrentCamZoom, newCamZoom, _CamZoomVelocity, 2.0f, 1.0f, deltaTime);
+
+	_Game.GameCam.SetScale(_CurrentCamZoom);
+
+	_Game.GameCam.SetFocalPoint(_Player.GetPlayerPosition());
 }
 
 void
@@ -213,7 +216,7 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 
 	if(_Player.IsAlive())
 	{
-		UpdateCamera();
+		UpdateCamera(deltaTime);
 	}
 	else
 	{

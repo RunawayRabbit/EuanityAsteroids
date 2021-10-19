@@ -12,6 +12,8 @@ public:
 
 	bool Contains(const Vector2& point) const;
 	bool FullyContains(const OBB& box) const;
+	AABB operator+(const AABB& other) const;
+	AABB operator-(const AABB& other) const;
 
 	// DATA
 	union
