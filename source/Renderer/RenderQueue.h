@@ -45,12 +45,12 @@ public:
 
 	const SpriteAtlas& GetSpriteAtlas() const { return _SpriteAtlas; }
 	const std::vector<Element>& GetRenderQueue();
-	void CacheCameraInfo();
+	void CacheCameraInfo(Camera* cam);
 	void Clear();
 
 private:
 
-	Camera& _Camera;
+	Camera* _Camera;
 
 	Vector2 _GameWorldDim;
 

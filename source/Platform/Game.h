@@ -59,8 +59,12 @@ public:
 	void GarbageCollection();
 	void ResetAllSystems();
 
+	// Camera Stuff
+	bool IsDebugCamera;
+	Camera GameCam;
+	Camera DebugCam;
+
 	// Renderer Stuff
-	Camera Camera;
 	Renderer Renderer;
 	RenderQueue RenderQueue;
 	BackgroundRenderer BackgroundRenderer;

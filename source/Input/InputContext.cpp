@@ -1,6 +1,6 @@
 
 // Used to catch out-of-range from std::map.
-#include <stdexcept> 
+#include <stdexcept>
 
 #include "InputContext.h"
 
@@ -14,7 +14,7 @@ InputContext::InputContext(bool fillWithDefaults)
 		AddToggle(SDLK_w, InputToggle::MoveForward);
 		AddToggle(SDLK_a, InputToggle::RotateLeft);
 		AddToggle(SDLK_d, InputToggle::RotateRight);
-	
+
 		AddToggle(SDLK_q, InputToggle::StrafeLeft);
 		AddToggle(SDLK_e, InputToggle::StrafeRight);
 
@@ -22,7 +22,9 @@ InputContext::InputContext(bool fillWithDefaults)
 
 		AddOneShot(SDL_EXT_MOUSE1_DOWN, InputOneShot::MouseDown);
 		AddOneShot(SDL_EXT_MOUSE1_UP, InputOneShot::MouseUp);
-	}
+
+		AddOneShot(SDLK_F8, InputOneShot::DEBUG_Camera);
+}
 }
 
 InputContext::~InputContext()
@@ -37,7 +39,7 @@ InputOneShot InputContext::ContainsOneShot(const SDL_Keycode key) const
 		return it->second;
 	else
 		return InputOneShot::NONE;
-	
+
 }
 
 InputToggle InputContext::ContainsToggle(const SDL_Keycode key) const

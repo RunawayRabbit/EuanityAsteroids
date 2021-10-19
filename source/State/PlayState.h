@@ -21,6 +21,7 @@ public:
 	void Render() override;
 	void ProcessCollisions();
 	void RespawnAsteroids();
+	void UpdateCamera() const;
 
 private:
 	Game& _Game;
@@ -30,7 +31,6 @@ private:
 
 	std::vector<Entity> _CurrentAsteroids;
 
-	int _Level;
 	int _Lives;
 	uint32_t _Score;
 

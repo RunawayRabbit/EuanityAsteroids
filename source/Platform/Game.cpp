@@ -5,9 +5,11 @@
 #include "../Physics/Physics.h"
 
 Game::Game(const std::string windowName, const int windowWidth, const int windowHeight, const Vector2& gameWorldDim)
-	: Camera(windowWidth, windowHeight),
+	: GameCam(windowWidth, windowHeight),
+	  DebugCam(windowWidth, windowHeight),
+	  IsDebugCamera(false),
 	  Renderer(windowName, windowWidth, windowHeight),
-	  RenderQueue(Renderer, Camera, gameWorldDim),
+	  RenderQueue(Renderer, GameCam, gameWorldDim),
 	  BackgroundRenderer(Xforms, AABB(static_cast<float>(windowWidth), static_cast<float>(windowHeight))),
 	  Input(InputHandler(_IsRunning)),
 	  Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
@@ -20,7 +22,10 @@ Game::Game(const std::string windowName, const int windowWidth, const int window
 	  GameFieldDim(gameWorldDim),
 	  _IsRunning(true)
 {
-	Camera.SetFocalPoint(gameWorldDim * 0.5f);
+	GameCam.SetFocalPoint(gameWorldDim * 0.5f);
+
+	DebugCam.SetFocalPoint(gameWorldDim * 0.5f);
+	DebugCam.SetScale(0.4f);
 
 	CurrentState = std::make_unique<MenuState>(*this);
 	CurrentState->OnEnter();
@@ -50,6 +55,11 @@ Game::Update(const float deltaTime)
 
 	const auto& inputBuffer = Input.GetBuffer();
 
+	if(inputBuffer.Contains(InputOneShot::DEBUG_Camera))
+	{
+		IsDebugCamera = !IsDebugCamera;
+	}
+
 	CurrentState->Update(inputBuffer, deltaTime);
 
 	Rigidbodies.EnqueueAll(Physics, deltaTime);
@@ -68,7 +78,8 @@ void
 Game::Render()
 {
 	RenderQueue.Clear();
-	RenderQueue.CacheCameraInfo();
+	auto& cam = IsDebugCamera ? DebugCam : GameCam;
+	RenderQueue.CacheCameraInfo(&cam);
 
 	UI.Render(RenderQueue);
 
@@ -103,6 +114,6 @@ Game::ResetAllSystems()
 	Rigidbodies.Clear();
 	UI.Clear();
 	Sprites.Clear();
-	Camera.SetFocalPoint(GameFieldDim * 0.5f);
-	Camera.SetScale(1.0f);
+	GameCam.SetFocalPoint(GameFieldDim * 0.5f);
+	GameCam.SetScale(1.0f);
 }

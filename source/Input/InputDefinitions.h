@@ -6,6 +6,10 @@ enum class InputOneShot
 
 	MouseUp,
 	MouseDown,
+
+	START_DEBUG,
+
+    DEBUG_Camera
 };
 
 enum class InputToggle
@@ -21,4 +25,6 @@ enum class InputToggle
 	StrafeRight,
 
 	Shoot,
+
+	START_DEBUG,
 };

@@ -11,10 +11,10 @@
 
 
 RenderQueue::RenderQueue(Renderer& renderer, Camera& camera, const Vector2& gameWorldDim)
-	: _Camera(camera),
+	: _Camera(&camera),
 	  _GameWorldDim(gameWorldDim),
 	  _SpriteAtlas(renderer),
-	  _CameraAABB(AABB(0,100,0,100)),
+	  _CameraAABB(AABB(0, 100, 0, 100)),
 	  _CameraScale(0)
 {
 	_RenderQueue.reserve(512); // arbitrary, but a decent starting size for total number of rendered sprites?)
@@ -74,11 +74,10 @@ RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 	}
 
 	auto newPos = transform.Position;
-	newPos.w = static_cast<int>(newPos.w * _CameraScale);
-	newPos.h = static_cast<int>(newPos.h * _CameraScale);
+	newPos.w    = static_cast<int>(newPos.w * _CameraScale);
+	newPos.h    = static_cast<int>(newPos.h * _CameraScale);
 	while(true)
 	{
-
 		spriteMinY += _GameWorldDim.y;
 
 		if(spriteMinY < _CameraAABB.bottom)
@@ -91,7 +90,7 @@ RenderQueue::EnqueueLooped(const SpriteTransform& transform)
 
 				if(spriteMinX < _CameraAABB.right)
 				{
-					const auto spriteMin = _Camera.WorldToCamera(Vector2(spriteMinX, spriteMinY));
+					const auto spriteMin = _Camera->WorldToCamera(Vector2(spriteMinX, spriteMinY));
 
 					newPos.x = static_cast<int>(spriteMin.x);
 					newPos.y = static_cast<int>(spriteMin.y);
@@ -125,10 +124,11 @@ RenderQueue::GetRenderQueue()
 }
 
 void
-RenderQueue::CacheCameraInfo()
+RenderQueue::CacheCameraInfo(Camera* cam)
 {
-	_CameraAABB = _Camera.GetCameraView();
-	_CameraScale = _Camera.GetCameraScale();
+	_CameraAABB  = cam->GetCameraView();
+	_CameraScale = cam->GetCameraScale();
+	_Camera = cam;
 }
 
 void

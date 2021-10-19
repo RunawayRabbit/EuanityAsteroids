@@ -1,15 +1,12 @@
-#include "../Platform/Game.h"
-
 #include "PlayState.h"
 
-
 #include "../Math/EuanityMath.h"
+#include "../Platform/Game.h"
 
 PlayState::PlayState(Game& game)
 	: _Game(game),
 	  _Player(game.Entities, game.Rigidbodies, game.Xforms, game.Create, game.Physics),
 	  _GameOver(),
-	  _Level(0),
 	  _Lives(3),
 	  _Score(0),
 	  _WaitingForNextLevel(false),
@@ -116,10 +113,16 @@ PlayState::RespawnAsteroids()
 	int numDesiredAsteroids;
 	float asteroidSpeedMin;
 	float asteroidSpeedMax;
-	if(difficultyLevel <= 2)
+	if(difficultyLevel < 2)
 	{
 		numDesiredAsteroids = 1;
 		asteroidSpeedMin    = 30.0f;
+		asteroidSpeedMax    = 45.0f;
+	}
+	else if(difficultyLevel == 2)
+	{
+		numDesiredAsteroids = 3;
+		asteroidSpeedMin    = 35.0f;
 		asteroidSpeedMax    = 45.0f;
 	}
 	else if(difficultyLevel == 3)
@@ -167,13 +170,14 @@ PlayState::RespawnAsteroids()
 		Vector2 spawnPosition;
 		do
 		{
-			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 900.0f);
+			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 650.0f);
 			spawnPosition.x = Math::Repeat(spawnPosition.x, _Game.GameFieldDim.x);
 			spawnPosition.y = Math::Repeat(spawnPosition.y, _Game.GameFieldDim.y);
-		} while((playerPos - spawnPosition).LengthSq() < 600.0f * 600.0f);
+		} while(_Game.GameCam.GetCameraView().Contains(spawnPosition));
 
-
-		auto spawnVelocity = Math::RandomOnUnitCircle() * Math::RandomRange(asteroidSpeedMin, asteroidSpeedMax);
+		const auto piOverFour = Math::PI*0.25f;
+		auto spawnVelocity = (playerPos - spawnPosition).Normalized().RotateRad(Math::RandomRange(-piOverFour, piOverFour)) * Math::RandomRange(
+			asteroidSpeedMin, asteroidSpeedMax);
 
 		_CurrentAsteroids.push_back(_Game.Create.Asteroid(spawnPosition,
 		                                                  Math::RandomRange(0.0f, 360.0f),
@@ -184,28 +188,32 @@ PlayState::RespawnAsteroids()
 }
 
 void
+PlayState::UpdateCamera() const
+{
+	auto [x,y]           = _Player.GetPlayerPosition();
+	const auto playerVel = _Player.GetPlayerVelocity();
+
+	const auto cameraScale =
+		Math::Remap(playerVel.Length(),
+		            0, 300.0f,
+		            1.7f, 1.0f);
+	_Game.GameCam.SetScale(cameraScale);
+
+	_Game.GameCam.SetFocalPoint(
+		x + (playerVel.x * CAMERA_VELOCITY_FACTOR),
+		y + (playerVel.y * CAMERA_VELOCITY_FACTOR));
+}
+
+void
 PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 {
 	ProcessCollisions();
-
-	auto playerPos = _Player.GetPlayerPosition();
 
 	_Player.Update(inputBuffer, deltaTime);
 
 	if(_Player.IsAlive())
 	{
-		auto [x,y]           = _Player.GetPlayerPosition();
-		const auto playerVel = _Player.GetPlayerVelocity();
-
-		const auto cameraScale =
-			Math::Remap(playerVel.Length(),
-			            0, 300.0f,
-			            1.7f, 1.0f);
-		_Game.Camera.SetScale(cameraScale);
-
-		_Game.Camera.SetFocalPoint(
-			x + (playerVel.x * CAMERA_VELOCITY_FACTOR),
-			y + (playerVel.y * CAMERA_VELOCITY_FACTOR));
+		UpdateCamera();
 	}
 	else
 	{
