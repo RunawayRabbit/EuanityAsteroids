@@ -9,7 +9,9 @@ enum class InputOneShot
 
 	START_DEBUG,
 
-    DEBUG_Camera
+    DEBUG_Camera,
+	DEBUG_SpeedDown,
+	DEBUG_SpeedUp,
 };
 
 enum class InputToggle

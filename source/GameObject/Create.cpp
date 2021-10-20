@@ -332,7 +332,7 @@ Create::Bullet(const BulletType bulletType, const Vector2& position, const Vecto
 
 	Transform trans;
 	trans.pos = position;
-	trans.rot = velocity.GetAngleDegFromVector();
+	trans.rot = velocity.GetAngleDegFromVector() - 90.0f;
 
 	_TransManager.Add(entity, trans);
 	_RigidbodyManager.Add(entity, colliderType, velocity, 0);

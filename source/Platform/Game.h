@@ -18,8 +18,6 @@
 
 #include "../Input/InputHandler.h"
 
-#include "../Math/AABB.h"
-
 #include "../State/Timer.h"
 #include "../State/MenuState.h"
 
@@ -36,7 +34,8 @@ public:
 	bool IsRunning() const;
 
 	void ProcessInput();
-	void Update(float deltaTime);
+	void HandleDebugInput(const InputBuffer& inputBuffer);
+	void Update(float realDeltaTime);
 	void Render();
 	void Quit();
 
@@ -97,4 +96,5 @@ public:
 
 private:
 	bool _IsRunning;
+	float _TimeFactor;
 };

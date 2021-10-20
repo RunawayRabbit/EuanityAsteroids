@@ -26,6 +26,8 @@ public:
 
 	void Simulate(const float& deltaTime);
 
+	void EndFrame();
+
 	//@NOTE @IMPORTANT: This method is written to be as fast as possible. NOT as ACCURATE as possible!
 	bool IsOverlappingAnything(const Circle& testCircle, ColliderType ignore = ColliderType::NONE);
 
@@ -93,8 +95,6 @@ private:
 	std::array<ResolvedListEntry, 2> ResolveMove(const float& deltaTime, CollisionListEntry collision) const;
 
 	void FinalizeMoves(const float& deltaTime);
-
-	void End();
 
 
 	// OBB Collisions

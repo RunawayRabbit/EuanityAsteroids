@@ -222,12 +222,11 @@ Physics::Simulate(const float& deltaTime)
 	}
 
 	FinalizeMoves(deltaTime);
-	End();
 }
 
 
 void
-Physics::End()
+Physics::EndFrame()
 {
 	for(auto& moveList : _MoveLists)
 		moveList.Clear();

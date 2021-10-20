@@ -5,12 +5,12 @@
 #include "../Physics/Physics.h"
 
 Game::Game(const std::string windowName, const int windowWidth, const int windowHeight, const Vector2& gameWorldDim)
-	: GameCam(this, windowWidth, windowHeight),
+	: IsDebugCamera(false),
+	  GameCam(this, windowWidth, windowHeight),
 	  DebugCam(this, windowWidth, windowHeight),
-	  IsDebugCamera(false),
 	  Renderer(windowName, windowWidth, windowHeight),
 	  RenderQueue(Renderer, GameCam, gameWorldDim),
-	  BackgroundRenderer({windowWidth, windowHeight}),
+	  BackgroundRenderer({ windowWidth, windowHeight }),
 	  Input(InputHandler(_IsRunning)),
 	  Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
 	  Entities(Time),
@@ -20,7 +20,8 @@ Game::Game(const std::string windowName, const int windowWidth, const int window
 	  Physics(Xforms, Rigidbodies, gameWorldDim),
 	  Rigidbodies(Entities, 1024),
 	  GameFieldDim(gameWorldDim),
-	  _IsRunning(true)
+	  _IsRunning(true),
+	  _TimeFactor(1.0f)
 {
 	GameCam.SetFocalPoint(gameWorldDim * 0.5f);
 
@@ -49,23 +50,41 @@ Game::ProcessInput()
 }
 
 void
-Game::Update(const float deltaTime)
+Game::HandleDebugInput(const InputBuffer& inputBuffer)
 {
-	Time.Update(deltaTime);
-
-	const auto& inputBuffer = Input.GetBuffer();
-
 	if(inputBuffer.Contains(InputOneShot::DEBUG_Camera))
 	{
 		IsDebugCamera = !IsDebugCamera;
 	}
 
+	if(inputBuffer.Contains(InputOneShot::DEBUG_SpeedDown))
+	{
+		_TimeFactor -= 0.1f;
+	}
+
+	if(inputBuffer.Contains(InputOneShot::DEBUG_SpeedUp))
+	{
+		_TimeFactor += 0.1f;
+	}
+}
+
+void
+Game::Update(const float realDeltaTime)
+{
+	auto deltaTime = realDeltaTime * _TimeFactor;
+	Time.Update(deltaTime);
+
+	const auto& inputBuffer = Input.GetBuffer();
+
+	HandleDebugInput(inputBuffer);
+
 	Rigidbodies.EnqueueAll(Physics, deltaTime);
+	Physics.Simulate(deltaTime);
+	Sprites.Update(deltaTime);
 
 	CurrentState->Update(inputBuffer, deltaTime);
 
-	Physics.Simulate(deltaTime);
-	Sprites.Update(deltaTime);
+	Physics.EndFrame();
 
 	GarbageCollection();
 
@@ -93,7 +112,6 @@ Game::Render()
 	UI.Render(RenderQueue);
 
 	Renderer.Render(RenderQueue.GetRenderQueue());
-
 }
 
 void
@@ -134,6 +152,6 @@ Game::WrapToGameField(const Vector2& point) const
 bool
 Game::GameFieldContains(const Vector2& point) const
 {
-	const auto gameField = AABB(0,GameFieldDim.y, 0, GameFieldDim.x);
+	const auto gameField = AABB(0, GameFieldDim.y, 0, GameFieldDim.x);
 	return gameField.Contains(point);
 }

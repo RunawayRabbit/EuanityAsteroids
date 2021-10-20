@@ -24,6 +24,9 @@ InputContext::InputContext(bool fillWithDefaults)
 		AddOneShot(SDL_EXT_MOUSE1_UP, InputOneShot::MouseUp);
 
 		AddOneShot(SDLK_F8, InputOneShot::DEBUG_Camera);
+		AddOneShot(SDLK_F9, InputOneShot::DEBUG_SpeedDown);
+		AddOneShot(SDLK_F10, InputOneShot::DEBUG_SpeedUp);
+
 }
 }
 
