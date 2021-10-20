@@ -216,6 +216,18 @@ Player::GetPlayerPositionInt() const
 }
 
 Vector2
+Player::GetPlayerForward() const
+{
+	auto trans     = _TransformManager.Get(_Entity);
+	Vector2 retVal = { 0.0f, 0.0f };
+	if(trans.has_value())
+	{
+		retVal = Vector2::Forward().RotateDeg(trans.value().rot);
+	}
+	return retVal;
+}
+
+Vector2
 Player::GetPlayerPosition() const
 {
 	auto trans     = _TransformManager.Get(_Entity);

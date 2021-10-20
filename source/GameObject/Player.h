@@ -35,6 +35,7 @@ public:
 
 	Vector2 GetPlayerPosition() const;
 	Vector2Int GetPlayerPositionInt() const;
+	Vector2 GetPlayerForward() const;
 
 	Vector2 GetPlayerVelocity() const;
 	void TakeDamage(int damage);

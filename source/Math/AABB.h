@@ -14,6 +14,7 @@ public:
 	bool FullyContains(const OBB& box) const;
 	AABB operator+(const AABB& other) const;
 	AABB operator-(const AABB& other) const;
+	Vector2 Center() const;
 
 	// DATA
 	union

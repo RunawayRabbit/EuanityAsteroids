@@ -1,111 +1,76 @@
 #include "BackgroundRenderer.h"
+
 #include "RenderQueue.h"
-#include "..\ECS\SpriteManager.h"
+#include "../Math/EuanityMath.h"
 
-BackgroundRenderer::BackgroundRenderer(const TransformManager& transformManager, const AABB& screen)
-	: transformManager(transformManager),
-	  playerShip(Entity::Null()),
-	  screen(screen),
-	  position(0.0f, 0.0f)
+
+BackgroundRenderer::BackgroundRenderer(const Vector2Int screenDim)
+	: _ScreenDim(screenDim)
 {
-	SDL_Rect screenRect {};
-	screenRect.x = 0;
-	screenRect.y = 0;
-	screenRect.w = static_cast<int>(screen.max.x);
-	screenRect.h = static_cast<int>(screen.max.y);
+	_Layers[0] = {
+		SpriteID::STATIC_BACKGROUND,
+        Vector2::Zero(),
+        0.01f
+    };
 
-	// Background
-	background.ID       = SpriteID::STATIC_BACKGROUND;
-	background.Layer    = RenderQueue::Layer::BACKGROUND;
-	background.Rotation = 0;
-	background.Position = screenRect;
+	_Layers[1] = {
+		SpriteID::PARALLAX_BACKGROUND_3,
+        Vector2::Zero(),
+        0.06f
+    };
 
-	// Parallax 1
-	parallax1.ID       = SpriteID::PARALLAX_BACKGROUND_1;
-	parallax1.Layer    = RenderQueue::Layer::PARALLAX;
-	parallax1.Rotation = 0;
-	parallax1.Position = screenRect;
+	_Layers[2] = {
+		SpriteID::PARALLAX_BACKGROUND_1,
+        Vector2::Zero(),
+        0.12f
+    };
 
-	// Parallax 2
-	parallax2.ID       = SpriteID::PARALLAX_BACKGROUND_2;
-	parallax2.Layer    = RenderQueue::Layer::PARALLAX;
-	parallax2.Rotation = 0;
-	parallax2.Position = screenRect;
+	_Layers[3] = {
+		SpriteID::PARALLAX_BACKGROUND_2,
+        Vector2::Zero(),
+        0.18f
+    };
+}
 
-	// Parallax 3
-	parallax3.ID       = SpriteID::PARALLAX_BACKGROUND_3;
-	parallax3.Layer    = RenderQueue::Layer::PARALLAX;
-	parallax3.Rotation = 0;
-	parallax3.Position = screenRect;
+
+void
+BackgroundRenderer::DrawLayer(RenderQueue& renderQueue,
+                              BackgroundLayer& layer,
+                              const Vector2& delta)
+{
+	layer.Offset += -delta * layer.Speed;
+
+	layer.Offset.x = Math::RepeatNeg(layer.Offset.x, BACKGROUND_SIZE_X);
+	layer.Offset.y = Math::RepeatNeg(layer.Offset.y, BACKGROUND_SIZE_Y);
+
+	SDL_Rect bgRect;
+	bgRect.w = BACKGROUND_SIZE_X;
+	bgRect.h = BACKGROUND_SIZE_Y;
+
+	bgRect.x = static_cast<int>(layer.Offset.x);
+	bgRect.y = static_cast<int>(layer.Offset.y);
+	renderQueue.EnqueueScreenSpace(layer.SpriteID, bgRect, 0, RenderQueue::Layer::BACKGROUND);
+
+	bgRect.x = static_cast<int>(layer.Offset.x);
+	bgRect.y = static_cast<int>(layer.Offset.y) - BACKGROUND_SIZE_Y;
+	renderQueue.EnqueueScreenSpace(layer.SpriteID, bgRect, 0, RenderQueue::Layer::BACKGROUND);
+
+	bgRect.x = static_cast<int>(layer.Offset.x) - BACKGROUND_SIZE_X;
+	bgRect.y = static_cast<int>(layer.Offset.y) - BACKGROUND_SIZE_Y;
+	renderQueue.EnqueueScreenSpace(layer.SpriteID, bgRect, 0, RenderQueue::Layer::BACKGROUND);
+
+	bgRect.x = static_cast<int>(layer.Offset.x) - BACKGROUND_SIZE_X;
+	bgRect.y = static_cast<int>(layer.Offset.y);
+	renderQueue.EnqueueScreenSpace(layer.SpriteID, bgRect, 0, RenderQueue::Layer::BACKGROUND);
 }
 
 void
-BackgroundRenderer::Render(RenderQueue& renderQueue, const float& deltaTime)
+BackgroundRenderer::Render(Camera& camera, RenderQueue& renderQueue, const float& deltaTime)
 {
-#if 0
-	// Static background
-	renderQueue.Enqueue(SpriteID::STATIC_BACKGROUND, 0, RenderQueue::Layer::BACKGROUND);
+	const auto delta = camera.GetCameraVelocity() * deltaTime;
 
-	position.x += 20.0f * deltaTime;
-	//position.y += 10.0f * deltaTime; // Corner rendering bugs. This is unfortunately the easiest fix..
-
-	if(playerShip == Entity::Null())
+	for(auto& layer : _Layers)
 	{
-		parallax1.Position.x = static_cast<int>(floor(position.x));
-		if(parallax1.Position.x < 0)
-			parallax1.Position.x += static_cast<int>(screen.max.x);
-		else if(parallax1.Position.x > screen.max.x)
-			parallax1.Position.x -= static_cast<int>(screen.max.x);
-
-		parallax1.Position.y = static_cast<int>(floor(position.y));
-		if(parallax1.Position.y < 0)
-			parallax1.Position.y += static_cast<int>(screen.max.y);
-		else if(parallax1.Position.y > screen.max.y)
-			parallax1.Position.y -= static_cast<int>(screen.max.y);
-
-
-		parallax2.Position.x = static_cast<int>(floor(position.x / 2));
-		if(parallax2.Position.x < 0)
-			parallax2.Position.x += static_cast<int>(screen.max.x);
-		else if(parallax2.Position.x > screen.max.x)
-			parallax2.Position.x -= static_cast<int>(screen.max.x);
-
-		parallax2.Position.y = static_cast<int>(floor(position.y / 2));
-		if(parallax2.Position.y < 0)
-			parallax2.Position.y += static_cast<int>(screen.max.y);
-		else if(parallax2.Position.y > screen.max.y)
-			parallax2.Position.y -= static_cast<int>(screen.max.y);
-
-
-		parallax3.Position.x = static_cast<int>(floor(position.x / 4));
-		if(parallax3.Position.x < 0)
-			parallax3.Position.x += static_cast<int>(screen.max.x);
-		else if(parallax3.Position.x > screen.max.x)
-			parallax3.Position.x -= static_cast<int>(screen.max.x);
-
-		parallax3.Position.y = static_cast<int>(floor(position.y / 4));
-		if(parallax3.Position.y < 0)
-			parallax3.Position.y += static_cast<int>(screen.max.y);
-		else if(parallax3.Position.y > screen.max.y)
-			parallax3.Position.y -= static_cast<int>(screen.max.y);
-
-
-		background.Position.x = static_cast<int>(floor(position.x / 5));
-		if(background.Position.x < 0)
-			background.Position.x += static_cast<int>(screen.max.x);
-		else if(background.Position.x > screen.max.x)
-			background.Position.x -= static_cast<int>(screen.max.x);
-
-		background.Position.y = static_cast<int>(floor(position.y / 5));
-		if(background.Position.y < 0)
-			background.Position.y += static_cast<int>(screen.max.y);
-		else if(background.Position.y > screen.max.y)
-			background.Position.y -= static_cast<int>(screen.max.y);
+		DrawLayer(renderQueue, layer, delta);
 	}
-
-	renderQueue.EnqueueLooped(background);
-	renderQueue.EnqueueLooped(parallax1);
-	renderQueue.EnqueueLooped(parallax2);
-	renderQueue.EnqueueLooped(parallax3);
-#endif
 }

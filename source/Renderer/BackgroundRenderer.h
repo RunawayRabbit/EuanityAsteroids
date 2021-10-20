@@ -1,38 +1,33 @@
 #pragma once
 
-#include <array>
+#include "../Math/Vector2.h"
+#include "../Math/Vector2Int.h"
+#include "Camera.h"
 
-#include "..\ECS\Entity.h"
-
-#include "..\Renderer\SpriteAtlas.h"
-#include "..\Renderer\SpriteTransform.h"
-
-#include "..\Math\Vector2.h"
-#include "..\Math\AABB.h"
-
-class TransformManager;
+enum class SpriteID;
 class RenderQueue;
 
 class BackgroundRenderer
 {
 public:
-	BackgroundRenderer(const TransformManager& transformManager, const AABB& screen);
-	void Render(RenderQueue& renderQueue, const float& deltaTime);
+	explicit BackgroundRenderer(Vector2Int screenDim);
+
+	void Render(Camera& camera, RenderQueue& renderQueue, const float& deltaTime);
 
 private:
-	const TransformManager& transformManager;
-	Entity playerShip;
+	const Vector2Int _ScreenDim;
 
-	Vector2 offset;
-	const AABB screen;
+	struct BackgroundLayer
+	{
+		SpriteID SpriteID;
+		Vector2 Offset;
+		float Speed;
+	};
 
-	SpriteTransform background;
-	SpriteTransform parallax1;
-	SpriteTransform parallax2;
-	SpriteTransform parallax3;
+	static void DrawLayer(RenderQueue& renderQueue, BackgroundLayer& layer, const Vector2& delta);
 
-	Vector2 position;
+	BackgroundLayer _Layers[4];
 
-	static constexpr int backgroundSizeX = 2000;
-	static constexpr int backgroundSizeY = 2000;
+	static constexpr int BACKGROUND_SIZE_X = 2000;
+	static constexpr int BACKGROUND_SIZE_Y = 2000;
 };

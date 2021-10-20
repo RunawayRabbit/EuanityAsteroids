@@ -110,7 +110,8 @@ Repeat(float t, float length)
 static float
 RepeatNeg(float t, float length)
 {
-	while(t < 0) t += length;
+	while(t < 0)
+		t += length;
 	return std::clamp(t - floor(t / length) * length, 0.0f, length);
 }
 
@@ -153,38 +154,35 @@ Remap(const float& t,
 }
 
 static float
-SmoothDamp(const float& from,
-           const float& to,
+SmoothDamp(const float from,
+           const float to,
            float& velocity,
-           const float& maxSpeed,
-           const float& smoothTime,
-           const float& deltaTime)
+           const float maxSpeed,
+           const float smoothTime,
+           const float deltaTime)
 {
 	// Ripped shamelessly from Game Programming Gems 4, credit to Noel Llopis.
 	assert(smoothTime > 0.001f);
 
-	const auto omega = 2.0f / smoothTime;
-	const auto x     = omega * deltaTime;
-	const auto exp   = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+	const auto omega    = 2.0f / smoothTime;
+	const auto x        = omega * deltaTime;
+	const auto exp      = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+	const auto maxDelta = maxSpeed * smoothTime;
 
-	const auto maxDelta   = maxSpeed * smoothTime;
 	const auto delta      = std::clamp(from - to, -maxDelta, maxDelta);
-	const auto stepTarget = from - delta;
-
 	const auto temp = (velocity + omega * delta) * deltaTime;
 
+	auto result = from - delta + (delta + temp) * exp;
 	velocity = (velocity - omega * temp) * exp;
 
-	auto output = stepTarget + ((delta + temp) * exp);
-
 	// Prevent overshooting
-	if(to - from > 0.0f == output > to)
+	if(to - from > 0.0f == result > to)
 	{
-		output   = to;
-		velocity = (output - to) / deltaTime;
+		result   = to;
+		velocity = 0.0f;
 	}
 
-	return output;
+	return result;
 }
 
 static Vector2

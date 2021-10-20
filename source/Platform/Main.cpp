@@ -14,11 +14,11 @@ main(int /*argc*/, char* /*args[]*/)
 	const auto screenWidth  = 1600;
 	const auto screenHeight = 900;
 
-	const auto gameWorldDim = Vector2::One() * 2000.0f;
+	const auto gameWorldDim = Vector2::One() * 2500.0f;
 	Game game(windowName, screenWidth, screenHeight, gameWorldDim);
 
 	// Frame Timer Setup
-	const auto updatesPerSecond = 60;
+	const auto updatesPerSecond = 144;
 
 	const auto frameTime = 1.0f / updatesPerSecond;
 	FrameTimer timer(updatesPerSecond);
@@ -38,7 +38,7 @@ main(int /*argc*/, char* /*args[]*/)
 		game.Render();
 		timer.UpdateEstimatedRenderTime(renderBegin);
 
-		timer.PrintDebugStats(); // Frame timing
+		timer.PrintDebugStats();
 	}
 
 	return EXIT_SUCCESS;

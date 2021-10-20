@@ -123,45 +123,45 @@ PlayState::RespawnAsteroids()
 	}
 	else if(difficultyLevel == 2)
 	{
-		numDesiredAsteroids = 3;
+		numDesiredAsteroids = 5;
 		asteroidSpeedMin    = 35.0f;
 		asteroidSpeedMax    = 45.0f;
 	}
 	else if(difficultyLevel == 3)
 	{
-		numDesiredAsteroids = 5;
+		numDesiredAsteroids = 8;
 		asteroidSpeedMin    = 40.0f;
 		asteroidSpeedMax    = 50.0f;
 	}
 	else if(difficultyLevel == 4)
 	{
-		numDesiredAsteroids = 7;
+		numDesiredAsteroids = 12;
 		asteroidSpeedMin    = 50.0f;
 		asteroidSpeedMax    = 60.0f;
 	}
 	else if(difficultyLevel == 5)
 	{
-		numDesiredAsteroids = 10;
+		numDesiredAsteroids = 17;
 		asteroidSpeedMin    = 60.0f;
 		asteroidSpeedMax    = 80.0f;
 	}
 	else if(difficultyLevel == 6)
 	{
-		numDesiredAsteroids = 15;
+		numDesiredAsteroids = 24;
 		asteroidSpeedMin    = 80.0f;
 		asteroidSpeedMax    = 100.0f;
 	}
 	else if(difficultyLevel == 7)
 	{
-		numDesiredAsteroids = 20;
+		numDesiredAsteroids = 30;
 		asteroidSpeedMin    = 100.0f;
 		asteroidSpeedMax    = 140.0f;
 	}
-	else // >= 8
+	else // >= 8. DEATH SCREEN!!!!!
 	{
-		numDesiredAsteroids = 30;
-		asteroidSpeedMin    = 140.0f;
-		asteroidSpeedMax    = 180.0f;
+		numDesiredAsteroids = 500;
+		asteroidSpeedMin    = 240.0f;
+		asteroidSpeedMax    = 380.0f;
 	}
 #pragma endregion DifficultySettings
 
@@ -199,12 +199,13 @@ PlayState::UpdateCamera(const float& deltaTime)
 		            0, 300.0f,
 		            1.5f, 0.8f);
 
-
 	_CurrentCamZoom = Math::SmoothDamp(_CurrentCamZoom, newCamZoom, _CamZoomVelocity, 2.0f, 1.0f, deltaTime);
 
 	_Game.GameCam.SetScale(_CurrentCamZoom);
 
-	_Game.GameCam.SetFocalPoint(_Player.GetPlayerPosition());
+	const auto focalPoint = _Player.GetPlayerPosition() + (playerVel* 1.2f) +
+		_Player.GetPlayerForward() * -15.0f;
+	_Game.GameCam.SetFocalPoint(focalPoint);
 }
 
 void

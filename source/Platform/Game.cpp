@@ -10,7 +10,7 @@ Game::Game(const std::string windowName, const int windowWidth, const int window
 	  IsDebugCamera(false),
 	  Renderer(windowName, windowWidth, windowHeight),
 	  RenderQueue(Renderer, GameCam, gameWorldDim),
-	  BackgroundRenderer(Xforms, AABB(static_cast<float>(windowWidth), static_cast<float>(windowHeight))),
+	  BackgroundRenderer({windowWidth, windowHeight}),
 	  Input(InputHandler(_IsRunning)),
 	  Create(*this, Entities, Xforms, Sprites, Rigidbodies, UI, Time),
 	  Entities(Time),
@@ -82,15 +82,17 @@ Game::Render()
 {
 	RenderQueue.Clear();
 	auto& cam = IsDebugCamera ? DebugCam : GameCam;
+
 	RenderQueue.CacheCameraInfo(&cam);
 
-	UI.Render(RenderQueue);
-
-	BackgroundRenderer.Render(RenderQueue, Time.DeltaTime());
+	BackgroundRenderer.Render(cam, RenderQueue, Time.DeltaTime());
 
 	Sprites.Render(RenderQueue);
 
+	UI.Render(RenderQueue);
+
 	Renderer.Render(RenderQueue.GetRenderQueue());
+
 }
 
 void

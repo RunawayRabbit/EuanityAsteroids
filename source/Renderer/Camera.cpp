@@ -2,8 +2,19 @@
 
 #include <iostream>
 
+
 #include "../Math/EuanityMath.h"
 #include "../Platform/Game.h"
+
+Camera::Camera(const Game* game, const int& windowWidth, const int& windowHeight)
+	: _Game(game),
+	  _WindowDim({ windowWidth, windowHeight }),
+	  _Velocity(AABB(0, 0, 0, 0)),
+	  _TargetView(AABB(static_cast<float>(windowWidth), static_cast<float>(windowHeight))),
+	  _PreviousTargetView(AABB(static_cast<float>(windowWidth), static_cast<float>(windowHeight))),
+	  _CurrentView(AABB(static_cast<float>(windowWidth), static_cast<float>(windowHeight)))
+{
+}
 
 AABB
 Camera::GetCameraView() const
@@ -14,7 +25,13 @@ Camera::GetCameraView() const
 Vector2
 Camera::GetFocalPoint() const
 {
-	return (_CurrentView.min + _CurrentView.max) * 0.5f;
+	return _CurrentView.Center();
+}
+
+Vector2
+Camera::GetCameraVelocity() const
+{
+	return _Velocity.Center();
 }
 
 Vector2
@@ -51,24 +68,18 @@ Camera::GetCameraScale() const
 void
 Camera::Update(const float& deltaTime)
 {
-	if(!_Game->GameFieldContains(_TargetView.min))
+	if(!_TargetView.Contains(_CurrentView.Center()))
 	{
-		const auto newMin = _Game->WrapToGameField(_TargetView.min);
-		const auto delta  = newMin - _TargetView.min;
-		const auto newMax = _TargetView.max + delta;
+		const auto targetDelta = _TargetView - _PreviousTargetView;
 
-		_TargetView = AABB(newMin, newMax);
+		_CurrentView = _CurrentView + targetDelta;
 	}
 
-	// Reconstruct CurrentView from deltas
-	_CurrentView = _TargetView + _CurrentOffsetFromTarget;
-
 	_CurrentView = Math::SmoothDamp(
-		_CurrentView, _TargetView, _Velocity,
-		MAX_CAMERA_SPEED, INTERP_SPEED, deltaTime);
+        _CurrentView, _TargetView, _Velocity,
+        MAX_CAMERA_SPEED, INTERP_SPEED, deltaTime);
 
-	// Store deltas for next frame
-	_CurrentOffsetFromTarget = _CurrentView - _TargetView;
+	_PreviousTargetView = _TargetView;
 }
 
 void
@@ -77,7 +88,7 @@ Camera::SetFocalPoint(const Vector2& focalPoint)
 	const auto dim     = (_TargetView.max - _TargetView.min);
 	const auto halfDim = dim * 0.5f;
 
-	const auto newMin = _Game->WrapToGameField((focalPoint - halfDim));
+	const auto newMin = (focalPoint - halfDim);
 
 	_TargetView = AABB(newMin, (newMin + dim));
 }

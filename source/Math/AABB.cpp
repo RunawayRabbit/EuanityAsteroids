@@ -61,3 +61,10 @@ AABB::operator-(const AABB& other) const
     this->left - other.left,
     this->right - other.right);
 }
+
+Vector2
+AABB::Center() const
+{
+	return Vector2((min.x + max.x)*0.5f,
+		(min.y + max.y)*0.5f);
+}
