@@ -18,7 +18,7 @@ main(int /*argc*/, char* /*args[]*/)
 	Game game(windowName, screenWidth, screenHeight, gameWorldDim);
 
 	// Frame Timer Setup
-	const auto updatesPerSecond = 144;
+	const auto updatesPerSecond = 60;
 
 	const auto frameTime = 1.0f / updatesPerSecond;
 	FrameTimer timer(updatesPerSecond);

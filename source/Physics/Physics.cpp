@@ -22,6 +22,98 @@ Physics::Physics(TransformManager& transformManager, RigidbodyManager& rigidbody
 {
 }
 
+bool
+Physics::IsOverlappingAnything(const Circle& testCircle, const ColliderType ignore)
+{
+	const auto boundingAABB =
+		AABB(testCircle.Center.y - testCircle.Radius, testCircle.Center.y + testCircle.Radius,
+		     testCircle.Center.y - testCircle.Radius, testCircle.Center.y + testCircle.Radius);
+
+	// @TODO: We can shave off some work by only checking the circle and not it's bounding box.
+	// Get tile range based on our bounding AABB.
+	const auto [MinTileX, MinTileY, MaxTileX, MaxTileY] = GetTileRange(boundingAABB);
+
+	for(auto y = MinTileY; y <= MaxTileY; ++y)
+	{
+		// Wrap our Y coordinate if we have to.
+		auto wrappedY = testCircle.Center.y;
+		if(y < 0)
+		{
+			wrappedY += _GameFieldDim.y;
+		}
+		else if(y >= CHUNKS_Y)
+		{
+			wrappedY -= _GameFieldDim.y;
+		}
+
+		for(auto x = MinTileX; x <= MaxTileX; ++x)
+		{
+			// Wrap the element in X if we have to.
+			auto wrappedX = testCircle.Center.x;
+			if(x < 0)
+				wrappedX += _GameFieldDim.x;
+			else if(x >= CHUNKS_X)
+				wrappedX -= _GameFieldDim.x;
+
+			// Calculate the chunk index and enqueue
+			const auto chunkIndex = Math::Mod(y, CHUNKS_Y) * CHUNKS_X + Math::Mod(x, CHUNKS_X);
+
+			const Circle wrappedCircle(Vector2(wrappedX, wrappedY), testCircle.Radius);
+			const float maximumRadius = ColliderRadius::GetRadiusFromType(ColliderType::LARGEST_POSSIBLE_COLLIDER);
+			for(auto entry = _MoveLists[chunkIndex].begin();
+			    entry != _MoveLists[chunkIndex].end(); ++entry)
+			{
+				if(entry->Rb.colliderType == ignore) continue;
+				const Circle entryCircle(entry->Pos, maximumRadius);
+				if(CollisionTests::CircleToCircle(wrappedCircle, entryCircle))
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+Physics::TileRange
+Physics::GetTileRange(const AABB& aabb) const
+{
+	TileRange result;
+	auto accumulator = Vector2::Zero();
+	result.MinTileX  = -1;
+	result.MinTileY  = -1;
+	while(accumulator.x < aabb.min.x)
+	{
+		accumulator.x += _ChunkSizeX;
+		++result.MinTileX;
+	}
+	while(accumulator.y < aabb.min.y)
+	{
+		accumulator.y += _ChunkSizeY;
+		++result.MinTileY;
+	}
+	// @NOTE: Logic here is a bit tricky. At this point, startTile indicates the
+	//  "lowest" tile that the AABB overlaps, and accumulator is sitting in the
+	//  maximum corner of that tile.
+
+	// Using the same method, we advance the max accumulator to find the maximum.
+	result.MaxTileX = result.MinTileX;
+	result.MaxTileY = result.MinTileY;
+	while(accumulator.x < aabb.max.x)
+	{
+		accumulator.x += _ChunkSizeX;
+		++result.MaxTileX;
+	}
+	while(accumulator.y < aabb.max.y)
+	{
+		accumulator.y += _ChunkSizeY;
+		++result.MaxTileY;
+	}
+
+	return result;
+}
+
 void
 Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 {
@@ -34,7 +126,8 @@ Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 	}
 
 	const auto rbTrans = optionalRbTrans.value();
-	auto rbAABB        = ColliderRadius::GetAABB(rb.colliderType, rbTrans.pos);
+
+	auto rbAABB = ColliderRadius::GetAABB(rb.colliderType, rbTrans.pos);
 
 	// Pad the AABB by the velocity, and a small safety margin.
 	const auto deltaPosition = rb.velocity * deltaTime;
@@ -46,39 +139,10 @@ Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 	rbAABB.max.x = std::max(rbAABB.max.x, rbAABB.max.x + deltaPosition.x + padding);
 	rbAABB.max.y = std::max(rbAABB.max.y, rbAABB.max.y + deltaPosition.y + padding);
 
-	auto accumulator = Vector2::Zero();
-	auto startTileX  = -1;
-	auto startTileY  = -1;
-	while(accumulator.x < rbAABB.min.x)
-	{
-		accumulator.x += _ChunkSizeX;
-		++startTileX;
-	}
-	while(accumulator.y < rbAABB.min.y)
-	{
-		accumulator.y += _ChunkSizeY;
-		++startTileY;
-	}
-	// @NOTE: Logic here is a bit tricky. At this point, startTile indicates the
-	//  "lowest" tile that the AABB overlaps, and accumulator is sitting in the
-	//  maximum corner of that tile.
-
-	// Using the same method, we advance the max accumulator to find the maximum.
-	auto endTileX = startTileX;
-	auto endTileY = startTileY;
-	while(accumulator.x < rbAABB.max.x)
-	{
-		accumulator.x += _ChunkSizeX;
-		++endTileX;
-	}
-	while(accumulator.y < rbAABB.max.y)
-	{
-		accumulator.y += _ChunkSizeY;
-		++endTileY;
-	}
+	const auto range = GetTileRange(rbAABB);
 
 	// Enqueue the rigidbody into the appropriate moveLists by the chunk it's in.
-	for(auto y = startTileY; y <= endTileY; ++y)
+	for(auto y = range.MinTileY; y <= range.MaxTileY; ++y)
 	{
 		// Wrap our Y coordinate if we have to.
 		auto wrappedY = rbTrans.pos.y;
@@ -87,7 +151,7 @@ Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 		else if(y >= CHUNKS_Y)
 			wrappedY -= _GameFieldDim.y;
 
-		for(auto x = startTileX; x <= endTileX; ++x)
+		for(auto x = range.MinTileX; x <= range.MaxTileX; ++x)
 		{
 			// Wrap the element in X if we have to.
 			auto wrappedX = rbTrans.pos.x;
@@ -97,8 +161,7 @@ Physics::Enqueue(const Rigidbody& rb, const float& deltaTime)
 				wrappedX -= _GameFieldDim.x;
 
 			// Calculate the chunk index and enqueue
-			auto mod              = [](const int A, const int B) { return (B + (A % B)) % B; };
-			const auto chunkIndex = mod(y, CHUNKS_Y) * CHUNKS_X + mod(x, CHUNKS_X);
+			const auto chunkIndex = Math::Mod(y, CHUNKS_Y) * CHUNKS_X + Math::Mod(x, CHUNKS_X);
 			_MoveLists[chunkIndex].Enqueue({ rb, Vector2(wrappedX, wrappedY) });
 		}
 	}
@@ -162,6 +225,7 @@ Physics::Simulate(const float& deltaTime)
 	End();
 }
 
+
 void
 Physics::End()
 {
@@ -190,7 +254,8 @@ Physics::DetectInitialCollisions(MoveList& moveList, const float& deltaTime) con
 	MoveList::ColliderRanges ranges;
 	ranges.ShipBegin = moveList.begin() + moveList.GetColliderCount(ColliderType::NONE);
 	ranges.ShipEnd   = ranges.BulletBegin = ranges.ShipBegin + moveList.GetColliderCount(ColliderType::SHIP);
-	ranges.BulletEnd = ranges.LargeBegin  = ranges.BulletBegin + moveList.GetColliderCount(ColliderType::BULLET) + moveList.GetColliderCount(ColliderType::BOUNCY_BULLET);
+	ranges.BulletEnd = ranges.LargeBegin = ranges.BulletBegin + moveList.GetColliderCount(ColliderType::BULLET) + moveList.GetColliderCount(
+		ColliderType::BOUNCY_BULLET);
 	ranges.LargeEnd  = ranges.MediumBegin = ranges.LargeBegin + moveList.GetColliderCount(ColliderType::LARGE_ASTEROID);
 	ranges.MediumEnd = ranges.SmallBegin  = ranges.MediumBegin + moveList.GetColliderCount(ColliderType::MEDIUM_ASTEROID);
 	ranges.SmallEnd  = moveList.end();
@@ -607,6 +672,7 @@ Physics::FinalizeMoves(const float& deltaTime)
 		rigid->velocity        = velocity;
 		rigid->angularVelocity = angularVelocity;
 	}
+
 
 	// Sort the Report, ready for other game systems to query.
 	std::sort(_CollisionReport.begin(), _CollisionReport.end(),

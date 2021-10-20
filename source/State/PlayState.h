@@ -40,7 +40,7 @@ private:
 	float _CurrentCamZoom;
 	float _CamZoomVelocity;
 
-	void SpawnPlayer();
+	void RespawnPlayer();
 	void SpawnFirstAsteroid();
 
 };

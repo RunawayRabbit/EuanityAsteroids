@@ -14,7 +14,7 @@ EntityManager::EntityManager(const Timer& time)
 {
 	// @NOTE: Entity.id == 0 is considered to be the null entity and is never available.
 
-	_OpenRanges.push_back({ 1, Entity::ENTITYID_MAX });
+	_OpenRanges.push_back({ 1, Entity::EID_MAX });
 }
 
 Entity
@@ -202,7 +202,7 @@ EntityManager::Clear()
 
 	//@TODO: Pretty clear that this range-based storage system needs to be it's own class.
 	_OpenRanges.clear();
-	_OpenRanges.push_back({ 1, Entity::ENTITYID_MAX });
+	_OpenRanges.push_back({ 1, Entity::EID_MAX });
 
 	_DeathRow = DeathRow();
 }

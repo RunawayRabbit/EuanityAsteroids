@@ -104,30 +104,14 @@ struct WeaponType
 	{
 		WeaponType weapon;
 
-		weapon.BulletSpeed        = 250.0f;
-		weapon.BulletLifetime     = 1.7f;
-		weapon.ShotCooldown       = 1.0f;
+		weapon.BulletSpeed        = 220.0f;
+		weapon.BulletLifetime     = 3.7f;
+		weapon.ShotCooldown       = 2.0f;
 		weapon.BulletSpawnOffsetY = 11.0f;
 		weapon.BulletSpawnCount   = 500;
 		weapon.BulletSpawnArcDeg  = 360.0f;
 
 		weapon.BulletType = BulletType::REGULAR_BULLET;
-
-		return weapon;
-	}
-
-	static WeaponType GetGammaRayBurstWeapon()
-	{
-		WeaponType weapon;
-
-		weapon.BulletSpeed = 10000.0f;
-		weapon.BulletLifetime     = 0.1f;
-		weapon.ShotCooldown       = 1.0f;
-		weapon.BulletSpawnOffsetY = 11.0f;
-		weapon.BulletSpawnCount   = 500;
-		weapon.BulletSpawnArcDeg  = 360.0f;
-
-		weapon.BulletType = BulletType::INVISIBLE_BULLET;
 
 		return weapon;
 	}

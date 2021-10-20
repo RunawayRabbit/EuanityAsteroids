@@ -8,16 +8,16 @@ class Entity
 public:
 	//@NOTE: Change these to 32/64 if necessary
 	typedef uint16_t EID;
-	static const EID ENTITYID_MAX = UINT16_MAX;
+	static const EID EID_MAX = UINT16_MAX;
 
-	bool operator==(const Entity& Other) const
+	bool operator==(const Entity& other) const
 	{
-		return _ID == Other._ID;
+		return _ID == other._ID;
 	}
 
-	bool operator!=(const Entity& Other) const
+	bool operator!=(const Entity& other) const
 	{
-		return _ID != Other._ID;
+		return _ID != other._ID;
 	}
 
 	size_t Hash() const {
@@ -26,9 +26,9 @@ public:
 
 	static Entity Null()
 	{
-		Entity RetVal;
-		RetVal._ID = 0;
-		return RetVal;
+		Entity retVal;
+		retVal._ID = 0;
+		return retVal;
 	}
 
 	std::string ToString() const
@@ -42,7 +42,7 @@ public:
 	}
 
 private:
-	
+
 	EID _ID;
 	Entity& operator++()
 	{
@@ -52,9 +52,9 @@ private:
 
 	Entity operator++(int)
 	{
-		const auto Copy = *this;
+		const auto copy = *this;
 		++_ID;
-		return Copy;
+		return copy;
 	}
 	friend class EntityManager;
 };

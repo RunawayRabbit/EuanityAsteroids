@@ -1,8 +1,3 @@
 
-Tiled physics sometimes misses interactions along the edges of the wrapped area
-
-Background Renderer rewrite
-
-There are no checks done when respawning the player and no immunity frames, you can spawn into instant death.
 No sound because I didn't implement sound =D
 Not yet using the WIP DX12 rendering backend.

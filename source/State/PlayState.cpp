@@ -1,6 +1,10 @@
 #include "PlayState.h"
 
+#include <iostream>
+
+
 #include "../Math/EuanityMath.h"
+#include "../Math/Circle.h"
 #include "../Platform/Game.h"
 
 PlayState::PlayState(Game& game)
@@ -20,7 +24,7 @@ PlayState::PlayState(Game& game)
 void
 PlayState::OnEnter()
 {
-	SpawnPlayer();
+	_Player.Spawn(_Game.GameFieldDim * 0.5f, 0);
 	SpawnFirstAsteroid();
 }
 
@@ -177,9 +181,10 @@ PlayState::RespawnAsteroids()
 			spawnPosition.y = Math::Repeat(spawnPosition.y, _Game.GameFieldDim.y);
 		} while(_Game.GameCam.GetCameraView().Contains(spawnPosition));
 
-		const auto piOverFour = Math::PI*0.25f;
-		auto spawnVelocity = (playerPos - spawnPosition).Normalized().RotateRad(Math::RandomRange(-piOverFour, piOverFour)) * Math::RandomRange(
-			asteroidSpeedMin, asteroidSpeedMax);
+		const auto piOverFour = Math::PI * 0.25f;
+		auto spawnVelocity    = (playerPos - spawnPosition).Normalized().RotateRad(Math::RandomRange(-piOverFour, piOverFour)) *
+			Math::RandomRange(
+				asteroidSpeedMin, asteroidSpeedMax);
 
 		_CurrentAsteroids.push_back(_Game.Create.Asteroid(spawnPosition,
 		                                                  Math::RandomRange(0.0f, 360.0f),
@@ -203,7 +208,7 @@ PlayState::UpdateCamera(const float& deltaTime)
 
 	_Game.GameCam.SetScale(_CurrentCamZoom);
 
-	const auto focalPoint = _Player.GetPlayerPosition() + (playerVel* 1.2f) +
+	const auto focalPoint = _Player.GetPlayerPosition() + (playerVel * 1.2f) +
 		_Player.GetPlayerForward() * -15.0f;
 	_Game.GameCam.SetFocalPoint(focalPoint);
 }
@@ -233,7 +238,7 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 				_WaitingToSpawn = true;
 				_Game.Time.ExecuteDelayed(1.5f, [&]()
 				{
-					SpawnPlayer();
+					RespawnPlayer();
 					_WaitingToSpawn = false;
 				});
 			}
@@ -244,9 +249,20 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 }
 
 void
-PlayState::SpawnPlayer()
+PlayState::RespawnPlayer()
 {
-	_Player.Spawn(_Game.GameFieldDim * 0.5f, 0);
+	static const auto RESPAWN_CHECK_RADIUS = 100.0f;
+
+	const auto spawnPoint = _Game.WrapToGameField(_Game.GameCam.GetFocalPoint() + (_Game.GameFieldDim * 0.5f));
+
+	auto testCircle   = Circle(spawnPoint, RESPAWN_CHECK_RADIUS);
+	while(_Game.Physics.IsOverlappingAnything(testCircle, ColliderType::SHIP))
+	{
+		// Our selected spawnpoint is not safe to spawn in. Random walk to a new point!
+		testCircle.Center = _Game.WrapToGameField(testCircle.Center + (Math::RandomOnUnitCircle() * RESPAWN_CHECK_RADIUS));
+	}
+
+	_Player.Spawn(testCircle.Center, 0);
 }
 
 void

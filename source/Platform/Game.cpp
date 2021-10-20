@@ -60,9 +60,10 @@ Game::Update(const float deltaTime)
 		IsDebugCamera = !IsDebugCamera;
 	}
 
+	Rigidbodies.EnqueueAll(Physics, deltaTime);
+
 	CurrentState->Update(inputBuffer, deltaTime);
 
-	Rigidbodies.EnqueueAll(Physics, deltaTime);
 	Physics.Simulate(deltaTime);
 	Sprites.Update(deltaTime);
 

@@ -7,7 +7,6 @@
 #include "Vector2.h"
 
 class AABB;
-class Sphere;
 
 class OBB
 {
@@ -21,7 +20,7 @@ public:
 	float DistanceBetween(const Vector2& point) const;
 	float DistanceBetweenSq(const Vector2& point) const;
 	Vector2 ClosestPointTo(const Vector2& point) const;
-	
+
 	AABB Bounds() const;
 
 	std::array<Vector2,4> GetCorners() const;

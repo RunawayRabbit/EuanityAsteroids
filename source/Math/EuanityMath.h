@@ -169,11 +169,11 @@ SmoothDamp(const float from,
 	const auto exp      = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
 	const auto maxDelta = maxSpeed * smoothTime;
 
-	const auto delta      = std::clamp(from - to, -maxDelta, maxDelta);
-	const auto temp = (velocity + omega * delta) * deltaTime;
+	const auto delta = std::clamp(from - to, -maxDelta, maxDelta);
+	const auto temp  = (velocity + omega * delta) * deltaTime;
 
 	auto result = from - delta + (delta + temp) * exp;
-	velocity = (velocity - omega * temp) * exp;
+	velocity    = (velocity - omega * temp) * exp;
 
 	// Prevent overshooting
 	if(to - from > 0.0f == result > to)
@@ -208,5 +208,11 @@ SmoothDamp(const AABB& from,
 {
 	return AABB(SmoothDamp(from.min, to.min, velocity.min, maxSpeed, smoothTime, deltaTime),
 	            SmoothDamp(from.max, to.max, velocity.max, maxSpeed, smoothTime, deltaTime));
+}
+
+inline int
+Mod(const int num, const int divisor)
+{
+	return (divisor + (num % divisor)) % divisor;
 }
 }

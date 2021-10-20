@@ -13,6 +13,7 @@
 #include "ColliderType.h"
 #include "MoveList.h"
 
+class Circle;
 class TransformManager;
 class RigidbodyManager;
 
@@ -24,6 +25,9 @@ public:
 	void Enqueue(const Rigidbody& rb, const float& deltaTime);
 
 	void Simulate(const float& deltaTime);
+
+	//@NOTE @IMPORTANT: This method is written to be as fast as possible. NOT as ACCURATE as possible!
+	bool IsOverlappingAnything(const Circle& testCircle, ColliderType ignore = ColliderType::NONE);
 
 	struct CollisionListEntry
 	{
@@ -63,6 +67,18 @@ private:
 		float AngularVelocity = 0;
 		float Time            = 0;
 	};
+
+
+	// Utility
+	struct TileRange
+	{
+		int_fast8_t MinTileX;
+		int_fast8_t MinTileY;
+		int_fast8_t MaxTileX;
+		int_fast8_t MaxTileY;
+	};
+	TileRange GetTileRange(const AABB& aabb) const;
+
 
 	// Physics Pipeline
 

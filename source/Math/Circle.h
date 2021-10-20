@@ -5,16 +5,19 @@
 class Circle
 {
 public:
-	Circle(const Vector2& center, const float& radius) :
-		center(center),
-		radius(radius) {};
-
-	inline bool Overlaps(const Circle& other)
+	Circle(const Vector2& center, const float& radius)
+		: Center(center),
+		  Radius(radius)
 	{
-		Vector2 diff = this->center - other.center;
-		float distanceSq = Dot(diff, diff);
-		float radiusSumSq = (this->radius + other.radius) *
-			(this->radius + other.radius);
+	}
+
+	bool Overlaps(const Circle& other) const
+	{
+		const auto diff        = this->Center - other.Center;
+		const auto distanceSq  = Dot(diff, diff);
+		const auto radiusSumSq =
+			(this->Radius + other.Radius) *
+			(this->Radius + other.Radius);
 
 		return distanceSq < radiusSumSq;
 	}
@@ -22,6 +25,6 @@ public:
 
 	//DATA
 
-	Vector2 center;
-	float radius;
+	Vector2 Center;
+	float Radius;
 };

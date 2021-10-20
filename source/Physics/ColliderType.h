@@ -15,6 +15,8 @@ enum class ColliderType
 	MEDIUM_ASTEROID,
 	SMOL_ASTEROID,
 
+	LARGEST_POSSIBLE_COLLIDER,
+
 	COUNT,
 };
 
@@ -40,6 +42,7 @@ GetRadiusFromType(const ColliderType& type)
 		case ColliderType::LARGE_ASTEROID: return Large;
 		case ColliderType::MEDIUM_ASTEROID: return Medium;
 		case ColliderType::SMOL_ASTEROID: return Small;
+		case ColliderType::LARGEST_POSSIBLE_COLLIDER: return Large;
 	}
 	// @TODO: Might be time to write a logger?
 	return 0;
@@ -48,7 +51,6 @@ GetRadiusFromType(const ColliderType& type)
 inline AABB
 GetAABB(const ColliderType& type, const Vector2& center)
 {
-	//@TODO: This is a bug that I'm willing to live with, due to time constraints.
 	//	Refactoring colliders to be polymorphic would be way better than what I'm currently
 	//	doing, but maintaining the same level of performance would be quite tough.
 
@@ -60,7 +62,6 @@ GetAABB(const ColliderType& type, const Vector2& center)
 
 		_assume(false);
 	}
-
 
 	const auto radius = GetRadiusFromType(type);
 	const auto min    = Vector2(center.x - radius, center.y - radius);

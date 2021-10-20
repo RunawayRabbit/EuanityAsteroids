@@ -5,21 +5,24 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="">
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Camera and Background Renderer complete">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/BugList.txt" beforeDir="false" afterPath="$PROJECT_DIR$/source/BugList.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/Entity.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/Entity.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/EntityManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/GameObject/Player.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Player.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Math/AABB.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/AABB.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Math/AABB.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/AABB.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/WeaponType.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/WeaponType.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Math/Circle.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/Circle.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Math/EuanityMath.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/EuanityMath.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Math/OBB.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Math/OBB.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Physics/ColliderType.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/ColliderType.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Physics/CollisionTests.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/CollisionTests.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Platform/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Platform/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/Camera.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/State/PlayState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/State/PlayState.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.ilk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/x64/Debug/Asteroids.tlog/CL.command.1.tlog" afterDir="false" />
@@ -64,8 +67,6 @@
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
-      <option value="$PROJECT_DIR$/source/ECS/TransformManager.h" />
-      <option value="$PROJECT_DIR$/source/ECS/TransformManager.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/RingBuffer.h" />
       <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.h" />
       <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp" />
@@ -78,18 +79,12 @@
       <option value="$PROJECT_DIR$/source/GameObject/ShipTypes.h" />
       <option value="$PROJECT_DIR$/source/GameObject/ShipType.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
-      <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
-      <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
-      <option value="$PROJECT_DIR$/source/Math/Circle.h" />
       <option value="$PROJECT_DIR$/source/ECS/UIManager.cpp" />
       <option value="$PROJECT_DIR$/source/Math/Meth.h" />
       <option value="$PROJECT_DIR$/source/Math/MathConstants.h" />
-      <option value="$PROJECT_DIR$/source/Physics/CollisionTests.h" />
       <option value="$PROJECT_DIR$/source/ECS/SpriteManager.h" />
-      <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
       <option value="$PROJECT_DIR$/source/Math/Vector2.h" />
       <option value="$PROJECT_DIR$/source/Math/Vector2Int.h" />
-      <option value="$PROJECT_DIR$/source/Physics/Physics.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
       <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/Renderer.h" />
@@ -102,19 +97,27 @@
       <option value="$PROJECT_DIR$/source/Input/InputContext.h" />
       <option value="$PROJECT_DIR$/source/Input/InputDefinitions.h" />
       <option value="$PROJECT_DIR$/source/State/PlayState.h" />
-      <option value="$PROJECT_DIR$/source/BugList.txt" />
       <option value="$PROJECT_DIR$/source/Math/AABB.h" />
       <option value="$PROJECT_DIR$/source/Math/AABB.cpp" />
-      <option value="$PROJECT_DIR$/source/Math/EuanityMath.h" />
       <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.h" />
-      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
-      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
-      <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/Camera.h" />
       <option value="$PROJECT_DIR$/source/Renderer/Camera.cpp" />
+      <option value="$PROJECT_DIR$/source/BugList.txt" />
+      <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
+      <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
+      <option value="$PROJECT_DIR$/source/ECS/Entity.h" />
+      <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
+      <option value="$PROJECT_DIR$/source/Math/EuanityMath.h" />
+      <option value="$PROJECT_DIR$/source/Math/OBB.h" />
+      <option value="$PROJECT_DIR$/source/Math/Circle.h" />
+      <option value="$PROJECT_DIR$/source/Physics/CollisionTests.h" />
+      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
+      <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
+      <option value="$PROJECT_DIR$/source/Physics/Physics.h" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -127,12 +130,12 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.29950082" />
-    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.38352746" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.38685524" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.34109816" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="TODO_SCOPE" value="All Places" />
-    <property name="XThreadsFramesViewSplitterKey" value="0.22222222" />
+    <property name="XThreadsFramesViewSplitterKey" value="0.35560346" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="C++" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C++" />
   </component>
@@ -212,7 +215,7 @@
       <workItem from="1634550360827" duration="3743000" />
       <workItem from="1634609098180" duration="17128000" />
       <workItem from="1634629705380" duration="10873000" />
-      <workItem from="1634703699615" duration="9469000" />
+      <workItem from="1634703699615" duration="21254000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -375,7 +378,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634626187194</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Camera and Background Renderer complete">
+      <created>1634726395124</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1634726395124</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -418,7 +428,8 @@
     <MESSAGE value="Decoupled game field size from screen size and fixed some related rendering bugs." />
     <MESSAGE value="Added a Debug Camera" />
     <MESSAGE value="Various camera improvements, mostly involving smooth movement." />
-    <option name="LAST_COMMIT_MESSAGE" value="Various camera improvements, mostly involving smooth movement." />
+    <MESSAGE value="Camera and Background Renderer complete" />
+    <option name="LAST_COMMIT_MESSAGE" value="Camera and Background Renderer complete" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -428,24 +439,11 @@
           <line>39</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/source/Renderer/Camera.cpp</url>
-          <line>96</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/source/State/PlayState.cpp</url>
-          <line>113</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CppProject">
-        <watch expression="_CurrentView.Center()" language="C++" />
-        <watch expression="_TargetView.Center()" language="C++" />
-        <watch expression="_Velocity.Center()" language="C++" />
-        <watch expression="_TargetView.min" language="C++" />
+        <watch expression="_MoveLists[chunkIndex]" language="C++" />
       </configuration>
     </watches-manager>
   </component>
