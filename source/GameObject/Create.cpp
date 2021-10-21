@@ -18,13 +18,13 @@ Create::GetCollisionRadiusFromColliderType(const AsteroidType& type)
 {
 	switch(type)
 	{
-		case AsteroidType::LARGE: return ColliderRadius::Large;
+		case AsteroidType::LARGE: return ColliderUtils::Large;
 
 		case AsteroidType::RANDOM_MEDIUM:
 		case AsteroidType::MEDIUM_1:
 		case AsteroidType::MEDIUM_2:
 		case AsteroidType::MEDIUM_3:
-		case AsteroidType::MEDIUM_4: return ColliderRadius::Medium;
+		case AsteroidType::MEDIUM_4: return ColliderUtils::Medium;
 
 		case AsteroidType::RANDOM_SMALL:
 		case AsteroidType::SMALL_1:
@@ -42,7 +42,7 @@ Create::GetCollisionRadiusFromColliderType(const AsteroidType& type)
 		case AsteroidType::SMALL_13:
 		case AsteroidType::SMALL_14:
 		case AsteroidType::SMALL_15:
-		case AsteroidType::SMALL_16: return ColliderRadius::Small;
+		case AsteroidType::SMALL_16: return ColliderUtils::Small;
 	}
 	return 0;
 }
@@ -106,7 +106,7 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 			sprites.at(2) = SpriteID::MEDIUM_ASTEROID_3;
 			sprites.at(3) = SpriteID::MEDIUM_ASTEROID_4;
 			colliderType  = ColliderType::MEDIUM_ASTEROID;
-			parentRadius  = ColliderRadius::Large;
+			parentRadius  = ColliderUtils::Large;
 
 			break;
 
@@ -115,7 +115,7 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 			sprites.at(2) = GetSpriteFor(AsteroidType::RANDOM_SMALL);
 			sprites.at(3) = GetSpriteFor(AsteroidType::RANDOM_SMALL);
 			colliderType  = ColliderType::SMOL_ASTEROID;
-			parentRadius  = ColliderRadius::Medium;
+			parentRadius  = ColliderUtils::Medium;
 			break;
 
 		default:
@@ -346,7 +346,7 @@ Create::Bullet(const BulletType bulletType, const Vector2& position, const Vecto
 }
 
 Entity
-Create::Ship(const Vector2& position, const float& rotation, const Vector2& initialVelocity, const float& initialAngularVelocity) const
+Create::Ship(const ShipInfo& shipInfo, const Vector2& position, const float& rotation, const Vector2& initialVelocity, const float& initialAngularVelocity) const
 {
 	const auto entity = _EntityManager.Create();
 
@@ -354,9 +354,9 @@ Create::Ship(const Vector2& position, const float& rotation, const Vector2& init
 	trans.pos = position;
 	trans.rot = rotation;
 	_TransManager.Add(entity, trans);
-	_SpriteManager.Create(entity, SpriteID::SHIP, RenderQueue::Layer::DEFAULT);
+	_SpriteManager.Create(entity, shipInfo.SpriteID, RenderQueue::Layer::DEFAULT);
 
-	_RigidbodyManager.Add(entity, ColliderType::SHIP, initialVelocity, initialAngularVelocity);
+	_RigidbodyManager.Add(entity, shipInfo.ColliderType, initialVelocity, initialAngularVelocity);
 
 	return entity;
 }

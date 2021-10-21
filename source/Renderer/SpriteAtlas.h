@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "..\Renderer\Sprite.h"
-#include "..\Renderer\SpriteID.h"
+#include "../Renderer/Sprite.h"
+#include "../Renderer/SpriteID.h"
 
 class Renderer;
 
@@ -16,14 +16,14 @@ public:
 	SpriteAtlas(Renderer& renderer);
 	SpriteAtlas() = delete;
 
-	inline const Sprite Get(SpriteID id) const
+	Sprite Get(SpriteID id) const
 	{
-		return spriteData[(int)id];
+		return _SpriteData[static_cast<int>(id)];
 	}
 
-	static inline bool isAnimated(const SpriteID& id)
+	static bool IsAnimated(const SpriteID& id)
 	{
-		return (int)id < (int)SpriteID::_END_ANIMATED;
+		return static_cast<int>(id) < static_cast<int>(SpriteID::_END_ANIMATED);
 	}
 
 private:
@@ -33,9 +33,9 @@ private:
 	void CreateMenuSprites();
 	void CreateSprite(SpriteID id, int texIndex, int width, int height, int x, int y);
 
-	void LoadPNGs(SDL_Renderer* renderer);
-	SDL_Texture* PNGToTexture(SDL_Renderer* renderer, const std::string path) const;
+	void LoadPnGs(SDL_Renderer* renderer);
+	SDL_Texture* PNGToTexture(SDL_Renderer* renderer, std::string path) const;
 
-	std::vector<SDL_Texture*> loadedImages;
-	std::vector<Sprite> spriteData;
+	std::vector<SDL_Texture*> _LoadedImages;
+	std::vector<Sprite> _SpriteData;
 };

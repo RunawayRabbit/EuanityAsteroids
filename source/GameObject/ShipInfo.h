@@ -1,5 +1,7 @@
 #pragma once
 #include "WeaponType.h"
+#include "../Physics/ColliderType.h"
+#include "../Renderer/SpriteID.h"
 
 class ShipInfo
 {
@@ -12,6 +14,9 @@ public:
 	};
 
 	ShipType Type;
+
+	ColliderType ColliderType;
+	SpriteID SpriteID;
 
 	float MainThrusterX;
 	float MainThrusterY;
@@ -35,6 +40,10 @@ public:
 		ShipInfo ship;
 
 		ship.Type = ShipType::FastWeak;
+
+		ship.ColliderType = ColliderType::SHIP_1;
+		ship.SpriteID     = SpriteID::SHIP_1;
+
 		ship.MainThrusterX   = 0.0f;
 		ship.MainThrusterY   = 18.0f;
 		ship.StrafeThrusterX = 4.0f;
@@ -59,7 +68,11 @@ public:
 	{
 		ShipInfo ship;
 
-		ship.Type = ShipType::Normal;
+		ship.Type            = ShipType::Normal;
+
+		ship.ColliderType = ColliderType::SHIP_2;
+		ship.SpriteID     = SpriteID::SHIP_2;
+
 		ship.MainThrusterX   = 0.0f;
 		ship.MainThrusterY   = 18.0f;
 		ship.StrafeThrusterX = 4.0f;
@@ -83,7 +96,11 @@ public:
 	static ShipInfo GetSlowPowerfulShip()
 	{
 		ShipInfo ship;
-		ship.Type = ShipType::SlowPowerful;
+		ship.Type            = ShipType::SlowPowerful;
+
+		ship.ColliderType = ColliderType::SHIP_3;
+		ship.SpriteID     = SpriteID::SHIP_3;
+
 		ship.MainThrusterX   = 0.0f;
 		ship.MainThrusterY   = 18.0f;
 		ship.StrafeThrusterX = 4.0f;

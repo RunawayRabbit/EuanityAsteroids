@@ -3,27 +3,26 @@
 #include <queue>
 #include <functional>
 #include <vector>
-#include <algorithm>
 
 class Timer
 {
 public:
-	Timer() : deltaTime(0), time(0) {};
+	Timer() : _DeltaTime(0), _Time(0) {};
 
 	void Update(float deltaTime);
 
-	const float& Now() const { return time; };
-	const float& DeltaTime() { return deltaTime; }
+	const float& Now() const { return _Time; };
+	const float& DeltaTime() const { return _DeltaTime; }
 	void ExecuteDelayed(const float& seconds, std::function<void()> function);
 
 private:
-	float deltaTime;
-	float time;
+	float _DeltaTime;
+	float _Time;
 
 	class QueueCompare
 	{
 	public:
-		bool operator()(std::pair<float, std::function<void()>>& a, std::pair<float, std::function<void()>>& b)
+		bool operator()(std::pair<float, std::function<void()>>& a, std::pair<float, std::function<void()>>& b) const
 		{
 			return a.first > b.first;
 		}
@@ -31,7 +30,7 @@ private:
 
 	std::priority_queue<std::pair<float, std::function<void()>>,
 		std::vector<std::pair<float, std::function<void()>>>,
-		QueueCompare> queuedCalls;
+		QueueCompare> _QueuedCalls;
 
 
 };

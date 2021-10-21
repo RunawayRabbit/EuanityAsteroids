@@ -149,8 +149,22 @@ Remap(const float& t,
       const float& outputMin,
       const float& outputMax)
 {
-	auto inputT = InvLerp(t, inputMin, inputMax);
+	const auto inputT = InvLerp(t, inputMin, inputMax);
 	return Lerp(inputT, outputMin, outputMax);
+}
+
+static float
+RemapClamped(const float& t,
+             const float& inputMin,
+             const float& inputMax,
+             const float& outputMin,
+             const float& outputMax)
+{
+	const auto min = outputMin < outputMax ? outputMin : outputMax;
+	const auto max = outputMin > outputMax ? outputMin : outputMax;
+	return std::clamp(Remap(t, inputMin, inputMax,
+	                        outputMin, outputMax),
+	                  min, max);
 }
 
 static float

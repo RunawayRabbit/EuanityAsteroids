@@ -13,11 +13,7 @@
 #include "../Platform/Game.h"
 
 Player::Player(Game& game)
-	: _RigidbodyManager(game.Rigidbodies),
-	  _Physics(game.Physics),
-	  _EntityManager(game.Entities),
-	  _TransformManager(game.Xforms),
-	  _Create(game.Create),
+	: _Game(game),
 	  _Entity(Entity::Null()),
 	  _MainThruster(Entity::Null()),
 	  _StrafeThrusterLeft(Entity::Null()),
@@ -39,7 +35,9 @@ Player::Spawn(const Vector2& startPos, const float& startRot)
 	if(IsAlive())
 		return;
 
-	_Entity = _Create.Ship(startPos, startRot);
+	_Ship = ShipInfo::GetShip(_Game.GameState.PlayerShipType);
+	_Weapon = ShipInfo::GetDefaultWeaponForShip(_Ship.Type);
+	_Entity = _Game.Create.Ship(_Ship, startPos, startRot);
 }
 
 void
@@ -49,13 +47,13 @@ Player::Kill(const Entity& playerEntity, const Vector2& playerVelocity)
 	if(_Entity != playerEntity)
 		return;
 
-	auto ship    = _TransformManager.Get(_Entity);
+	auto ship    = _Game.Xforms.Get(_Entity);
 	auto shipPos = ship.value().pos;
 	DestroyThruster(_MainThruster);
 	DestroyThruster(_StrafeThrusterLeft);
 	DestroyThruster(_StrafeThrusterRight);
 
-	_EntityManager.Destroy(_Entity);
+	_Game.Entities.Destroy(_Entity);
 
 
 	// ReSharper disable CppExpressionWithoutSideEffects
@@ -64,22 +62,22 @@ Player::Kill(const Entity& playerEntity, const Vector2& playerVelocity)
 		auto spawnDistanceFromPlayer = Math::RandomRange(10.0f, 17.0f);
 
 		const auto offset = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * spawnDistanceFromPlayer;
-		_Create.LargeExplosion(shipPos + offset);
-		_Create.LargeExplosion(shipPos + offset);
-		_Create.LargeExplosion(shipPos + offset);
-		_Create.LargeExplosion(shipPos + offset);
+		_Game.Create.LargeExplosion(shipPos + offset);
+		_Game.Create.LargeExplosion(shipPos + offset);
+		_Game.Create.LargeExplosion(shipPos + offset);
+		_Game.Create.LargeExplosion(shipPos + offset);
 	}
 
 	for(auto i = 0; i < 12; ++i)
 	{
 		const auto randomVelocity = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * Math::RandomRange(10.0f, 140.0f);
-		_Create.SmallExplosion(shipPos, (playerVelocity * 0.1f) + randomVelocity);
+		_Game.Create.SmallExplosion(shipPos, (playerVelocity * 0.1f) + randomVelocity);
 	}
 
 	for(auto i = 0; i < 12; ++i)
 	{
 		const auto randomVelocity = Vector2::Forward().RotateRad(Math::RandomRange(0.0f, Math::TAU)) * Math::RandomRange(60.0f, 240.0f);
-		_Create.TinyExplosion(shipPos, (playerVelocity * 0.1f) + randomVelocity);
+		_Game.Create.TinyExplosion(shipPos, (playerVelocity * 0.1f) + randomVelocity);
 	}
 	// ReSharper restore CppExpressionWithoutSideEffects
 
@@ -99,8 +97,8 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 
 	// Get the rb and the transform from the respective managers
 	Rigidbody* rigid;
-	auto optionalTransform = _TransformManager.Get(_Entity);
-	if(!optionalTransform.has_value() || !_RigidbodyManager.GetMutable(_Entity, rigid))
+	auto optionalTransform = _Game.Xforms.Get(_Entity);
+	if(!optionalTransform.has_value() || !_Game.Rigidbodies.GetMutable(_Entity, rigid))
 	{
 		// If we end up here, a serious bug has occured.
 		__assume(false);
@@ -190,7 +188,7 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		_ShotTimer = (_ShotTimer > -deltaTime) ? _ShotTimer + _Weapon.ShotCooldown : _Weapon.ShotCooldown;
 
 		// ReSharper disable once CppExpressionWithoutSideEffects
-		_Create.MuzzleFlash(transform.pos + forward * _Weapon.BulletSpawnOffsetY, newVelocity);
+		_Game.Create.MuzzleFlash(transform.pos + forward * _Weapon.BulletSpawnOffsetY, newVelocity);
 
 		auto bulletForward = forward.RotateDeg(-_Weapon.BulletSpawnArcDeg * 0.5f);
 
@@ -198,12 +196,18 @@ Player::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 		for(auto i = 0; i < _Weapon.BulletSpawnCount; ++i)
 		{
 			// ReSharper disable once CppExpressionWithoutSideEffects
-			_Create.Bullet(_Weapon.BulletType, transform.pos + (bulletForward * _Weapon.BulletSpawnOffsetY),
+			_Game.Create.Bullet(_Weapon.BulletType, transform.pos + (bulletForward * _Weapon.BulletSpawnOffsetY),
 			               rigid->velocity + (bulletForward * _Weapon.BulletSpeed), _Weapon.BulletLifetime);
 			bulletForward = bulletForward.RotateDeg(spawnArcIncrement);
 		}
 	}
 #pragma endregion
+}
+
+bool
+Player::IsAlive() const
+{
+	return _Game.Entities.Exists(_Entity);
 }
 
 Vector2Int
@@ -217,7 +221,7 @@ Player::GetPlayerPositionInt() const
 Vector2
 Player::GetPlayerForward() const
 {
-	auto trans     = _TransformManager.Get(_Entity);
+	auto trans     = _Game.Xforms.Get(_Entity);
 	Vector2 retVal = { 0.0f, 0.0f };
 	if(trans.has_value())
 	{
@@ -229,7 +233,7 @@ Player::GetPlayerForward() const
 Vector2
 Player::GetPlayerPosition() const
 {
-	auto trans     = _TransformManager.Get(_Entity);
+	auto trans     = _Game.Xforms.Get(_Entity);
 	Vector2 retVal = { 0.0f, 0.0f };
 	if(trans.has_value())
 	{
@@ -241,7 +245,7 @@ Player::GetPlayerPosition() const
 Vector2
 Player::GetPlayerVelocity() const
 {
-	auto rigid  = _RigidbodyManager.Get(_Entity);
+	auto rigid  = _Game.Rigidbodies.Get(_Entity);
 	auto retVal = Vector2::Zero();
 	if(rigid.has_value())
 	{
@@ -260,6 +264,12 @@ Player::TakeDamage(const int damage)
 	}
 }
 
+ColliderType
+Player::GetShipColliderType() const
+{
+	return _Ship.ColliderType;
+}
+
 void
 Player::RenderThruster(Entity& thruster,
                        const Vector2& thrusterOffset,
@@ -267,12 +277,12 @@ Player::RenderThruster(Entity& thruster,
                        const Transform& parentTrans,
                        const SpriteID spriteID) const
 {
-	if(!_EntityManager.Exists(thruster))
+	if(!_Game.Entities.Exists(thruster))
 	{
-		thruster = _Create.ShipThruster(_Entity, thrusterOffset, thrusterRotation, spriteID);
+		thruster = _Game.Create.ShipThruster(_Entity, thrusterOffset, thrusterRotation, spriteID);
 	}
 
-	auto OptThrusterTrans = _TransformManager.GetMutable(thruster);
+	auto OptThrusterTrans = _Game.Xforms.GetMutable(thruster);
 	if(!OptThrusterTrans.has_value())
 	{
 		//@TODO: Log Error?
@@ -286,6 +296,6 @@ Player::RenderThruster(Entity& thruster,
 void
 Player::DestroyThruster(Entity& thruster) const
 {
-	_EntityManager.Destroy(thruster);
+	_Game.Entities.Destroy(thruster);
 	thruster = Entity::Null();
 }

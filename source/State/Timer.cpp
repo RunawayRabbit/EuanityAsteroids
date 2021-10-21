@@ -1,18 +1,18 @@
 
 #include "Timer.h"
 
-void Timer::Update(float deltaTime)
+void Timer::Update(const float deltaTime)
 {
-	this->deltaTime = deltaTime;
-	this->time += deltaTime;
+	this->_DeltaTime = deltaTime;
+	this->_Time += deltaTime;
 
-	while (queuedCalls.size() > 0)
+	while (_QueuedCalls.size() > 0)
 	{
-		auto& element = queuedCalls.top();
-		if (element.first < Now())
+		const auto& [time, fn] = _QueuedCalls.top();
+		if (time < Now())
 		{
-			element.second();
-			queuedCalls.pop();
+			fn();
+			_QueuedCalls.pop();
 		}
 		else
 			return;
@@ -21,5 +21,5 @@ void Timer::Update(float deltaTime)
 
 void Timer::ExecuteDelayed(const float& seconds, std::function<void()> function)
 {
-	queuedCalls.push({ Now() + seconds, function });
+	_QueuedCalls.push({ Now() + seconds, function });
 }

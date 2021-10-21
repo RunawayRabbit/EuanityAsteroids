@@ -3,13 +3,13 @@
 #include <array>
 #include <functional>
 
-
 #include "WeaponType.h"
-#include "..\Physics\ColliderType.h"
-#include "..\Renderer\SpriteAtlas.h"
+#include "../Physics/ColliderType.h"
+#include "../Renderer/SpriteAtlas.h"
 
-#include "..\Math\Vector2.h"
+#include "../Math/Vector2.h"
 
+class ShipInfo;
 class Game;
 
 class Entity;
@@ -64,7 +64,7 @@ public:
 	Entity MuzzleFlash(const Vector2& position, const Vector2& velocity) const;
 	Entity Bullet(BulletType bulletType, const Vector2& position, const Vector2& velocity, const float& secondsToLive) const;
 
-	Entity Ship(const Vector2& position, const float& rotation, const Vector2& initialVelocity = Vector2::Zero(), const float& initialAngularVelocity = 0) const;
+	Entity Ship(const ShipInfo& shipInfo, const Vector2& position, const float& rotation, const Vector2& initialVelocity = Vector2::Zero(), const float& initialAngularVelocity = 0) const;
 	Entity ShipThruster(const Entity& ship, const Vector2& thrusterOffset, const float& thrusterRotation, SpriteID spriteID) const;
 
 	[[maybe_unused]] Entity TinyExplosion(const Vector2& position, const Vector2& velocity = Vector2::Zero(), const float& rotVelocity = 0) const;

@@ -8,6 +8,7 @@
 #include "../Physics/Physics.h"
 
 #include "../Math/Vector2Int.h"
+#include "../Platform/Game.h"
 
 #include "../Renderer/SpriteID.h"
 
@@ -28,10 +29,7 @@ public:
 	void Kill(const Entity& playerEntity, const Vector2& playerVelocity);
 
 	void Update(const InputBuffer& inputBuffer, const float& deltaTime);
-	bool IsAlive() const
-	{
-		return _EntityManager.Exists(_Entity);
-	}
+	bool IsAlive() const;
 
 	Vector2 GetPlayerPosition() const;
 	Vector2Int GetPlayerPositionInt() const;
@@ -40,17 +38,14 @@ public:
 	Vector2 GetPlayerVelocity() const;
 	void TakeDamage(int damage);
 
+	 ColliderType GetShipColliderType() const;
+
 private:
 
 	void RenderThruster(Entity& thruster, const Vector2& thrusterOffset, const float& thrusterRotation, const Transform& parentTrans, SpriteID spriteID) const;
 	void DestroyThruster(Entity& thruster) const;
 
-	RigidbodyManager& _RigidbodyManager;
-	Physics& _Physics;
-
-	EntityManager& _EntityManager;
-	TransformManager& _TransformManager;
-	const Create& _Create;
+	Game& _Game;
 
 	Entity _Entity;
 
@@ -64,4 +59,5 @@ private:
 
 	ShipInfo _Ship;
 	WeaponType _Weapon;
+
 };

@@ -47,7 +47,7 @@ PlayState::ProcessCollisions()
 			// Don't double-process things that were destroyed earlier in the collision list!
 			continue;
 		}
-		if(EntityAType == ColliderType::SHIP)
+		if(ColliderUtils::IsPlayerShip(EntityAType))
 		{
 			if(EntityBType == ColliderType::LARGE_ASTEROID ||
 				EntityBType == ColliderType::MEDIUM_ASTEROID)
@@ -87,7 +87,6 @@ PlayState::ProcessCollisions()
 			_CurrentAsteroids.erase(
 				std::remove(_CurrentAsteroids.begin(), _CurrentAsteroids.end(), B),
 				_CurrentAsteroids.end());
-
 
 			// ReSharper disable CppExpressionWithoutSideEffects
 			_Game.Create.SplitAsteroid(B, 15.0f);
@@ -171,23 +170,27 @@ PlayState::RespawnAsteroids()
 	{
 		auto playerPos = _Player.GetPlayerPosition();
 		Vector2 spawnPosition;
+		int spawnAttempts = 0;
 		do
 		{
 			spawnPosition   = playerPos + (Math::RandomOnUnitCircle() * 750.0f);
 			spawnPosition.x = Math::Repeat(spawnPosition.x, _Game.GameFieldDim.x);
 			spawnPosition.y = Math::Repeat(spawnPosition.y, _Game.GameFieldDim.y);
-		} while(_Game.GameCam.GetCameraView().Contains(spawnPosition));
+			++spawnAttempts;
+		} while(_Game.GameCam.GetCameraView().Contains(spawnPosition) &&
+			spawnAttempts < 10);
 
 		const auto piOverFour = Math::PI * 0.25f;
 		auto spawnVelocity    = (playerPos - spawnPosition).Normalized().RotateRad(Math::RandomRange(-piOverFour, piOverFour)) *
 			Math::RandomRange(
 				asteroidSpeedMin, asteroidSpeedMax);
 
-		_CurrentAsteroids.push_back(_Game.Create.Asteroid(spawnPosition,
-		                                                  Math::RandomRange(0.0f, 360.0f),
-		                                                  spawnVelocity,
-		                                                  Math::RandomRange(15.0f, 40.0f),
-		                                                  Create::AsteroidType::LARGE));
+		_CurrentAsteroids.push_back(
+			_Game.Create.Asteroid(spawnPosition,
+			                      Math::RandomRange(0.0f, 360.0f),
+			                      spawnVelocity,
+			                      Math::RandomRange(15.0f, 40.0f),
+			                      Create::AsteroidType::LARGE));
 	}
 }
 
@@ -197,15 +200,15 @@ PlayState::UpdateCamera(const float& deltaTime)
 	const auto playerVel = _Player.GetPlayerVelocity();
 
 	const auto newCamZoom =
-		Math::Remap(playerVel.Length(),
-		            0, 300.0f,
-		            1.5f, 0.8f);
+		Math::RemapClamped(playerVel.Length(),
+		            100.0f, 500.0f,
+		            1.8f, 0.7f);
 
 	_CurrentCamZoom = Math::SmoothDamp(_CurrentCamZoom, newCamZoom, _CamZoomVelocity, 2.0f, 1.0f, deltaTime);
 
 	_Game.GameCam.SetScale(_CurrentCamZoom);
 
-	const auto focalPoint = _Player.GetPlayerPosition() + (playerVel * 1.2f) +
+	const auto focalPoint = _Player.GetPlayerPosition() + (playerVel * 0.8f) +
 		_Player.GetPlayerForward() * -15.0f;
 	_Game.GameCam.SetFocalPoint(focalPoint);
 }
@@ -233,6 +236,14 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 			else
 			{
 				_WaitingToSpawn = true;
+				if(_Lives == 2)
+				{
+					_Game.GameState.PlayerShipType = ShipInfo::ShipType::SlowPowerful;
+				}
+				else
+				{
+					_Game.GameState.PlayerShipType = ShipInfo::ShipType::FastWeak;
+				}
 				_Game.Time.ExecuteDelayed(1.5f, [&]()
 				{
 					RespawnPlayer();
@@ -252,8 +263,8 @@ PlayState::RespawnPlayer()
 
 	const auto spawnPoint = _Game.WrapToGameField(_Game.GameCam.GetFocalPoint() + (_Game.GameFieldDim * 0.5f));
 
-	auto testCircle   = Circle(spawnPoint, RESPAWN_CHECK_RADIUS);
-	while(_Game.Physics.IsOverlappingAnything(testCircle, ColliderType::SHIP))
+	auto testCircle = Circle(spawnPoint, RESPAWN_CHECK_RADIUS);
+	while(_Game.Physics.IsOverlappingAnything(testCircle, _Player.GetShipColliderType()))
 	{
 		// Our selected spawnpoint is not safe to spawn in. Random walk to a new point!
 		testCircle.Center = _Game.WrapToGameField(testCircle.Center + (Math::RandomOnUnitCircle() * RESPAWN_CHECK_RADIUS));

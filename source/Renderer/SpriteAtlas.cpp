@@ -9,10 +9,10 @@
 
 #include "Renderer.h"
 
-SpriteAtlas::SpriteAtlas(Renderer& renderer) : 
-	spriteData((int)SpriteID::COUNT)
+SpriteAtlas::SpriteAtlas(Renderer& renderer) :
+	_SpriteData(static_cast<int>(SpriteID::COUNT))
 {
-	LoadPNGs(renderer.GetRenderer());
+	LoadPnGs(renderer.GetRenderer());
 
 	//spriteData[(int)SpriteID::NONE]; // null data, default, nothing, nadda, zip.
 
@@ -51,9 +51,13 @@ void SpriteAtlas::CreateRegularSprites()
 	// loading indices. In an ideal world, this data would be read from a data
 	// file and not hard-coded in this way!
 
-	CreateSprite(SpriteID::SHIP, 0, 25, 23, 3, 34);
+		// @TODO: These dimensions are hard-coded here AND duplicate hard-coded in ColliderType.h. Unify this.
+	CreateSprite(SpriteID::SHIP_1, 0, 16, 28, 40, 33);
+	CreateSprite(SpriteID::SHIP_2, 0, 25, 23, 3, 34);
+	CreateSprite(SpriteID::SHIP_3, 0, 22, 31, 5, 1);
+
 	CreateSprite(SpriteID::LARGE_ASTEROID, 0, 58, 61, 66, 194);
-	
+
 	CreateSprite(SpriteID::MEDIUM_ASTEROID_1, 0, 25, 27, 134, 196); // radius 31.14 / 2
 	CreateSprite(SpriteID::MEDIUM_ASTEROID_2, 0, 26, 25, 161, 197); // radius 30.61 / 2
 	CreateSprite(SpriteID::MEDIUM_ASTEROID_3, 0, 26, 26, 133, 225); // radius 29.73 / 2
@@ -97,20 +101,20 @@ void SpriteAtlas::CreateMenuSprites()
 	CreateSprite(SpriteID::GAME_OVER, 8, 200, 160, 0, 0);
 }
 
-void SpriteAtlas::CreateSprite(SpriteID id, int texIndex, int width, int height, int x, int y)
+void SpriteAtlas::CreateSprite(const SpriteID id, const int texIndex, const int width, const int height, const int x, const int y)
 {
 	Sprite sprite;
 	sprite.id = id; //@TODO: Redundant?
-	sprite.texture = loadedImages[texIndex];
+	sprite.texture = _LoadedImages[texIndex];
 	sprite.source.w = width;
 	sprite.source.h = height;
 	sprite.source.x = x;
 	sprite.source.y = y;
 
-	spriteData[(int)sprite.id] = sprite;
+	_SpriteData[static_cast<int>(sprite.id)] = sprite;
 }
 
-void SpriteAtlas::LoadPNGs(SDL_Renderer* renderer)
+void SpriteAtlas::LoadPnGs(SDL_Renderer* renderer)
 {
 	// Perform ALL Image loading Here!
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
@@ -118,15 +122,15 @@ void SpriteAtlas::LoadPNGs(SDL_Renderer* renderer)
 		std::cout << ("Error initializing PNG extensions: ") << SDL_GetError();
 	}
 
-	loadedImages.push_back(PNGToTexture(renderer, "resources/asteroids-arcade.png")); //0 
-	loadedImages.push_back(PNGToTexture(renderer, "resources/crappy_logo.png")); //1
-	loadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_0.png")); //2
-	loadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_6.png")); //3 
-	loadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_7.png")); //4 
-	loadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_2.png")); //5 
-	loadedImages.push_back(PNGToTexture(renderer, "resources/MenuButtons.png")); //6
-	loadedImages.push_back(PNGToTexture(renderer, "resources/MainLogo.png")); //7
-	loadedImages.push_back(PNGToTexture(renderer, "resources/GameOver.png")); //8
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/asteroids-arcade.png")); //0
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/crappy_logo.png")); //1
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_0.png")); //2
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_6.png")); //3
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_7.png")); //4
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/bkgd_2.png")); //5
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/MenuButtons.png")); //6
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/MainLogo.png")); //7
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/GameOver.png")); //8
 
 	IMG_Quit(); // Shut down the image loading stuff, we don't need it anymore.
 }

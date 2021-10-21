@@ -176,7 +176,7 @@ SpriteManager::SpriteCategory::Create(const Entity entity, const SpriteID sprite
 	*(_Entities + _Size)   = entity;
 	*(_Transforms + _Size) = trans;
 
-	if(SpriteAtlas::isAnimated(spriteID))
+	if(SpriteAtlas::IsAnimated(spriteID))
 	{
 		// @TODO: This isn't the most efficient algorithm but I'm assuming the compiler will fix it..?
 		std::swap(*(_Entities + _Size), *(_Entities + _CurrentFrameTimes.size()));
@@ -200,7 +200,7 @@ SpriteManager::SpriteCategory::Update(const SpriteAtlas& spriteAtlas, const floa
 		auto transform = _TransManager.Get(*entity);
 		if(_EntityManager.Exists(*entity) && transform.has_value())
 		{
-			if(SpriteAtlas::isAnimated(spriteTrans->ID))
+			if(SpriteAtlas::IsAnimated(spriteTrans->ID))
 			{
 				_CurrentFrameTimes[i] -= deltaTime;
 				if(_CurrentFrameTimes[i] < 0.0f)
@@ -230,7 +230,7 @@ SpriteManager::SpriteCategory::Update(const SpriteAtlas& spriteAtlas, const floa
 
 			size_t swapTarget = i;
 
-			if(SpriteAtlas::isAnimated(spriteTrans->ID))
+			if(SpriteAtlas::IsAnimated(spriteTrans->ID))
 			{
 				// Maintain sorted order for animated sprites
 				swapTarget = _CurrentFrameTimes.size() - 1;

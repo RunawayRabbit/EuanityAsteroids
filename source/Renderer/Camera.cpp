@@ -1,8 +1,5 @@
 #include "Camera.h"
 
-#include <iostream>
-
-
 #include "../Math/EuanityMath.h"
 #include "../Platform/Game.h"
 

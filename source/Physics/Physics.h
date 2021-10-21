@@ -101,9 +101,9 @@ private:
 
 	void ShipVsAsteroid(const MoveList::ColliderRanges& ranges, std::vector<CollisionListEntry>& collisions) const;
 	static void OBBVsSpecificAsteroid(const OBB& ship,
-	                                  const Entity& shipEntity,
-	                                  std::vector<MoveList::Entry>::iterator asteroidBegin,
-	                                  std::vector<MoveList::Entry>::iterator asteroidEnd,
+	                                  const Rigidbody& shipRigidbody,
+	                                  const std::vector<MoveList::Entry>::iterator asteroidBegin,
+	                                  const std::vector<MoveList::Entry>::iterator asteroidEnd,
 	                                  const float& asteroidRadius,
 	                                  std::vector<CollisionListEntry>& collisions);
 

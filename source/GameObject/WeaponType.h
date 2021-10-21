@@ -24,12 +24,12 @@ struct WeaponType
 	{
 		WeaponType weapon;
 
-		weapon.BulletSpeed        = 500.0f;
-		weapon.BulletLifetime     = 1.2f;
+		weapon.BulletSpeed        = 600.0f;
+		weapon.BulletLifetime     = 1.8f;
 		weapon.ShotCooldown       = 0.1f;
-		weapon.BulletSpawnOffsetY = 11.0f;
-		weapon.BulletSpawnCount   = 1;
-		weapon.BulletSpawnArcDeg  = 0.0f;
+		weapon.BulletSpawnOffsetY = 12.0f;
+		weapon.BulletSpawnCount   = 2;
+		weapon.BulletSpawnArcDeg  = 1.5f;
 
 		weapon.BulletType = BulletType::REGULAR_BULLET;
 
@@ -42,10 +42,10 @@ struct WeaponType
 
 		weapon.BulletSpeed        = 400.0f;
 		weapon.BulletLifetime     = 2.3f;
-		weapon.ShotCooldown       = 0.4f;
+		weapon.ShotCooldown       = 0.3f;
 		weapon.BulletSpawnOffsetY = 11.0f;
-		weapon.BulletSpawnCount   = 3;
-		weapon.BulletSpawnArcDeg  = 15.0f;
+		weapon.BulletSpawnCount   = 4;
+		weapon.BulletSpawnArcDeg  = 18.0f;
 
 		weapon.BulletType = BulletType::REGULAR_BULLET;
 
@@ -60,7 +60,7 @@ struct WeaponType
 		weapon.BulletLifetime     = 4.8f;
 		weapon.ShotCooldown       = 0.6f;
 		weapon.BulletSpawnOffsetY = 9.0f;
-		weapon.BulletSpawnCount   = 6;
+		weapon.BulletSpawnCount   = 8;
 		weapon.BulletSpawnArcDeg  = 15.0f;
 
 		weapon.BulletType = BulletType::REGULAR_BULLET;

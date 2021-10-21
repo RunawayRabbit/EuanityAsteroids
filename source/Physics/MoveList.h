@@ -37,7 +37,7 @@ public:
 	void Clear()
 	{
 		_Data.clear();
-		for (auto& count : _ColliderCounts)
+		for(auto& count : _ColliderCounts)
 			count = 0;
 	}
 
@@ -51,14 +51,27 @@ public:
 	{
 		return _Data.begin();
 	}
+
 	// ReSharper disable once CppInconsistentNaming
 	std::vector<Entry>::iterator end()
 	{
 		return _Data.end();
 	}
-	int GetColliderCount(const ColliderType& colliderType)
+
+	int GetColliderCount(const ColliderType& colliderType) const
 	{
 		return _ColliderCounts[static_cast<int>(colliderType)];
+	}
+
+	int GetColliderCountsInRange(ColliderType first, ColliderType last) const
+	{
+		int accumulator = 0;
+		for(auto i = static_cast<int>(first); i <= static_cast<int>(last); ++i)
+		{
+			accumulator += _ColliderCounts[i];
+		}
+
+		return accumulator;
 	}
 
 private:
@@ -66,12 +79,13 @@ private:
 	std::array<int, static_cast<int>(ColliderType::COUNT)> _ColliderCounts = {};
 };
 
-namespace std {
-	template<> struct hash<MoveList::Entry>
+namespace std
+{
+template <> struct hash<MoveList::Entry>
+{
+	size_t operator()(const MoveList::Entry& entry) const noexcept
 	{
-		inline size_t operator()(const MoveList::Entry& entry) const noexcept
-		{
-			return entry.Rb.entity.Hash();
-		}
-	};
+		return entry.Rb.entity.Hash();
+	}
+};
 }
