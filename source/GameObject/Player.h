@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShipType.h"
+#include "ShipInfo.h"
 #include "WeaponType.h"
 
 #include "../ECS/Entity.h"
@@ -11,6 +11,7 @@
 
 #include "../Renderer/SpriteID.h"
 
+class Game;
 class RigidbodyManager;
 class EntityManager;
 class TransformManager;
@@ -21,8 +22,7 @@ struct InputBuffer;
 class Player
 {
 public:
-	Player(EntityManager& entityManager, RigidbodyManager& rigidbodyManager,
-		TransformManager& transformManager, const Create& create, Physics& physics);
+	explicit Player(Game& game);
 
 	void Spawn(const Vector2& startPos, const float& startRot);
 	void Kill(const Entity& playerEntity, const Vector2& playerVelocity);
@@ -62,6 +62,6 @@ private:
 
 	float _ShotTimer;
 
-	ShipType _Ship;
+	ShipInfo _Ship;
 	WeaponType _Weapon;
 };

@@ -1,7 +1,18 @@
 #pragma once
+#include "WeaponType.h"
 
-struct ShipType
+class ShipInfo
 {
+public:
+	enum class ShipType : uint8_t
+	{
+		FastWeak,
+		Normal,
+		SlowPowerful,
+	};
+
+	ShipType Type;
+
 	float MainThrusterX;
 	float MainThrusterY;
 	float StrafeThrusterX;
@@ -19,9 +30,11 @@ struct ShipType
 
 	int StartingHealth;
 
-	static ShipType GetFastAgileShip()
+	static ShipInfo GetFastAgileShip()
 	{
-		ShipType ship;
+		ShipInfo ship;
+
+		ship.Type = ShipType::FastWeak;
 		ship.MainThrusterX   = 0.0f;
 		ship.MainThrusterY   = 18.0f;
 		ship.StrafeThrusterX = 4.0f;
@@ -42,9 +55,11 @@ struct ShipType
 		return ship;
 	}
 
-	static ShipType GetNormalShip()
+	static ShipInfo GetNormalShip()
 	{
-		ShipType ship;
+		ShipInfo ship;
+
+		ship.Type = ShipType::Normal;
 		ship.MainThrusterX   = 0.0f;
 		ship.MainThrusterY   = 18.0f;
 		ship.StrafeThrusterX = 4.0f;
@@ -60,14 +75,15 @@ struct ShipType
 
 		ship.MaxSpeedSq = ship.MaxSpeed * ship.MaxSpeed;
 
-		ship.StartingHealth = 3;
+		ship.StartingHealth = 5;
 
 		return ship;
 	}
 
-	static ShipType GetSlowPowerfulShip()
+	static ShipInfo GetSlowPowerfulShip()
 	{
-		ShipType ship;
+		ShipInfo ship;
+		ship.Type = ShipType::SlowPowerful;
 		ship.MainThrusterX   = 0.0f;
 		ship.MainThrusterY   = 18.0f;
 		ship.StrafeThrusterX = 4.0f;
@@ -77,14 +93,60 @@ struct ShipType
 		ship.ForwardAcceleration = ship.MaxSpeed / 0.9f;
 		ship.StrafeAcceleration  = ship.MaxSpeed / 1.5f;
 
-		ship.MaxAngularVelocity  = 210.0f;
+		ship.MaxAngularVelocity = 210.0f;
 		ship.RotateAcceleration = ship.MaxAngularVelocity / 0.8f;
 		ship.RotateDeceleration = ship.RotateAcceleration * 2.0f;
 
 		ship.MaxSpeedSq = ship.MaxSpeed * ship.MaxSpeed;
 
-		ship.StartingHealth = 5;
+		ship.StartingHealth = 10;
 
 		return ship;
+	}
+
+	static WeaponType GetDefaultWeaponForShip(const ShipType& ship)
+	{
+		switch(ship)
+		{
+			case ShipType::FastWeak:
+			{
+				return WeaponType::GetSingleFastWeapon();
+			}
+			case ShipType::Normal:
+			{
+				return WeaponType::GetMediumWideWeapon();
+			}
+			case ShipType::SlowPowerful:
+			{
+				return WeaponType::GetSlowWideWeapon();
+			}
+			default:
+			{
+				return WeaponType::GetMediumWideWeapon();
+			}
+		}
+	}
+
+	static ShipInfo GetShip(const ShipType& ship)
+	{
+		switch(ship)
+		{
+			case ShipType::FastWeak:
+			{
+				return GetFastAgileShip();
+			}
+			case ShipType::Normal:
+			{
+				return GetNormalShip();
+			}
+			case ShipType::SlowPowerful:
+			{
+				return GetSlowPowerfulShip();
+			}
+			default:
+			{
+				return GetNormalShip();
+			}
+		}
 	}
 };

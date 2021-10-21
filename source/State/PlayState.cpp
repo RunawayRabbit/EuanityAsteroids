@@ -1,15 +1,12 @@
 #include "PlayState.h"
 
-#include <iostream>
-
-
 #include "../Math/EuanityMath.h"
 #include "../Math/Circle.h"
 #include "../Platform/Game.h"
 
 PlayState::PlayState(Game& game)
 	: _Game(game),
-	  _Player(game.Entities, game.Rigidbodies, game.Xforms, game.Create, game.Physics),
+	  _Player(game),
 	  _GameOver(),
 	  _Lives(3),
 	  _Score(0),

@@ -20,6 +20,7 @@
 
 #include "../State/Timer.h"
 #include "../State/MenuState.h"
+#include "../State/GameplayState.h"
 
 
 class Game
@@ -42,7 +43,7 @@ public:
 	//@NOTE: This has to be declared out here so that the state machine compilation units
 	// can see the code and generate their templated versions. I don't like this one bit.
 	template<typename T>
-	void ChangeState(bool shouldResetSystems)
+	void ChangeState(const bool shouldResetSystems)
 	{
 		CurrentState->OnExit();
 
@@ -60,6 +61,8 @@ public:
 
 	Vector2 WrapToGameField(const Vector2& point) const;
 	bool GameFieldContains(const Vector2& point) const;
+
+	GameplayState GameState;
 
 	// Camera Stuff
 	bool IsDebugCamera;

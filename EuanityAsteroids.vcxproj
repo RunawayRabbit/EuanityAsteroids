@@ -29,7 +29,7 @@
     <ClInclude Include="source\ECS\UIManager.h" />
     <ClInclude Include="source\GameObject\Create.h" />
     <ClInclude Include="source\GameObject\Player.h" />
-    <ClInclude Include="source\GameObject\ShipType.h" />
+    <ClInclude Include="source\GameObject\ShipInfo.h" />
     <ClInclude Include="source\GameObject\WeaponType.h" />
     <ClInclude Include="source\Input\InputBuffer.h" />
     <ClInclude Include="source\Input\InputContext.h" />
@@ -57,6 +57,7 @@
     <ClInclude Include="source\Renderer\SpriteAtlas.h" />
     <ClInclude Include="source\Renderer\SpriteTransform.h" />
     <ClInclude Include="source\State\GameMode.h" />
+    <ClInclude Include="source\State\GameplayState.h" />
     <ClInclude Include="source\State\MenuState.h" />
     <ClInclude Include="source\State\IState.h" />
     <ClInclude Include="source\State\PlayState.h" />

@@ -5,14 +5,16 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Player respawning now checks for asteroids before plonking you down.">
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/source/State/GameplayState.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Input/InputContext.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Input/InputContext.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Input/InputDefinitions.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Input/InputDefinitions.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/Player.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/Player.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Player.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/GameObject/ShipType.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/ShipInfo.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Platform/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/source/Platform/Game.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/State/PlayState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/PlayState.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,8 +53,6 @@
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
-      <option value="$PROJECT_DIR$/source/Platform/RingBuffer.h" />
-      <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.h" />
       <option value="$PROJECT_DIR$/source/ECS/RigidbodyManager.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/UIManager.h" />
       <option value="$PROJECT_DIR$/source/Renderer/SpriteTransform.h" />
@@ -61,7 +61,6 @@
       <option value="$PROJECT_DIR$/source/ECS/EntityManager.cpp" />
       <option value="$PROJECT_DIR$/source/State/MenuState.h" />
       <option value="$PROJECT_DIR$/source/GameObject/ShipTypes.h" />
-      <option value="$PROJECT_DIR$/source/GameObject/ShipType.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.h" />
       <option value="$PROJECT_DIR$/source/ECS/UIManager.cpp" />
       <option value="$PROJECT_DIR$/source/Math/Meth.h" />
@@ -69,7 +68,6 @@
       <option value="$PROJECT_DIR$/source/ECS/SpriteManager.h" />
       <option value="$PROJECT_DIR$/source/Math/Vector2.h" />
       <option value="$PROJECT_DIR$/source/Math/Vector2Int.h" />
-      <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
       <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/Renderer.h" />
       <option value="$PROJECT_DIR$/source/Renderer/Renderer.cpp" />
@@ -77,30 +75,34 @@
       <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.h" />
       <option value="$PROJECT_DIR$/source/Renderer/RenderQueue.cpp" />
       <option value="$PROJECT_DIR$/source/Input/InputContext.h" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.h" />
       <option value="$PROJECT_DIR$/source/Math/AABB.h" />
       <option value="$PROJECT_DIR$/source/Math/AABB.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.h" />
       <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" />
-      <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
       <option value="$PROJECT_DIR$/source/Renderer/Camera.h" />
       <option value="$PROJECT_DIR$/source/Renderer/Camera.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
-      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/Entity.h" />
       <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
       <option value="$PROJECT_DIR$/source/Math/EuanityMath.h" />
       <option value="$PROJECT_DIR$/source/Math/OBB.h" />
       <option value="$PROJECT_DIR$/source/Math/Circle.h" />
       <option value="$PROJECT_DIR$/source/Physics/CollisionTests.h" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
       <option value="$PROJECT_DIR$/source/BugList.txt" />
       <option value="$PROJECT_DIR$/source/Input/InputContext.cpp" />
       <option value="$PROJECT_DIR$/source/Input/InputDefinitions.h" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.cpp" />
       <option value="$PROJECT_DIR$/source/Physics/Physics.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
+      <option value="$PROJECT_DIR$/source/GameObject/ShipType.h" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/ShipInfo.h" />
+      <option value="$PROJECT_DIR$/source/State/GameplayState.h" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Game.h" />
+      <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
     </changedPaths>
   </component>
@@ -199,7 +201,8 @@
       <workItem from="1634550360827" duration="3743000" />
       <workItem from="1634609098180" duration="17128000" />
       <workItem from="1634629705380" duration="10873000" />
-      <workItem from="1634703699615" duration="22761000" />
+      <workItem from="1634703699615" duration="24031000" />
+      <workItem from="1634794333863" duration="1429000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -376,7 +379,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634748523998</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Added F9 and F10 as debug buttons to increase and decrease game speed">
+      <created>1634750267929</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1634750267929</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -396,7 +406,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Picking the project back up!" />
     <MESSAGE value="Completed the new Range-based EntityID system." />
     <MESSAGE value="Added the to-be-implemented stuff to the buglist, evne if they aren't technically bugs." />
     <MESSAGE value="Some fixes to replaying, more structured game system resets" />
@@ -421,7 +430,8 @@
     <MESSAGE value="Various camera improvements, mostly involving smooth movement." />
     <MESSAGE value="Camera and Background Renderer complete" />
     <MESSAGE value="Player respawning now checks for asteroids before plonking you down." />
-    <option name="LAST_COMMIT_MESSAGE" value="Player respawning now checks for asteroids before plonking you down." />
+    <MESSAGE value="Added F9 and F10 as debug buttons to increase and decrease game speed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added F9 and F10 as debug buttons to increase and decrease game speed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

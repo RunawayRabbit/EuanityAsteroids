@@ -26,10 +26,12 @@ Game::Game(const std::string windowName, const int windowWidth, const int window
 	GameCam.SetFocalPoint(gameWorldDim * 0.5f);
 
 	DebugCam.SetFocalPoint(gameWorldDim * 0.5f);
-	DebugCam.SetScale(0.4f);
+	DebugCam.SetScale(0.5f);
 
 	CurrentState = std::make_unique<MenuState>(*this);
 	CurrentState->OnEnter();
+
+	GameState = { ShipInfo::ShipType::Normal };
 }
 
 Game::~Game()
@@ -71,7 +73,7 @@ Game::HandleDebugInput(const InputBuffer& inputBuffer)
 void
 Game::Update(const float realDeltaTime)
 {
-	auto deltaTime = realDeltaTime * _TimeFactor;
+	const auto deltaTime = realDeltaTime * _TimeFactor;
 	Time.Update(deltaTime);
 
 	const auto& inputBuffer = Input.GetBuffer();

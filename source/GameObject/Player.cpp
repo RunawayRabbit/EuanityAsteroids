@@ -10,28 +10,27 @@
 #include "../Math/EuanityMath.h"
 #include "../Math/Vector2Int.h"
 #include "../Physics/Physics.h"
+#include "../Platform/Game.h"
 
-Player::Player(EntityManager& entityManager,
-               RigidbodyManager& rigidbodyManager,
-               TransformManager& transformManager,
-               const Create& create,
-               Physics& physics)
-	: _RigidbodyManager(rigidbodyManager),
-	  _Physics(physics),
-	  _EntityManager(entityManager),
-	  _TransformManager(transformManager),
-	  _Create(create),
+Player::Player(Game& game)
+	: _RigidbodyManager(game.Rigidbodies),
+	  _Physics(game.Physics),
+	  _EntityManager(game.Entities),
+	  _TransformManager(game.Xforms),
+	  _Create(game.Create),
 	  _Entity(Entity::Null()),
 	  _MainThruster(Entity::Null()),
 	  _StrafeThrusterLeft(Entity::Null()),
 	  _StrafeThrusterRight(Entity::Null()),
 	  _ShotTimer(0),
-	  _Ship(ShipType::GetNormalShip()),
-	  _Weapon(WeaponType::GetMediumWideWeapon())
+	  _Ship(ShipInfo::GetShip(game.GameState.PlayerShipType)),
+	  _Weapon(ShipInfo::GetDefaultWeaponForShip(_Ship.Type))
 {
-	_Health = _Ship.StartingHealth;
 	//@NOTE: We specifically set up the player code in such a way that there IS no player until we call Spawn. We do, however,
 	// have all of our initialization done at startup time.
+
+
+	_Health = _Ship.StartingHealth;
 }
 
 void
