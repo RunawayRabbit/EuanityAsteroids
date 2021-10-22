@@ -31,6 +31,13 @@ Camera::GetCameraVelocity() const
 	return _Velocity.Center();
 }
 
+void
+Camera::SetCameraView(const AABB& view)
+{
+	_TargetView = view;
+	_CurrentView = view;
+}
+
 Vector2
 Camera::WorldToCamera(const Vector2& point) const
 {

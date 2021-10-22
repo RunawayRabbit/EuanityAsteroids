@@ -15,7 +15,9 @@ public:
 
 	Vector2 GetFocalPoint() const;
 	Vector2 GetCameraVelocity() const;
-	;
+
+	void SetCameraView(const AABB& view);
+
 	void SetFocalPoint(const Vector2& focalPoint);
 	void SetFocalPoint(const float& x, const float& y);
 

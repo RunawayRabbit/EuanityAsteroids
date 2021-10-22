@@ -25,8 +25,8 @@ Game::Game(const std::string windowName, const int windowWidth, const int window
 {
 	GameCam.SetFocalPoint(gameWorldDim * 0.5f);
 
-	DebugCam.SetFocalPoint(gameWorldDim * 0.5f);
-	DebugCam.SetScale(0.5f);
+	const AABB debugCamView(-gameWorldDim*0.5f, gameWorldDim*1.5f);
+	DebugCam.SetCameraView(debugCamView);
 
 	CurrentState = std::make_unique<MenuState>(*this);
 	CurrentState->OnEnter();

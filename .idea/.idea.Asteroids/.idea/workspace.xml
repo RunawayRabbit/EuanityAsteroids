@@ -5,24 +5,10 @@
     <projectFile>EuanityAsteroids.vcxproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/ShipSelectUI.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Asteroids/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" beforeDir="false" afterPath="$PROJECT_DIR$/EuanityAsteroids.vcxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/Credit.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources/Credit.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/SpriteManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/ECS/SpriteManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/ECS/SpriteManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/GameObject/Create.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/GameObject/Create.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Input/InputContext.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Input/InputContext.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Physics/Physics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Physics/Physics.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/RenderQueue.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/RenderQueue.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/SpriteAtlas.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/SpriteAtlas.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/SpriteAtlas.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/SpriteAtlas.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/Renderer/SpriteID.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/SpriteID.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/State/GameMode.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/State/MenuState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source/State/MenuState.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/State/MenuState.h" afterDir="false" />
+    <list default="true" id="b22b293c-8530-41b9-b9e3-fa1521e7bbd5" name="Default Changelist" comment="Ship selection UI is in and working">
+      <change beforePath="$PROJECT_DIR$/source/Platform/Game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Platform/Game.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Renderer/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/Camera.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/Renderer/Camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/source/Renderer/Camera.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +59,6 @@
       <option value="$PROJECT_DIR$/source/Math/AABB.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.h" />
       <option value="$PROJECT_DIR$/source/Renderer/BackgroundRenderer.cpp" />
-      <option value="$PROJECT_DIR$/source/Renderer/Camera.h" />
       <option value="$PROJECT_DIR$/source/Platform/Main.cpp" />
       <option value="$PROJECT_DIR$/source/ECS/Entity.h" />
       <option value="$PROJECT_DIR$/source/Math/OBB.h" />
@@ -87,10 +72,8 @@
       <option value="$PROJECT_DIR$/source/State/PlayState.h" />
       <option value="$PROJECT_DIR$/source/State/GameplayState.h" />
       <option value="$PROJECT_DIR$/source/Platform/Game.h" />
-      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
       <option value="$PROJECT_DIR$/source/State/Timer.h" />
       <option value="$PROJECT_DIR$/source/State/Timer.cpp" />
-      <option value="$PROJECT_DIR$/source/Renderer/Camera.cpp" />
       <option value="$PROJECT_DIR$/source/Renderer/SpriteAtlas.h" />
       <option value="$PROJECT_DIR$/source/GameObject/ShipInfo.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.h" />
@@ -99,7 +82,6 @@
       <option value="$PROJECT_DIR$/source/Physics/ColliderType.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Player.cpp" />
       <option value="$PROJECT_DIR$/source/Math/EuanityMath.h" />
-      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
       <option value="$PROJECT_DIR$/source/GameObject/WeaponType.h" />
       <option value="$PROJECT_DIR$/source/Renderer/SpriteAtlas.cpp" />
       <option value="$PROJECT_DIR$/source/State/GameMode.h" />
@@ -113,6 +95,10 @@
       <option value="$PROJECT_DIR$/source/ECS/SpriteManager.h" />
       <option value="$PROJECT_DIR$/source/GameObject/Create.cpp" />
       <option value="$PROJECT_DIR$/source/State/MenuState.cpp" />
+      <option value="$PROJECT_DIR$/source/State/PlayState.cpp" />
+      <option value="$PROJECT_DIR$/source/Renderer/Camera.h" />
+      <option value="$PROJECT_DIR$/source/Renderer/Camera.cpp" />
+      <option value="$PROJECT_DIR$/source/Platform/Game.cpp" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1yoLX5l0RtHS6QOnD1gzf0oIDux" />
@@ -213,7 +199,7 @@
       <workItem from="1634703699615" duration="24031000" />
       <workItem from="1634794333863" duration="9349000" />
       <workItem from="1634814142150" duration="9973000" />
-      <workItem from="1634885078740" duration="1926000" />
+      <workItem from="1634885078740" duration="2853000" />
     </task>
     <task id="LOCAL-00001" summary="Picking the project back up!">
       <created>1634190612649</created>
@@ -411,7 +397,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634802910926</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Ship selection UI is in and working">
+      <created>1634888201515</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1634888201515</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
@@ -431,7 +424,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Some fixes to replaying, more structured game system resets" />
     <MESSAGE value="Fixed the duplicate collision handling bug" />
     <MESSAGE value="Sprite render order fixes, and jazzed up the menu a tiny bit." />
     <MESSAGE value="Made the game a bit more fun =D" />
@@ -456,7 +448,8 @@
     <MESSAGE value="Added F9 and F10 as debug buttons to increase and decrease game speed" />
     <MESSAGE value="Refactored shipTypes ahead of adding ship selection" />
     <MESSAGE value="All 3 ship types are now in." />
-    <option name="LAST_COMMIT_MESSAGE" value="All 3 ship types are now in." />
+    <MESSAGE value="Ship selection UI is in and working" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ship selection UI is in and working" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
