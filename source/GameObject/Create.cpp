@@ -12,6 +12,7 @@
 #include "../State/MenuState.h"
 
 #include "../Math/EuanityMath.h"
+#include "../Renderer/SpriteTransform.h"
 
 float
 Create::GetCollisionRadiusFromColliderType(const AsteroidType& type)
@@ -157,7 +158,7 @@ Create::SplitAsteroid(const Entity& asteroid, const float& splitImpulse) const
 		retVal.at(i) = entity;
 	}
 
-	LargeExplosion(parentTransform->pos, -parentRigid.velocity, Math::RandomRange(5.0f, 50.0f) );
+	LargeExplosion(parentTransform->pos, -parentRigid.velocity, Math::RandomRange(5.0f, 50.0f));
 	_EntityManager.Destroy(asteroid);
 
 	return retVal;
@@ -346,7 +347,11 @@ Create::Bullet(const BulletType bulletType, const Vector2& position, const Vecto
 }
 
 Entity
-Create::Ship(const ShipInfo& shipInfo, const Vector2& position, const float& rotation, const Vector2& initialVelocity, const float& initialAngularVelocity) const
+Create::Ship(const ShipInfo& shipInfo,
+             const Vector2& position,
+             const float& rotation,
+             const Vector2& initialVelocity,
+             const float& initialAngularVelocity) const
 {
 	const auto entity = _EntityManager.Create();
 
@@ -393,17 +398,31 @@ Create::UIButton(const AABB& position, const SpriteID spriteID, const std::funct
 Entity
 Create::GameOver(int score)
 {
-	const auto entity = _EntityManager.Create();
-
 	Transform trans;
-	trans.pos = { _Game.Renderer.GetWindowDim() * 0.5f };
-	trans.rot = 0;
-	_TransManager.Add(entity, trans);
-	_SpriteManager.Create(entity, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, SpriteManager::RenderFlags::SCREEN_SPACE);
+	trans.pos         = { _Game.Renderer.GetWindowDim() * 0.5f };
+	trans.rot         = 0;
+
+	const auto entity = StaticSprite(trans, SpriteID::GAME_OVER, RenderQueue::Layer::PARTICLE, SpriteManager::RenderFlags::SCREEN_SPACE);
 
 	const auto gameOverDuration = 5.0f;
 	_Timer.ExecuteDelayed(gameOverDuration, [&]() { _Game.ChangeState<MenuState>(true); });
 	_EntityManager.DestroyDelayed(entity, gameOverDuration);
+
+	return entity;
+}
+
+Entity
+Create::StaticSprite(const Transform& trans,
+                     const SpriteID spriteID,
+                     const RenderQueue::Layer layer,
+                     const SpriteManager::RenderFlags renderFlags,
+                     const float scale) const
+{
+	const auto entity = _EntityManager.Create();
+
+	_TransManager.Add(entity, trans);
+
+	_SpriteManager.Create(entity, spriteID, layer, scale, renderFlags);
 
 	return entity;
 }

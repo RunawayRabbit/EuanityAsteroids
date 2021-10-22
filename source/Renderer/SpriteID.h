@@ -68,13 +68,18 @@ enum class SpriteID
 	SHITTY_LOGO,
 	GAME_OVER,
 
+	// Ship Select stuff
+	SHIP_SELECT_BACKGROUND,
+	SHIP_DESCRIPTION_1,
+	SHIP_DESCRIPTION_2,
+	SHIP_DESCRIPTION_3,
 
 	COUNT
 };
 
 namespace SpriteAnimationData
 {
-	constexpr SpriteID nextFrameIndex[] = {
+	constexpr SpriteID NEXT_FRAME_INDEX[] = {
 		SpriteID::NONE, // null animation
 		SpriteID::SHIP_TRAIL_1, SpriteID::SHIP_TRAIL_2, SpriteID::SHIP_TRAIL_3, SpriteID::SHIP_TRAIL, // ship trail
 		SpriteID::SMALL_EXPLOSION_1, SpriteID::SMALL_EXPLOSION,// small explosion
@@ -82,7 +87,7 @@ namespace SpriteAnimationData
 		SpriteID::BULLET, SpriteID::BULLET_1, SpriteID::BULLET, // bullet
 	};
 
-	constexpr float frameTime[] = {
+	constexpr float FRAME_TIME[] = {
 	0.0f, // zero animation
 	0.15f, 0.1f, 0.2f, 0.1f, // ship trail
 	0.2f, 0.15f, // small explosion

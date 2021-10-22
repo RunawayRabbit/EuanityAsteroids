@@ -30,7 +30,11 @@ SpriteManager::Render(RenderQueue& renderQueue) const
 }
 
 void
-SpriteManager::Create(const Entity entity, const SpriteID spriteID, const RenderQueue::Layer layer, const RenderFlags renderFlags)
+SpriteManager::Create(const Entity entity,
+                      const SpriteID spriteID,
+                      const RenderQueue::Layer layer,
+                      const float scale,
+                      const RenderFlags renderFlags)
 {
 	//@TODO: These APIs aren't following the same conventions...
 
@@ -49,31 +53,40 @@ SpriteManager::Create(const Entity entity, const SpriteID spriteID, const Render
 
 	spriteTransform.ID = spriteID;
 
+	const auto newWidth  = static_cast<int>(rect.w * scale);
+	const auto newHeight = static_cast<int>(rect.h * scale);
+
 	SDL_Rect transPosition;
-	transPosition.x          = (static_cast<int>(TransPos.x) - rect.w / 2);
-	transPosition.y          = (static_cast<int>(TransPos.y) - rect.h / 2);
-	transPosition.w          = rect.w;
-	transPosition.h          = rect.h;
+	transPosition.x          = (static_cast<int>(TransPos.x) - newWidth / 2);
+	transPosition.y          = (static_cast<int>(TransPos.y) - newHeight / 2);
+	transPosition.w          = newWidth;
+	transPosition.h          = newHeight;
 	spriteTransform.Position = transPosition;
 	spriteTransform.Rotation = TransRot;
 	spriteTransform.Layer    = layer;
 
+	Create(entity, spriteTransform, renderFlags);
+}
+
+void
+SpriteManager::Create(const Entity entity, const SpriteTransform& spriteTransform, const RenderFlags renderFlags)
+{
 	switch(renderFlags)
 	{
 		case RenderFlags::FIXED:
 		{
-			_NonRepeating.Create(entity, spriteID, spriteTransform);
+			_NonRepeating.Create(entity, spriteTransform.ID, spriteTransform);
 			break;
 		}
 
 		case RenderFlags::REPEATING:
 		{
-			_Repeating.Create(entity, spriteID, spriteTransform);
+			_Repeating.Create(entity, spriteTransform.ID, spriteTransform);
 			break;
 		}
 		case RenderFlags::SCREEN_SPACE:
 		{
-			_ScreenSpace.Create(entity, spriteID, spriteTransform);
+			_ScreenSpace.Create(entity, spriteTransform.ID, spriteTransform);
 			break;
 		}
 	}
@@ -182,7 +195,7 @@ SpriteManager::SpriteCategory::Create(const Entity entity, const SpriteID sprite
 		std::swap(*(_Entities + _Size), *(_Entities + _CurrentFrameTimes.size()));
 		std::swap(*(_Transforms + _Size), *(_Transforms + _CurrentFrameTimes.size()));
 
-		_CurrentFrameTimes.push_back(SpriteAnimationData::frameTime[static_cast<int>(spriteID)]);
+		_CurrentFrameTimes.push_back(SpriteAnimationData::FRAME_TIME[static_cast<int>(spriteID)]);
 	}
 
 	++_Size;
@@ -205,8 +218,8 @@ SpriteManager::SpriteCategory::Update(const SpriteAtlas& spriteAtlas, const floa
 				_CurrentFrameTimes[i] -= deltaTime;
 				if(_CurrentFrameTimes[i] < 0.0f)
 				{
-					spriteTrans->ID = SpriteAnimationData::nextFrameIndex[static_cast<int>(spriteTrans->ID)];
-					_CurrentFrameTimes[i] += SpriteAnimationData::frameTime[static_cast<int>(spriteTrans->ID)];
+					spriteTrans->ID = SpriteAnimationData::NEXT_FRAME_INDEX[static_cast<int>(spriteTrans->ID)];
+					_CurrentFrameTimes[i] += SpriteAnimationData::FRAME_TIME[static_cast<int>(spriteTrans->ID)];
 
 					const auto [spriteID, tex, src] = spriteAtlas.Get(spriteTrans->ID);
 					spriteTrans->Position.w         = src.w;

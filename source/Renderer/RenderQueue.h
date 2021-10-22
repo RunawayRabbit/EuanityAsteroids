@@ -24,7 +24,9 @@ public:
 		PARALLAX,
 		DEFAULT,
 		PARTICLE,
+		UI_BOTTOM,
 		UI,
+		UI_TOP,
 
 		COUNT
 	};

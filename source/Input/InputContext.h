@@ -24,11 +24,11 @@ public:
 	InputContext(bool fillWithDefaults);
 	~InputContext();
 
-	InputOneShot ContainsOneShot(const SDL_Keycode key) const;
-	InputToggle ContainsToggle(const SDL_Keycode key) const;
+	InputOneShot ContainsOneShot(SDL_Keycode key) const;
+	InputToggle ContainsToggle(SDL_Keycode key) const;
 
-	void AddOneShot(const SDL_Keycode key, InputOneShot oneShot);
-	void AddToggle(const SDL_Keycode key, InputToggle toggle);
+	void AddOneShot(SDL_Keycode key, InputOneShot oneShot);
+	void AddToggle(SDL_Keycode key, InputToggle toggle);
 
 private:
 	std::map<SDL_Keycode, InputOneShot> _oneShots;

@@ -57,7 +57,6 @@
     <ClInclude Include="source\Renderer\SpriteAtlas.h" />
     <ClInclude Include="source\Renderer\SpriteID.h" />
     <ClInclude Include="source\Renderer\SpriteTransform.h" />
-    <ClInclude Include="source\State\GameMode.h" />
     <ClInclude Include="source\State\GameplayState.h" />
     <ClInclude Include="source\State\MenuState.h" />
     <ClInclude Include="source\State\IState.h" />

@@ -40,6 +40,93 @@ MenuState::Render()
 {
 }
 
+void
+MenuState::SpawnShipSelectButtons()
+{
+	_Game.Entities.Destroy(_Title);
+	_Game.Entities.Destroy(_StartButton);
+	_Game.Entities.Destroy(_QuitButton);
+	_Game.Entities.Destroy(_EuanityMeme);
+
+	const auto screenCenter = _Game.Renderer.GetWindowDim() * 0.5f;
+	const Vector2 buttonSize(158.0f, 207.0f);
+
+	const float buttonStride = 320.0f;
+
+	AABB button(screenCenter.y - buttonSize.y, screenCenter.y + buttonSize.y,
+	                  screenCenter.x - buttonSize.x - buttonStride,
+	                  screenCenter.x + buttonSize.x - buttonStride);
+
+	Transform textTrans;
+	textTrans.pos = Vector2(screenCenter.x - buttonStride, screenCenter.y + 90.0f);
+
+	Transform shipTrans;
+	shipTrans.pos = Vector2(screenCenter.x - buttonStride, screenCenter.y - 65.0f);
+
+	_ShipSelect[0].Background =
+        _Game.Create.UIButton(button, SpriteID::SHIP_SELECT_BACKGROUND,
+                              [&]() -> void
+                              {
+                                  _Game.GameState.PlayerShipType = ShipInfo::ShipType::FastWeak;
+                                  _Game.ChangeState<PlayState>(false);
+                              });
+
+
+	_ShipSelect[0].Text = _Game.Create.StaticSprite(
+        textTrans, SpriteID::SHIP_DESCRIPTION_1, RenderQueue::Layer::UI_TOP,
+        SpriteManager::RenderFlags::SCREEN_SPACE, 2.0f);
+
+	_ShipSelect[0].Ship = _Game.Create.StaticSprite(
+        shipTrans, SpriteID::SHIP_1, RenderQueue::Layer::UI_TOP,
+        SpriteManager::RenderFlags::SCREEN_SPACE, 3.0f);
+
+
+	button.left += buttonStride;
+	button.right += buttonStride;
+
+	textTrans.pos.x += buttonStride;
+	shipTrans.pos.x += buttonStride;
+
+	_ShipSelect[1].Background =
+    _Game.Create.UIButton(button, SpriteID::SHIP_SELECT_BACKGROUND,
+                          [&]() -> void
+                          {
+                              _Game.GameState.PlayerShipType = ShipInfo::ShipType::Normal;
+                              _Game.ChangeState<PlayState>(false);
+                          });
+
+
+	_ShipSelect[1].Text = _Game.Create.StaticSprite(
+        textTrans, SpriteID::SHIP_DESCRIPTION_2, RenderQueue::Layer::UI_TOP,
+        SpriteManager::RenderFlags::SCREEN_SPACE, 2.0f);
+
+	_ShipSelect[1].Ship = _Game.Create.StaticSprite(
+        shipTrans, SpriteID::SHIP_2, RenderQueue::Layer::UI_TOP,
+        SpriteManager::RenderFlags::SCREEN_SPACE, 3.0f);
+
+	button.left += buttonStride;
+	button.right += buttonStride;
+
+	textTrans.pos.x += buttonStride;
+	shipTrans.pos.x += buttonStride;
+
+	_ShipSelect[2].Background =
+    _Game.Create.UIButton(button, SpriteID::SHIP_SELECT_BACKGROUND,
+                          [&]() -> void
+                          {
+                              _Game.GameState.PlayerShipType = ShipInfo::ShipType::SlowPowerful;
+                              _Game.ChangeState<PlayState>(false);
+                          });
+
+
+	_ShipSelect[2].Text = _Game.Create.StaticSprite(
+        textTrans, SpriteID::SHIP_DESCRIPTION_3, RenderQueue::Layer::UI_TOP,
+        SpriteManager::RenderFlags::SCREEN_SPACE, 2.0f);
+
+	_ShipSelect[2].Ship = _Game.Create.StaticSprite(
+        shipTrans, SpriteID::SHIP_3, RenderQueue::Layer::UI_TOP,
+        SpriteManager::RenderFlags::SCREEN_SPACE, 3.0f);
+}
 
 void
 MenuState::SpawnMenuButtons()
@@ -60,10 +147,11 @@ MenuState::SpawnMenuButtons()
 	                    screenCenter.x - buttonSize.x * 0.5f,
 	                    screenCenter.x + buttonSize.x * 0.5f);
 	_StartButton = _Game.Create.UIButton(playAABB, SpriteID::START_BUTTON,
-	                                   [&]() -> void
-	                                   {
-		                                   _Game.ChangeState<PlayState>(false);
-	                                   });
+	                                     [&]() -> void
+	                                     {
+		                                     SpawnShipSelectButtons();
+		                                     //_Game.ChangeState<PlayState>(false);
+	                                     });
 
 
 	const AABB quitAABB((screenCenter.y * 1.1f) + 90,
@@ -71,10 +159,10 @@ MenuState::SpawnMenuButtons()
 	                    screenCenter.x - buttonSize.x * 0.5f,
 	                    screenCenter.x + buttonSize.x * 0.5f);
 	_QuitButton = _Game.Create.UIButton(quitAABB, SpriteID::QUIT_BUTTON,
-	                                  [&]() -> void
-	                                  {
-		                                  _Game.Quit();
-	                                  });
+	                                    [&]() -> void
+	                                    {
+		                                    _Game.Quit();
+	                                    });
 
 	const AABB euanityAABB((screenCenter * 2) - Vector2(205.0f, 67.0f), (screenCenter * 2) - Vector2(5.0f, 5.0f));
 	_EuanityMeme = _Game.Create.UIButton(euanityAABB, SpriteID::SHITTY_LOGO, []()
@@ -102,9 +190,11 @@ MenuState::SpawnRandomAsteroids() const
 				return;
 			}
 
-			auto asteroidSize = i < (numAsteroids/9) ? Create::AsteroidType::LARGE
-            : i < (3*numAsteroids/4) ? Create::AsteroidType::RANDOM_MEDIUM
-            : Create::AsteroidType::RANDOM_SMALL;
+			auto asteroidSize = i < (numAsteroids / 9)
+			                    ? Create::AsteroidType::LARGE
+			                    : i < (3 * numAsteroids / 4)
+			                    ? Create::AsteroidType::RANDOM_MEDIUM
+			                    : Create::AsteroidType::RANDOM_SMALL;
 			const auto asteroidRadius = Create::GetCollisionRadiusFromColliderType(asteroidSize);
 
 			auto startPos = Vector2 {
@@ -128,9 +218,9 @@ MenuState::SpawnRandomAsteroids() const
 			if(isValidPosition)
 			{
 				const auto speed = 90.0f;
-				auto startRot = static_cast<float>(rand() % 360);
-				auto startVel = Vector2 { Math::RandomRange(-speed, speed), Math::RandomRange(-speed, speed) };
-				auto rotVel   = Math::RandomRange(-45.0f, 45.0f);
+				auto startRot    = static_cast<float>(rand() % 360);
+				auto startVel    = Vector2 { Math::RandomRange(-speed, speed), Math::RandomRange(-speed, speed) };
+				auto rotVel      = Math::RandomRange(-45.0f, 45.0f);
 
 				asteroidPositions.push_back(startPos);
 

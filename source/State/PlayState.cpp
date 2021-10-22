@@ -236,14 +236,6 @@ PlayState::Update(const InputBuffer& inputBuffer, const float& deltaTime)
 			else
 			{
 				_WaitingToSpawn = true;
-				if(_Lives == 2)
-				{
-					_Game.GameState.PlayerShipType = ShipInfo::ShipType::SlowPowerful;
-				}
-				else
-				{
-					_Game.GameState.PlayerShipType = ShipInfo::ShipType::FastWeak;
-				}
 				_Game.Time.ExecuteDelayed(1.5f, [&]()
 				{
 					RespawnPlayer();

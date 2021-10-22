@@ -288,7 +288,6 @@ Physics::RemoveDuplicateCollisions()
 	sort(_CollisionList.begin(), _CollisionList.end());
 }
 
-
 void
 Physics::ShipVsAsteroid(const MoveList::ColliderRanges& ranges, std::vector<CollisionListEntry>& collisions) const
 {

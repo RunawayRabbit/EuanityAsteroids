@@ -12,7 +12,7 @@
 SpriteAtlas::SpriteAtlas(Renderer& renderer) :
 	_SpriteData(static_cast<int>(SpriteID::COUNT))
 {
-	LoadPnGs(renderer.GetRenderer());
+	LoadPNGs(renderer.GetRenderer());
 
 	//spriteData[(int)SpriteID::NONE]; // null data, default, nothing, nadda, zip.
 
@@ -99,6 +99,12 @@ void SpriteAtlas::CreateMenuSprites()
 	CreateSprite(SpriteID::START_BUTTON, 6, 200, 80, 0, 0);
 	CreateSprite(SpriteID::QUIT_BUTTON, 6, 200, 80, 0, 80);
 	CreateSprite(SpriteID::GAME_OVER, 8, 200, 160, 0, 0);
+
+	CreateSprite(SpriteID::SHIP_SELECT_BACKGROUND, 9, 158, 207, 0, 1);
+	CreateSprite(SpriteID::SHIP_DESCRIPTION_1, 9, 127, 52, 172, 3);
+	CreateSprite(SpriteID::SHIP_DESCRIPTION_2, 9, 127, 52, 172, 69);
+	CreateSprite(SpriteID::SHIP_DESCRIPTION_3, 9, 127 , 52, 172, 141);
+
 }
 
 void SpriteAtlas::CreateSprite(const SpriteID id, const int texIndex, const int width, const int height, const int x, const int y)
@@ -114,7 +120,7 @@ void SpriteAtlas::CreateSprite(const SpriteID id, const int texIndex, const int 
 	_SpriteData[static_cast<int>(sprite.id)] = sprite;
 }
 
-void SpriteAtlas::LoadPnGs(SDL_Renderer* renderer)
+void SpriteAtlas::LoadPNGs(SDL_Renderer* renderer)
 {
 	// Perform ALL Image loading Here!
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
@@ -131,11 +137,12 @@ void SpriteAtlas::LoadPnGs(SDL_Renderer* renderer)
 	_LoadedImages.push_back(PNGToTexture(renderer, "resources/MenuButtons.png")); //6
 	_LoadedImages.push_back(PNGToTexture(renderer, "resources/MainLogo.png")); //7
 	_LoadedImages.push_back(PNGToTexture(renderer, "resources/GameOver.png")); //8
+	_LoadedImages.push_back(PNGToTexture(renderer, "resources/ShipSelectUI.png")); //9
 
 	IMG_Quit(); // Shut down the image loading stuff, we don't need it anymore.
 }
 
-SDL_Texture* SpriteAtlas::PNGToTexture(SDL_Renderer* renderer, const std::string path) const
+SDL_Texture* SpriteAtlas::PNGToTexture(SDL_Renderer* renderer, const std::string path)
 {
 	SDL_Surface* surf = IMG_Load(path.c_str());
 

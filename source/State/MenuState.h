@@ -20,6 +20,7 @@ public:
 
 	void Update(const InputBuffer& inputBuffer, const float& deltaTime) override;
 	void Render() override;
+	void SpawnShipSelectButtons();
 
 private:
 	void SpawnMenuButtons();
@@ -27,9 +28,21 @@ private:
 
 	Game& _Game;
 
-	Entity _Title;
 
+	// Main Menu
+	Entity _Title;
 	Entity _StartButton;
 	Entity _QuitButton;
 	Entity _EuanityMeme;
+
+
+	struct ShipSelect
+	{
+		Entity Background;
+		Entity Text;
+		Entity Ship;
+	};
+
+	// Ship Select
+	ShipSelect _ShipSelect[3];
 };

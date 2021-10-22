@@ -23,7 +23,8 @@ public:
 	SpriteManager(const TransformManager& transManager, const EntityManager& entityManager, const SpriteAtlas& spriteAtlas, int capacity);
 	SpriteManager() = delete;
 
-	void Create(Entity entity, SpriteID spriteID, RenderQueue::Layer layer, RenderFlags renderFlags = RenderFlags::REPEATING);
+	void Create(Entity entity, SpriteID spriteID, RenderQueue::Layer layer, float scale = 1.0f, RenderFlags renderFlags = RenderFlags::REPEATING);
+	void Create(Entity entity, const SpriteTransform& spriteTransform, RenderFlags renderFlags);
 
 	void Render(RenderQueue& renderQueue) const;
 

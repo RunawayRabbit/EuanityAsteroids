@@ -6,9 +6,11 @@
 #include "WeaponType.h"
 #include "../Physics/ColliderType.h"
 #include "../Renderer/SpriteAtlas.h"
+#include "../ECS/SpriteManager.h"
 
 #include "../Math/Vector2.h"
 
+struct Transform;
 class ShipInfo;
 class Game;
 
@@ -16,7 +18,6 @@ class Entity;
 class EntityManager;
 class TransformManager;
 class RigidbodyManager;
-class SpriteManager;
 class UIManager;
 class Timer;
 
@@ -72,6 +73,8 @@ public:
 	[[maybe_unused]] Entity LargeExplosion(const Vector2& position, const Vector2& velocity = Vector2::Zero(), const float& rotVelocity = 0) const;
 
 	Entity UIButton(const AABB& position, SpriteID spriteID, std::function<void()> callback) const;
+
+	Entity StaticSprite(const Transform& trans, SpriteID spriteID, RenderQueue::Layer layer, SpriteManager::RenderFlags renderFlags, float scale = 1.0f) const;
 
 	Entity GameOver(int score);
 
